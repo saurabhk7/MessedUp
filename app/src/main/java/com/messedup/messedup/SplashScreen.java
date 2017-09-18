@@ -99,7 +99,6 @@ public class SplashScreen extends AppCompatActivity {
                 else
                 {
                     Intent i = new Intent(SplashScreen.this, GoogleSignIn.class);
-                    i.putExtra("menuArraylist",AllMessInfoFromDatabaseSplash);
                     startActivity(i);
                     Toast.makeText(getBaseContext(),"Oops,Error Updating Mess Menuhkfkfs",Toast.LENGTH_SHORT).show();
 
@@ -356,7 +355,6 @@ public class SplashScreen extends AppCompatActivity {
                     Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
 
                     Intent i = new Intent(contextFinal, GoogleSignIn.class);
-                    i.putExtra("menuArraylist",AllMessInfoFromDatabaseSplash);
                     startActivity(i);
                     contextFinal.startActivity(i);
                     finish();

@@ -27,10 +27,11 @@ import com.messedup.messedup.signin_package.GoogleSignIn;
 public class ProfileFragment extends Fragment {
 
     Button SignOutBtn;
-
+    String email;
     public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         return fragment;
+
     }
 
     private TextView mNameTxtView,mEmailTxtView,mContactTxtView;
@@ -57,59 +58,74 @@ public class ProfileFragment extends Fragment {
             int i=0;
             FirebaseUser CurrentUser= FirebaseAuth.getInstance().getCurrentUser();
 
-            for (UserInfo profile : CurrentUser.getProviderData()) {
+            if (CurrentUser != null) {
+                for (UserInfo profile : CurrentUser.getProviderData()) {
 
-                i++;
-                // Id of the provider (ex: google.com)
-                String providerId = profile.getProviderId();
+                    i++;
+                    // Id of the provider (ex: google.com)
+                    String providerId = profile.getProviderId();
 
-                Log.d("-----PROVIDER "+i+" ----- ","---- "+providerId+" ----");
-                // UID specific to the provider
-                String uid = profile.getUid();
+                    Log.d("-----PROVIDER "+i+" ----- ","---- "+providerId+" ----");
+                    // UID specific to the provider
+                    String uid = profile.getUid();
 
-                // Name, email address, and profile photo Url
-                String name = profile.getDisplayName();
+                    try{
+                        Log.e("profile.email ","=== "+profile.getEmail());
+                        Log.e("profile.email.provi 5",profile.getProviderId());
 
-                if(providerId.equals("google.com"))
-                    Log.d("-----PROVIDER "+i+" ----- ",name);
-
-                if(providerId.equals("google.com"))
-                    mNameTxtView.setText(name);
-                String email = profile.getEmail();
-                if(providerId.equals("firebase"))
-                    Log.d("-----PROVIDER "+i+" ----- "+i,email);
-
-
-                if(providerId.equals("google.com")) {
-
-
-                    final Uri photoUrl = profile.getPhotoUrl();
-                    final ImageView ProfilePic=(ImageView)ProfileView.findViewById(R.id.ProfilePicImg);
-
-                    Log.d("-----PROVIDER " + i + " ----- ", photoUrl.toString());
-                    try {
-                        Picasso.with(inflater.getContext()).load(photoUrl).transform(new CircleTransform()).networkPolicy(NetworkPolicy.OFFLINE).into(ProfilePic, new Callback() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError() {
-
-                                Picasso.with(inflater.getContext()).load(photoUrl).transform(new CircleTransform()).into(ProfilePic);
-
-                            }
-                        });
-                    } catch (Exception e) {
-                        Log.v("E_VALUE", e.getMessage());
+                        mEmailTxtView.setText(email);
                     }
-                }
+                    catch (Exception e)
+                    {
+                        Log.e("profile.email.provi ",profile.getProviderId());
 
-                Log.d("-----PROVIDER "+i+" ----- ","----------------");
+                    }
+
+                    // Name, email address, and profile photo Url
+                    String name = profile.getDisplayName();
+
+                    if(providerId.equals("google.com"))
+                        Log.d("-----PROVIDER "+i+" ----- ",name);
+
+                    if(providerId.equals("google.com")) {
+                        mNameTxtView.setText(name);
+                       email = profile.getEmail();
+                        Log.d("-----PROVIDER "+i+" ----- "+i,email);
+
+                    }
+                        if(providerId.equals("firebase"))
+
+
+                    if(providerId.equals("google.com")) {
+
+
+                        final Uri photoUrl = profile.getPhotoUrl();
+                        final ImageView ProfilePic=(ImageView)ProfileView.findViewById(R.id.ProfilePicImg);
+
+                        Log.d("-----PROVIDER " + i + " ----- ", photoUrl.toString());
+                        try {
+                            Picasso.with(inflater.getContext()).load(photoUrl).transform(new CircleTransform()).networkPolicy(NetworkPolicy.OFFLINE).into(ProfilePic, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                    Picasso.with(inflater.getContext()).load(photoUrl).transform(new CircleTransform()).into(ProfilePic);
+
+                                }
+                            });
+                        } catch (Exception e) {
+                            Log.v("E_VALUE", e.getMessage());
+                        }
+                    }
+
+                    Log.d("-----PROVIDER "+i+" ----- ","----------------");
+                }
             }
 
-            mEmailTxtView.setText(CurrentUser.getEmail());
             mContactTxtView.setText(CurrentUser.getPhoneNumber());
 
 
