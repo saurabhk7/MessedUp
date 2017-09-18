@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:elevation="30dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/cv_info"
+        app:cardCornerRadius="0dp"
+        android:layout_marginBottom="10dp"
+        app:cardUseCompatPadding="false"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/InfoLayout">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:id="@+id/BackImg"
+                    android:src="@drawable/red_profile_background"
+                    android:scaleType="centerCrop"
+                    android:layout_height="45dp" />
+
+                <TextView
+                    android:id="@+id/ContactUsTxtView"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/contact_us_string"
+                    android:layout_marginTop="5dp"
+                    android:textSize="17sp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/white"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/InfoTxtView"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/ContactUsTxtView"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="version 1.0.2"
+                    android:textSize="12sp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/white"
+                    android:textAlignment="center" />
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

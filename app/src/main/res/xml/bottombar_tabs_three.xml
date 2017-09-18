@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_notifs"
+        icon="@drawable/ic_megaphone"
+        badgeBackgroundColor="#ffa000"
+        title="Offers" />
+    <tab
+        id="@+id/tab_menu"
+        icon="@drawable/ic_restaurant_menu"
+        title="Menu" />
+    <tab
+        id="@+id/tab_profile"
+        icon="@drawable/ic_user"
+        title="Profile" />
+</tabs>

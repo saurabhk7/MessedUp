@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Messed Up</string>
+    <string name="TAG_SUCCESS">success</string>
+    <string name="TAG_MESSINFO">messinfo</string>
+    <string name="TAG_MESSID">messid</string>
+    <string name="TAG_NAME">name</string>
+    <string name="TAG_RICE">rice</string>
+    <string name="TAG_ROTI">roti</string>
+    <string name="TAG_SPECIAL">special</string>
+    <string name="TAG_SPECIAL_EXTRA">specialextra</string>
+    <string name="TAG_VEGIE1">vegieone</string>
+    <string name="TAG_VEGIE2">vegietwo</string>
+    <string name="TAG_VEGIE3">vegiethree</string>
+    <string name="TAG_OTHER">other</string>
+    <string name="TAG_GCHARGE">gcharge</string>
+    <string name="TAG_STATUS">status</string>
+    <string name="TAG_OPENTIME">opentime</string>
+    <string name="TAG_CLOSETIME">closetime</string>
+    <string name="url_mess_menu">https://wanidipak56.000webhostapp.com/t.php</string>
+
+
+    <string name="about_us_string"><u>About Us</u></string>
+    <string name="contact_us_string"><u>Need Help? Contact Us</u></string>
+
+    <string name="pict">PICT, Dhankawadi</string>
+    <string name="bvp">BVP, Katraj</string>
+    <string name="sinhagad">SINHAGAD COE, Vadgoan</string>
+    <string name="skn">SKNCOE, Ambegaon</string>
+    <string name="vit">VIT, Bibvewadi</string>
+    <string name="cummins">CUMMINS COEW, Karve Nagar</string>
+
+
+
+    <string name="interstitial_full_screen">ca-app-pub-2262853430578478/1739195261</string>
+
+
+</resources>

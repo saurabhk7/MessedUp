@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_call"
+        android:enabled="true"
+        android:icon="@drawable/ic_call_black_24dp"
+        android:title="Call"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_locate"
+        android:enabled="true"
+        android:icon="@drawable/ic_place_black_24dp"
+        android:title="Locate"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_share"
+        android:enabled="true"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="Share"
+        app:showAsAction="ifRoom" />
+</menu>

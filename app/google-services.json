@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "122964971956",
+    "firebase_url": "https://messed-up-37064.firebaseio.com",
+    "project_id": "messed-up-37064",
+    "storage_bucket": "messed-up-37064.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122964971956:android:981dd04e9b3c0fb0",
+        "android_client_info": {
+          "package_name": "com.messedup.messedup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122964971956-o9fh6roegjbpudsjtl29ag6ghclgiebm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.messedup.messedup",
+            "certificate_hash": "8e032c67a2b920ffd402aa192d076d30d7221fa3"
+          }
+        },
+        {
+          "client_id": "122964971956-qusp5p0luhqc8degg01s8u48tgapnk60.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVLz-MUyQU8bj59OCTsxyrT1GxNIXBNhY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122964971956-qusp5p0luhqc8degg01s8u48tgapnk60.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
