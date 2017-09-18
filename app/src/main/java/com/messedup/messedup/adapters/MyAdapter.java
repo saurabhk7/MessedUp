@@ -44,7 +44,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int STATIC_CARD_FOOT = 2;
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReferenceFromUrl("gs://messed-up-try.appspot.com");
+    StorageReference storageRef = storage.getReferenceFromUrl("gs://messed-up-37064.appspot.com");
 
     SharedPreference sharedPreference;
     List<String> favorites;

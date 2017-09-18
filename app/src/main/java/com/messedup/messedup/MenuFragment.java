@@ -1,6 +1,7 @@
 package com.messedup.messedup;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -54,17 +55,18 @@ public class MenuFragment extends Fragment {
 
     //DATABASE AND SHARED PREF OBJECTS
     DatabaseHandler databaseHandler;
-    SharedPrefHandler sharedPrefHandler;
+    public SharedPrefHandler sharedPrefHandler;
+    public DatabaseHandler db;
+
+
 
     //LOADED MENU ARRAYLIST TO POPULATE CARD VIEW
     ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
 
     public  static ArrayList<HashMap<String,String>> AllMessInfoFromDatabaseSplash=new ArrayList<>();
 
-    public static MenuFragment newInstance(/*ArrayList<HashMap<String,String>> temp*/) {
+    public static MenuFragment newInstance() {
         MenuFragment fragment = new MenuFragment();
-        //  AllMessInfoFromDatabaseSplash=temp;
-//        Toast.makeText(fragment.getContext(),"inInstance",Toast.LENGTH_SHORT).show();
         return fragment;
     }
     ArrayList<String> MessNameList=new ArrayList<>();
@@ -183,12 +185,445 @@ public class MenuFragment extends Fragment {
     }
 
 
+
+
+
+
+
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+
+
+
+
+
+        //set up the view
+        OnCreaterootView = inflater.inflate(R.layout.fragment_card, container, false);
+
+        //DATABASE HANDLER OBJECT
+        db=new DatabaseHandler(OnCreaterootView.getContext());
+
+        // Retrieve the SwipeRefreshLayout and ListView instances
+        mSwipeRefreshLayout = (SwipeRefreshLayout) OnCreaterootView.findViewById(R.id.swiperefresh);
+        // BEGIN_INCLUDE (change_colors) //TODO: See the changing colors of loading circle
+        // Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
+       /* mSwipeRefreshLayout.setColorScheme(
+                Color.BLUE,Color.CYAN,Color.GREEN,Color.RED);*/
+        // END_INCLUDE (change_colors)
+
+        // LoadingDialog=new SpotsDialog(getActivity(), R.style.Custom);
+
+        if (POPULATED_FLAG) {
+            re_initilializeHashMaps(OnCreaterootView);
+        }
+
+        spinner=(Spinner)getActivity().findViewById(R.id.categorySpinner);
+
+
+        final TextView hiddenTextView = new TextView(getContext());
+        hiddenTextView.setVisibility(View.GONE);
+
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String selectedArea;
+                Log.d("spinner pos: ",i+" "+"" );
+
+                if(adapterView.getItemAtPosition(i)!=null) {
+                    selectedArea = adapterView.getItemAtPosition(i).toString();
+                }
+                else {
+                    selectedArea = college_list.get(i);
+                    Log.d("spinner pos: ","found null using list "+selectedArea);
+                }
+
+                try {
+
+
+                    // Toast.makeText(OnCreaterootView.getContext(), "Selected College: " + selectedArea, Toast.LENGTH_SHORT).show();
+                    Log.e("Selected College"," "+selectedArea);
+                    String preselectArea = getSharedPrefs();
+                    // Toast.makeText(OnCreaterootView.getContext(), "SHARED PREF College: " + preselectArea, Toast.LENGTH_SHORT).show();
+                    Log.e("Preselected College", " " + preselectArea);
+
+                    //SUBSCRIBE TO THE NEARBY COLLEGE TOPIC
+                    updateSharedPrefs(selectedArea);
+                    String preselectArea2 = getSharedPrefs();
+                    FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(preselectArea2));
+
+                    // Toast.makeText(OnCreaterootView.getContext(), "After Updating SHARED PREF College: " + preselectArea2, Toast.LENGTH_SHORT).show();
+                    Log.e("After Updating College", " " + preselectArea2);
+
+
+                    //Setting Up Database and Shared Pref Objects to retrieve the Stored Menu
+                    databaseHandler = new DatabaseHandler(OnCreaterootView.getContext());
+                    sharedPrefHandler = new SharedPrefHandler(OnCreaterootView.getContext());
+
+                    //Populating the Menu ArrayList
+                    MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
+                    if (MenuArrayList == null) {
+                        Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("Total Menu : ", MenuArrayList.toString());
+
+
+
+                        intializeList(OnCreaterootView);
+                        //initiateRefresh(OnCreaterootView);
+                     //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+        });
+
+        return OnCreaterootView;
+    }
+
+
+
+
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // BEGIN_INCLUDE (setup_refreshlistener)
+        /**
+         * Implement {@link SwipeRefreshLayout.OnRefreshListener}. When users do the "swipe to
+         * refresh" gesture, SwipeRefreshLayout invokes
+         * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}. In
+         * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}, call a method that
+         * refreshes the content. Call the same method in response to the Refresh action from the
+         * action bar.
+         */
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i("IN ON REFRESH", "onRefresh called from SwipeRefreshLayout");
+
+                initiateRefresh(view);
+            }
+        });
+        // END_INCLUDE (setup_refreshlistener)
+    }
+// END_INCLUDE (setup_views)
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    private void initiateRefresh(View view) {
+        Log.i("IN INITIATE REFRESH", "initiateRefresh");
+
+        /**
+         * Execute the background task, which uses {@link AsyncTask} to load the data.
+         */
+        //  new DummyBackgroundTask().execute();
+
+        new LoadAllMess(view).execute();
+    }
+
+    public void initiateRefresh(View view,String area) {
+        Log.i("IN INITIATE REFRESH", "initiateRefresh");
+
+        /**
+         * Execute the background task, which uses {@link AsyncTask} to load the data.
+         */
+        //  new DummyBackgroundTask().execute();
+
+        new LoadAllMess(view,area).execute();
+    }
+
+    private void onRefreshComplete(String url) {
+        Log.i("REFRESH COMPLETE", "onRefreshComplete"+url);
+
+        // Remove all items from the ListAdapter, and then replace them with the new items
+
+
+        // Stop the refreshing indicator
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+
+
+
+
+
+    /**
+     * Created by saurabh on 24/8/17.
+     */
+
+    class LoadAllMess extends AsyncTask<String , Void ,String> {
+
+
+        private View mPassedView;
+        private Context thiscontext;
+        private String MessArea;
+        JSONObject jObj = null;
+        String json = "";
+        private String url_mess_menu = thiscontext.getString(R.string.url_mess_menu);
+        // JSON Node names
+        private  final String TAG_SUCCESS = thiscontext.getString(R.string.TAG_SUCCESS);
+        private  final String TAG_MESSINFO = thiscontext.getString(R.string.TAG_MESSINFO);
+        private  final String TAG_MESSID =thiscontext.getString(R.string.TAG_MESSID);
+        private  final String TAG_NAME = thiscontext.getString(R.string.TAG_NAME);
+        private  final String TAG_RICE = thiscontext.getString(R.string.TAG_RICE);
+        private  final String TAG_ROTI = thiscontext.getString(R.string.TAG_ROTI);
+        private  final String TAG_SPECIAL = thiscontext.getString(R.string.TAG_SPECIAL);
+        private  final String TAG_SPECIAL_EXTRA = thiscontext.getString(R.string.TAG_SPECIAL_EXTRA);
+        private  final String TAG_VEGIE1 = thiscontext.getString(R.string.TAG_VEGIE1);
+        private  final String TAG_VEGIE2 = thiscontext.getString(R.string.TAG_VEGIE2);
+        private  final String TAG_VEGIE3 = thiscontext.getString(R.string.TAG_VEGIE3);
+        private  final String TAG_OTHER = thiscontext.getString(R.string.TAG_OTHER);
+        private  final String TAG_GCHARGE = thiscontext.getString(R.string.TAG_GCHARGE);
+        private  final String TAG_STATUS = thiscontext.getString(R.string.TAG_STATUS);
+        private  final String TAG_OPENTIME = thiscontext.getString(R.string.TAG_OPENTIME);
+        private  final String TAG_CLOSETIME = thiscontext.getString(R.string.TAG_CLOSETIME);
+
+
+
+
+        LoadAllMess(View PassedView) {
+            mPassedView = PassedView;
+            MessArea = getSharedPrefs();
+            thiscontext=PassedView.getContext();
+        }
+
+        LoadAllMess(View view, String area) {
+            mPassedView = view;
+            thiscontext=view.getContext();
+            MessArea = area;
+        }
+
+        LoadAllMess(Context cont) {
+            thiscontext = cont;
+            String preselectArea = getSharedPrefs();
+            MessArea = preselectArea;
+
+            Log.i("SPLASH SCREEN SHARED", preselectArea);
+        }
+
+
+        /**
+         * @use clear the initial Hashmap
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            AllMessInfoFromDatabaseSplash.clear();
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL(url_mess_menu);
+                JSONObject jsonObject = new JSONObject();
+
+
+                jsonObject.put("college", MessArea);
+
+
+                String message = jsonObject.toString();
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    db.updateMenuCard(MessArea,json);
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                } catch (JSONException e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+
+            try {
+                int success = jObj.getInt("success");
+                if (success == 1) {
+                    JSONArray mess2 = jObj.getJSONArray("messinfo");
+
+                    for (int i = 0; i < mess2.length(); i++) {
+                        JSONObject c = mess2.getJSONObject(i);
+
+                        // Storing each json item in variable
+                        String id = c.getString(TAG_MESSID).trim();
+                        String rice = c.getString(TAG_RICE).trim();
+                        String vegie1 = c.getString(TAG_VEGIE1).trim();
+                        String vegie2 = c.getString(TAG_VEGIE2).trim();
+                        String vegie3 = c.getString(TAG_VEGIE3).trim();
+                        String roti = c.getString(TAG_ROTI).trim();
+                        String special = c.getString(TAG_SPECIAL).trim();
+                        String special_extra = c.getString(TAG_SPECIAL_EXTRA).trim();
+                        String other = c.getString(TAG_OTHER).trim();
+
+                        String gcharge = c.getString(TAG_GCHARGE).trim();
+                        String otime = c.getString(TAG_OPENTIME).trim();
+                        String ctime = c.getString(TAG_CLOSETIME).trim();
+
+                        /*String otime = c.getString(TAG_OPENTIME).trim();
+                        String ctime = c.getString(TAG_CLOSETIME).trim();*/
+
+                        String stat = c.getString(TAG_STATUS).trim();
+
+
+                        // creating new HashMap
+                        HashMap<String, String> map = new HashMap<>();
+
+                        // adding each child node to HashMap key => value
+                        map.put(TAG_MESSID, id);
+                        map.put(TAG_RICE, rice);
+                        map.put(TAG_VEGIE1, vegie1);
+                        map.put(TAG_VEGIE2, vegie2);
+                        map.put(TAG_VEGIE3, vegie3);
+                        map.put(TAG_ROTI, roti);
+                        map.put(TAG_SPECIAL, special);
+                        map.put(TAG_SPECIAL_EXTRA, special_extra);
+                        map.put(TAG_OTHER, other);
+
+                        map.put(TAG_GCHARGE, gcharge);
+                        map.put(TAG_OPENTIME, otime);
+                        map.put(TAG_CLOSETIME, ctime);
+                        map.put(TAG_STATUS, stat);
+
+
+                        Log.d("inDoinBackground: ID", "``````````````````````" + map.toString());
+
+
+                        // adding HashList to ArrayList
+                        AllMessInfoFromDatabaseSplash.add(map);
+                    }
+
+
+                    Log.i("IN MENUFRAG SCREEN ", "``````````````````````" + AllMessInfoFromDatabaseSplash.toString());
+
+                    intializeList(mPassedView);
+                    // close this activity
+                    //contextFinal..finish();
+
+                } else {
+                    Log.i("SPLASH SCREEN SHARED", "ERROR");
+
+                    updateSharedPrefs(thiscontext.getString(R.string.pict));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+
+
+
+    }
+
+
     public View intializeList(final View mPassedView) {
 
-
-
-
-        int count = 0;
+        Log.d("In initialize List", AllMessInfoFromDatabase.toString());
+        AllMessInfoFromDatabase=databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
         Log.d("In initialize List", AllMessInfoFromDatabase.toString());
 
         AllMessMenu.clear();
@@ -493,40 +928,6 @@ public class MenuFragment extends Fragment {
 
     }
 
-    private String getTopicName(String messID) {
-
-        try {
-            messID=messID.replace(",","_");
-            messID = messID.replace(" ", "_");
-            messID = messID.toLowerCase();
-            messID = messID.trim();
-        }
-        catch (Exception e)
-        {
-            Log.i("error","Error in topicname");
-        }
-
-        return messID;
-    }
-
-
-    /*Checks whether a particular product exists in SharedPreferences*/
-    public boolean checkFavoriteItem(String checkProduct , View passedView) {
-
-        SharedPreference sharedPreference= new SharedPreference();
-        boolean check = false;
-        List<String> favorites = sharedPreference.getFavorites(passedView.getContext());
-        if (favorites != null) {
-            for (String product : favorites) {
-                if (product.equals(checkProduct)) {
-                    check = true;
-                    break;
-                }
-            }
-        }
-        return check;
-    }
-
 
 
     private void re_initilializeHashMaps(View mPassedView)
@@ -546,110 +947,23 @@ public class MenuFragment extends Fragment {
 
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+    //TODO:===========================CHECKS AND SMALL SUPPORT METHODS==============================
+    /*Checks whether a particular product exists in SharedPreferences*/
+    public boolean checkFavoriteItem(String checkProduct , View passedView) {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
-
-        //set up the view
-        OnCreaterootView = inflater.inflate(R.layout.fragment_card, container, false);
-
-        // Retrieve the SwipeRefreshLayout and ListView instances
-        mSwipeRefreshLayout = (SwipeRefreshLayout) OnCreaterootView.findViewById(R.id.swiperefresh);
-        // BEGIN_INCLUDE (change_colors) //TODO: See the changing colors of loading circle
-        // Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
-       /* mSwipeRefreshLayout.setColorScheme(
-                Color.BLUE,Color.CYAN,Color.GREEN,Color.RED);*/
-        // END_INCLUDE (change_colors)
-
-        // LoadingDialog=new SpotsDialog(getActivity(), R.style.Custom);
-
-        if (POPULATED_FLAG) {
-            re_initilializeHashMaps(OnCreaterootView);
+        SharedPreference sharedPreference= new SharedPreference();
+        boolean check = false;
+        List<String> favorites = sharedPreference.getFavorites(passedView.getContext());
+        if (favorites != null) {
+            for (String product : favorites) {
+                if (product.equals(checkProduct)) {
+                    check = true;
+                    break;
+                }
+            }
         }
-
-        spinner=(Spinner)getActivity().findViewById(R.id.categorySpinner);
-
-
-        final TextView hiddenTextView = new TextView(getContext());
-        hiddenTextView.setVisibility(View.GONE);
-
-
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String selectedArea;
-                Log.d("spinner pos: ",i+" "+"" );
-
-                if(adapterView.getItemAtPosition(i)!=null) {
-                    selectedArea = adapterView.getItemAtPosition(i).toString();
-                }
-                else {
-                    selectedArea = college_list.get(i);
-                    Log.d("spinner pos: ","found null using list "+selectedArea);
-                }
-
-                try {
-
-
-                    // Toast.makeText(OnCreaterootView.getContext(), "Selected College: " + selectedArea, Toast.LENGTH_SHORT).show();
-                    Log.e("Selected College"," "+selectedArea);
-                    String preselectArea = getSharedPrefs();
-                    // Toast.makeText(OnCreaterootView.getContext(), "SHARED PREF College: " + preselectArea, Toast.LENGTH_SHORT).show();
-                    Log.e("Preselected College", " " + preselectArea);
-
-                    //SUBSCRIBE TO THE NEARBY COLLEGE TOPIC
-                    updateSharedPrefs(selectedArea);
-                    String preselectArea2 = getSharedPrefs();
-                    FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(preselectArea2));
-
-                    // Toast.makeText(OnCreaterootView.getContext(), "After Updating SHARED PREF College: " + preselectArea2, Toast.LENGTH_SHORT).show();
-                    Log.e("After Updating College", " " + preselectArea2);
-
-
-                    //Setting Up Database and Shared Pref Objects to retrieve the Stored Menu
-                    databaseHandler = new DatabaseHandler(OnCreaterootView.getContext());
-                    sharedPrefHandler = new SharedPrefHandler(OnCreaterootView.getContext());
-
-                    //Populating the Menu ArrayList
-                    MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
-                    if (MenuArrayList == null) {
-                        Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("Total Menu : ", MenuArrayList.toString());
-
-
-                        Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-
-        });
-
-        return OnCreaterootView;
+        return check;
     }
-
 
 
     private void updateSharedPrefs(String selectedArea) {
@@ -671,471 +985,30 @@ public class MenuFragment extends Fragment {
 
     }
 
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    private String getTopicName(String messID) {
 
-        // BEGIN_INCLUDE (setup_refreshlistener)
-        /**
-         * Implement {@link SwipeRefreshLayout.OnRefreshListener}. When users do the "swipe to
-         * refresh" gesture, SwipeRefreshLayout invokes
-         * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}. In
-         * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}, call a method that
-         * refreshes the content. Call the same method in response to the Refresh action from the
-         * action bar.
-         */
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Log.i("IN ON REFRESH", "onRefresh called from SwipeRefreshLayout");
-
-                initiateRefresh(view);
-            }
-        });
-        // END_INCLUDE (setup_refreshlistener)
-    }
-// END_INCLUDE (setup_views)
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-    private void initiateRefresh(View view) {
-        Log.i("IN INITIATE REFRESH", "initiateRefresh");
-
-        /**
-         * Execute the background task, which uses {@link AsyncTask} to load the data.
-         */
-        //  new DummyBackgroundTask().execute();
-
-        new LoadAllMess(view).execute();
-    }
-
-    public void initiateRefresh(View view,String area) {
-        Log.i("IN INITIATE REFRESH", "initiateRefresh");
-
-        /**
-         * Execute the background task, which uses {@link AsyncTask} to load the data.
-         */
-        //  new DummyBackgroundTask().execute();
-
-        new LoadAllMess(view,area).execute();
-    }
-
-    private void onRefreshComplete(String url) {
-        Log.i("REFRESH COMPLETE", "onRefreshComplete"+url);
-
-        // Remove all items from the ListAdapter, and then replace them with the new items
-
-
-        // Stop the refreshing indicator
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-
-
-
-
-
-    /**
-     * Created by saurabh on 24/8/17.
-     */
-
-    public class LoadAllMess extends AsyncTask<String , Void ,String> {
-
-        private  View mPassedView;
-        private String MessArea;
-        JSONObject jObj = null;
-        String json = "";
-
-        LoadAllMess(View PassedView)
+        try {
+            messID=messID.replace(",","_");
+            messID = messID.replace(" ", "_");
+            messID = messID.toLowerCase();
+            messID = messID.trim();
+        }
+        catch (Exception e)
         {
-            mPassedView=PassedView;
-            String preselectArea= getSharedPrefs();
-            MessArea=preselectArea;
+            Log.i("error","Error in topicname");
         }
 
-        LoadAllMess(View view,String area)
-        {
-            mPassedView=view;
-
-            MessArea=area;
-        }
-
-
-        // products JSONArray
-        JSONArray mess = null;
-        JSONArray mess2 = null;
-
-        //JSONParser jParser = new JSONParser();
-        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
-        private String url_mess_menu="https://wanidipak56.000webhostapp.com/receivemenu.php";
-        //ArrayList<HashMap<String, String>> messList;
-
-        // JSON Node names
-        private static final String TAG_SUCCESS = "success";
-        private static final String TAG_MESSINFO = "messinfo";
-        private static final String TAG_MESSID = "messid";
-        private static final String TAG_NAME = "name";
-        private static final String TAG_RICE = "rice";
-        private static final String TAG_ROTI = "roti";
-        private static final String TAG_SPECIAL = "special";
-        private static final String TAG_SPECIAL_EXTRA = "specialextra";
-        private static final String TAG_VEGIE1 = "vegieone";
-        private static final String TAG_VEGIE2 = "vegietwo";
-        private static final String TAG_VEGIE3 = "vegiethree";
-        private static final String TAG_OTHER = "other";
-
-        private static final String TAG_GCHARGE = "gcharge";
-        private static final String TAG_STATUS = "status";
-        private static final String TAG_OPENTIME = "opentime";
-        private static final String TAG_CLOSETIME = "closetime";
-
-//TODO: give lunch and dinner open/close and open/close status
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            AllMessInfoFromDatabase.clear();
-           /* pDialog = new ProgressDialog(getActivity().getApplicationContext());
-            pDialog.setMessage("Loading products. Please wait...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();*/
-        }
-
-        protected String doInBackground(String... args) {
-
-            OutputStream os = null;
-            InputStream is = null;
-            HttpURLConnection conn = null;
-            try {
-                //constants
-                URL url = new URL("https://wanidipak56.000webhostapp.com/t.php");
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("college", MessArea);
-
-                String message = jsonObject.toString();
-
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout( 10000 /*milliseconds*/ );
-                conn.setConnectTimeout( 15000 /* milliseconds */ );
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                conn.setFixedLengthStreamingMode(message.getBytes().length);
-
-                //make some HTTP header nicety
-                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-
-                //open
-                conn.connect();
-
-                //setup send
-                os = new BufferedOutputStream(conn.getOutputStream());
-                os.write(message.getBytes());
-                //clean up
-                os.flush();
-
-
-                //do somehting with response
-                is = conn.getInputStream();
-
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(
-                            is, "iso-8859-1"), 8);
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    is.close();
-                    json = sb.toString();
-                } catch (Exception e) {
-                    Log.e("Buffer Error", "Error converting result " + e.toString());
-                }
-
-                // try parse the string to a JSON object
-                try {
-                    jObj = new JSONObject(json);
-                } catch (JSONException e) {
-                    Log.e("JSON Parser", "Error parsing data " + e.toString());
-                }
-                //String contentAsString = readIt(is,len);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }  finally {
-                //clean up
-                try {
-                    os.close();
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                conn.disconnect();
-            }
-            return null;
-
-
-            /*final String TAG_SUCCESS = "success";
-              final String TAG_MESSINFO = "messinfo";
-              final String TAG_MESSID = "messid";
-              final String TAG_NAME = "name";
-              final String TAG_RICE = "rice";
-              final String TAG_ROTI = "roti";
-              final String TAG_SPECIAL = "special";
-              final String TAG_SPECIAL_EXTRA = "specialextra";
-              final String TAG_VEGIE1 = "vegieone";
-              final String TAG_VEGIE2 = "vegietwo";
-              final String TAG_VEGIE3 = "vegiethree";
-              final String TAG_OTHER = "other";*/
-            /*List<NameValuePair> params = new ArrayList<>();
-            // getting JSON string from URL
-            //  JSONObject json_obj_all = jParser.makeHttpRequest(url_all_products, "GET", params);
-            JSONObject json_obj_menu = jParser.makeHttpRequest(url_mess_menu, "GET", params);
-
-            // Check your log cat for JSON reponse
-            //   Log.d("All Products: ", json_obj_all.toString());
-
-            try {
-                // Checking for SUCCESS TAG
-                //     int success1 = json_obj_all.getInt(TAG_SUCCESS);
-
-
-                int success2 = json_obj_menu.getInt(TAG_SUCCESS);
-
-/*
-
-                if (success1 == 1) {
-                    // products found
-                    // Getting Array of Products
-                    mess = json_obj_all.getJSONArray(TAG_MESSINFO);
-
-                    // looping through All Products
-                    for (int i = 0; i < mess.length(); i++) {
-                        JSONObject c = mess.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String id = c.getString(TAG_MESSID);
-                        String name = c.getString(TAG_NAME);
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_MESSID, id);
-                        map.put(TAG_NAME, name);
-
-                        Log.d("Dipak: Mess Id ", id);
-                        Log.d("Dipak: Mess Name ", name);
-
-                        // adding HashList to ArrayList
-                       // AllMessInfoFromDatabase.add(map);
-                    }
-                } else {
-                    // no products found
-                    Log.d("Dipak: ", "No Mess found!");
-                }
-
-
-                if(success2==1){
-                    // products found
-                    // Getting Array of Products
-                    mess2 = json_obj_menu.getJSONArray(TAG_MESSINFO);
-
-                    // looping through All Products
-                    for (int i = 0; i < mess2.length(); i++) {
-                        JSONObject c = mess2.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String id = c.getString(TAG_MESSID).trim();
-                        String rice = c.getString(TAG_RICE).trim();
-                        String vegie1 = c.getString(TAG_VEGIE1).trim();
-                        String vegie2 = c.getString(TAG_VEGIE2).trim();
-                        String vegie3 = c.getString(TAG_VEGIE3).trim();
-                        String roti = c.getString(TAG_ROTI).trim();
-                        String special = c.getString(TAG_SPECIAL).trim();
-                        String special_extra = c.getString(TAG_SPECIAL_EXTRA).trim();
-                        String other = c.getString(TAG_OTHER).trim();
-
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_MESSID, id+" "+MessArea);
-                        map.put(TAG_RICE, rice);
-                        map.put(TAG_VEGIE1, vegie1);
-                        map.put(TAG_VEGIE2, vegie2);
-                        map.put(TAG_VEGIE3, vegie3);
-                        map.put(TAG_ROTI, roti);
-                        map.put(TAG_SPECIAL, special);
-                        map.put(TAG_SPECIAL_EXTRA, special_extra);
-                        map.put(TAG_OTHER, other);
-
-
-                        Log.d("inDoinBackground: ID", map.toString());
-
-
-                        // adding HashList to ArrayList
-                        AllMessInfoFromDatabase.add(map);
-                    }
-                    Log.d("inDoinBackground: ID", AllMessInfoFromDatabase.toString());
-
-
-
-
-                } else {
-                    // no products found
-                    Log.d("Dipak: ", "No Mess found!");
-                }
-
-            }
-            catch (Exception e)
-            {
-
-
-
-                   /* SuperActivityToast.create(getActivity(), new Style(), Style.TYPE_STANDARD)
-                            .setText("Oops! No Internet Connection!")
-                            .setDuration(Style.DURATION_MEDIUM)
-                            .setFrame(Style.FRAME_LOLLIPOP)
-                            .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_RED))
-                            .setAnimations(Style.ANIMATIONS_POP).show();
-                e.printStackTrace();
-            }
-
-
-
-            return null;*/
-        }
-
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
-        protected void onPostExecute(String file_url) {
-
-
-            try {
-                int success = jObj.getInt("success");
-                if (success == 1) {
-                    JSONArray mess2 = jObj.getJSONArray("messinfo");
-
-                    for (int i = 0; i < mess2.length(); i++) {
-                        JSONObject c = mess2.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String id = c.getString(TAG_MESSID).trim();
-                        String rice = c.getString(TAG_RICE).trim();
-                        String vegie1 = c.getString(TAG_VEGIE1).trim();
-                        String vegie2 = c.getString(TAG_VEGIE2).trim();
-                        String vegie3 = c.getString(TAG_VEGIE3).trim();
-                        String roti = c.getString(TAG_ROTI).trim();
-                        String special = c.getString(TAG_SPECIAL).trim();
-                        String special_extra = c.getString(TAG_SPECIAL_EXTRA).trim();
-                        String other = c.getString(TAG_OTHER).trim();
-
-                        String gcharge = c.getString(TAG_GCHARGE).trim();
-                        String otime = c.getString(TAG_OPENTIME).trim();
-                        String ctime = c.getString(TAG_CLOSETIME).trim();
-
-                        /*String otime = c.getString(TAG_OPENTIME).trim();
-                        String ctime = c.getString(TAG_CLOSETIME).trim();*/
-
-                        String stat = c.getString(TAG_STATUS).trim();
-
-
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_MESSID, id);
-                        map.put(TAG_RICE, rice);
-                        map.put(TAG_VEGIE1, vegie1);
-                        map.put(TAG_VEGIE2, vegie2);
-                        map.put(TAG_VEGIE3, vegie3);
-                        map.put(TAG_ROTI, roti);
-                        map.put(TAG_SPECIAL, special);
-                        map.put(TAG_SPECIAL_EXTRA, special_extra);
-                        map.put(TAG_OTHER, other);
-
-                        map.put(TAG_GCHARGE, gcharge);
-                        map.put(TAG_OPENTIME, otime);
-                        map.put(TAG_CLOSETIME, ctime);
-                        map.put(TAG_STATUS, stat);
-
-
-                        Log.d("inDoinBackground: ID", map.toString());
-
-
-                        // adding HashList to ArrayList
-                        AllMessInfoFromDatabase.add(map);
-                    }
-
-
-                }
-                else
-                {
-                    Toast.makeText(mPassedView.getContext(),"Oops,Error Updating Mess Menus",Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            View v=intializeList(mPassedView);
-            // dismiss the dialog after getting all products
-//            pDialog.dismiss();
-            // updating UI from Background Thread
-
-        }
-
+        return messID;
     }
 
-
-    class DummyBackgroundTask extends AsyncTask<String, String, String> {
-
-        static final int TASK_DURATION = 3 * 1000; // 3 seconds
-
-        @Override
-        protected String doInBackground(String... args) {
-            // Sleep for a small amount of time to simulate a background-task
-            try {
-                Thread.sleep(TASK_DURATION);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-
-            // Return a new random list of cheeses
-        }
-
-        @Override
-        protected void onPostExecute(String file_url) {
-
-            // dismiss the dialog after getting all products
-//            pDialog.dismiss();
-            // updating UI from Background Thread
-            onRefreshComplete(file_url);
-        }
-
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
-
-
-
-
+    //TODO:=========================================================================================
 
 
 }
