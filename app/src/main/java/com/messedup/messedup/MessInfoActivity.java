@@ -1,0 +1,409 @@
+package com.messedup.messedup;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.transition.Fade;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.transition.Explode;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.messedup.messedup.adapters.TabsPagerAdapter;
+import com.messedup.messedup.connection_handlers.HttpHandler;
+import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+public class MessInfoActivity extends AppCompatActivity {
+
+    private ViewPager viewPager;
+    private TabsPagerAdapter mAdapter;
+    private TabLayout tabLayout;
+    private Toolbar toolbar;
+    private TextView toolbarTextView, LunchTimeTxt, DinnerTimeTxt;
+    public static ArrayList<ArrayList> fullData = new ArrayList<>();
+    public static HashMap<String, String> Hashmessinfo = new HashMap<>();
+
+
+
+    private String lunchtxt,dinnertxt;
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mess_info);
+
+        setupWindowAnimations();
+
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar3);
+
+        LunchTimeTxt = (TextView) findViewById(R.id.LunchTimingTxtView);
+        DinnerTimeTxt = (TextView) findViewById(R.id.DinnerTimingTxtView);
+
+
+
+        toolbarTextView = (TextView) findViewById(R.id.toolbar_title);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
+        // overridePendingTransition(R.anim.my_slide_in_left, R.anim.my_slide_out_right);
+
+
+        String MessID;
+        MenuCardView MessObj;
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                MessID = null;
+            } else {
+                MessObj = (MenuCardView) extras.getSerializable("messobj");
+                if (MessObj != null) {
+                    MessID = MessObj.getMessID();
+                    Toast.makeText(this, "Show Info of : " + MessID, Toast.LENGTH_SHORT).show();
+                    toolbarTextView.setText(MessID);
+
+                    setMessDetails(MessObj);
+
+
+                }
+            }
+        } else {
+            MessObj = (MenuCardView) savedInstanceState.getSerializable("messid");
+            if (MessObj != null) {
+                MessID = MessObj.getMessID();
+                Toast.makeText(this, "Show Info of : " + MessID, Toast.LENGTH_SHORT).show();
+                toolbarTextView.setText(MessID);
+
+
+            }
+
+        }
+
+
+        GetMenu obj = new GetMenu(MessInfoActivity.this);
+        obj.execute();
+        GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this);
+        Infoobj.execute();
+
+        loadBottomNavigationView();
+
+
+
+
+        /*viewPager = (ViewPager) findViewById(R.id.pager);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(),fullData);
+        tabLayout = (TabLayout) findViewById(R.id.tab);
+
+        viewPager.setAdapter(mAdapter);
+        tabLayout.setupWithViewPager(viewPager);*/
+
+
+    }
+
+    private void loadBottomNavigationView() {
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_call:
+//                                This is how to ask permission and make calls
+                                int REQUEST_PHONE_CALL = 1;
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+919555994342"));
+
+                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    if (ContextCompat.checkSelfPermission(MessInfoActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(MessInfoActivity.this, new String[]{android.Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                                    } else {
+                                        startActivity(intent);
+                                    }
+                                } else {
+                                    startActivity(intent);
+                                }
+                                break;
+
+                            case R.id.action_locate:
+                                String uri = String.format(Locale.ENGLISH, "https://goo.gl/maps/3r6R7FerPC52");//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
+                                Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                startActivity(intent1);
+                                break;
+
+                            case R.id.action_share:
+                                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                sharingIntent.setType("text/plain");
+                                String shareBody = "Ae Bhenchod!";
+//                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+//                                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                                startActivity(sharingIntent);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+
+    }
+
+    private void setMessDetails(MenuCardView messObj) {
+
+        lunchtxt = "<b>Lunch: </b>"+messObj.getOTime()+" to "+messObj.getCTime();
+        dinnertxt = "<b>Dinner: </b>"+messObj.getOTime()+" to "+messObj.getCTime();
+
+        LunchTimeTxt.setText(Html.fromHtml(lunchtxt));
+        DinnerTimeTxt.setText(Html.fromHtml(dinnertxt));
+
+
+    }
+
+    public void loadTabs() {
+        viewPager = (ViewPager) findViewById(R.id.pager);
+//        Log.e("asdfssad", fullData.toString());
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), fullData);
+        tabLayout = (TabLayout) findViewById(R.id.tab);
+
+        viewPager.setAdapter(mAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+
+
+    class GetMenu extends AsyncTask<Void, Void, Void> {
+
+        private String TAG = MainActivity.class.getSimpleName();
+        private ProgressDialog pDialog;
+        private Context mcontext;
+//    public ArrayList<ArrayList> fullData = new ArrayList<>();
+
+        public GetMenu(Context context) {
+            mcontext = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//         Showing progress dialog
+            pDialog = new ProgressDialog(mcontext);
+            pDialog.setMessage("Getting Menu...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            HttpHandler sh = new HttpHandler();
+//            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + messname);
+            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
+
+            Log.e(TAG, "Response from url: " + jsonStr);
+
+            try {
+                if (jsonStr != null) {
+
+                    JSONArray details = new JSONArray(jsonStr);
+
+                    for (int i = 0; i < details.length(); i++) {
+                        JSONObject m = details.getJSONObject(i);
+
+                        String date = m.getString("date");
+                        String day = m.getString("day");
+                        HashMap<String, String> info = new HashMap<>();
+                        info.put("date", date);
+                        info.put("day", day);
+
+                        JSONArray menu = m.getJSONArray("menu");
+                        ArrayList<HashMap> m3 = new ArrayList<>();
+
+                        HashMap<String, ArrayList> m2 = new HashMap<>();
+                        for (int j = 0; j < menu.length(); j++) {
+                            JSONObject m1 = menu.getJSONObject(j);
+
+                            String Meal = m1.getString("Meal");
+                            String Rice = m1.getString("Rice");
+                            String VegieOne = m1.getString("VegieOne");
+                            String VegieTwo = m1.getString("VegieTwo");
+                            String VegieThree = m1.getString("VegieThree");
+                            String Roti = m1.getString("Roti");
+                            String Special = m1.getString("Special");
+                            String SpecialExtra = m1.getString("SpecialExtra");
+                            String Other = m1.getString("Other");
+
+                            HashMap<String, String> menuhash = new HashMap<>();
+
+                            menuhash.put("Meal", Meal);
+                            menuhash.put("Rice", Rice);
+                            menuhash.put("VegieOne", VegieOne);
+                            menuhash.put("VegieTwo", VegieTwo);
+                            menuhash.put("VegieThree", VegieThree);
+                            menuhash.put("Roti", Roti);
+                            menuhash.put("Special", Special);
+                            menuhash.put("SpecialExtra", SpecialExtra);
+                            menuhash.put("Other", Other);
+
+                            m3.add(menuhash);
+
+//                            m2.put("menu", menuhash);
+                        }
+                        m2.put("menu", m3);
+
+                        ArrayList<HashMap> node = new ArrayList<>();
+                        node.add(info);
+                        node.add(m2);
+
+//                    System.out.println(node);
+                        fullData.add(node);
+                    }
+                } else {
+                    Toast.makeText(mcontext, "Oops,Some Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
+            Toast.makeText(mcontext, "Menu Updated", Toast.LENGTH_SHORT).show();
+
+            loadTabs();
+        }
+    }
+
+
+    class GetMessInfo extends AsyncTask<Void, Void, Void>{
+
+        private String TAG = MainActivity.class.getSimpleName();
+        private ProgressDialog pDialog;
+        private Context mcontext;
+
+        public GetMessInfo(Context context){
+            mcontext = context;
+        }
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+//         Showing progress dialog
+            pDialog = new ProgressDialog(mcontext);
+            pDialog.setMessage("Getting the Mess Info...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            HttpHandler sh = new HttpHandler();
+//            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + messname);
+            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
+
+            Log.e(TAG, "Response from url: " + jsonStr);
+            try {
+                if (jsonStr != null) {
+
+                    JSONObject messinfo = new JSONObject(jsonStr);
+
+                    Log.e("Mess InfoStr ","*"+messinfo.toString());
+
+
+//                    String Name = messinfo.get("Name");
+
+                    Hashmessinfo.put("Name", messinfo.getString("Name"));
+                    Hashmessinfo.put("GuestCharge", messinfo.getString("GuestCharge"));
+                    Hashmessinfo.put("LunchOpen", messinfo.getString("LunchOpen"));
+                    Hashmessinfo.put("LunchClose", messinfo.getString("LunchClose"));
+                    Hashmessinfo.put("DinnerOpen", messinfo.getString("DinnerOpen"));
+                    Hashmessinfo.put("DinnerClose", messinfo.getString("DinnerClose"));
+                    Hashmessinfo.put("MonthlyCharge", messinfo.getString("MonthlyCharge"));
+                    Hashmessinfo.put("Contact", messinfo.getString("Contact"));
+                    Hashmessinfo.put("Address", messinfo.getString("Address"));
+                    Hashmessinfo.put("Location", messinfo.getString("Location"));
+                    Hashmessinfo.put("NBCollege", messinfo.getString("NBCollege"));
+                    Hashmessinfo.put("Owner", messinfo.getString("Owner"));
+
+                } else {
+                    Toast.makeText(mcontext, "Oops,Some Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
+//            loadmessinfo();
+
+            Toast.makeText(mcontext, "Mess Info Updated", Toast.LENGTH_SHORT).show();
+
+            Log.e("Mess Info ","*"+Hashmessinfo.toString());
+        }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setupWindowAnimations() {
+
+        Fade fade = new Fade();
+        fade.setDuration(1000);
+        getWindow().setEnterTransition(new Explode());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+
+}

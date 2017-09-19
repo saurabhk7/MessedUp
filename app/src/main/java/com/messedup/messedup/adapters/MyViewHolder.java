@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.messedup.messedup.MessInfoActivity;
 import com.messedup.messedup.R;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
@@ -77,11 +78,11 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 // item clicked
-              //  Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
+                Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("messobj", CurrentObj);
-              //  InfoIntent.putExtras(bundle);
-             //   view.getContext().startActivity(InfoIntent);
+               InfoIntent.putExtras(bundle);
+                view.getContext().startActivity(InfoIntent);
             }
         });
 

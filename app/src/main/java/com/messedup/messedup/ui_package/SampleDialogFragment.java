@@ -3,6 +3,7 @@ package com.messedup.messedup.ui_package;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.messedup.messedup.R;
+import com.messedup.messedup.signin_package.GoogleSignIn;
 
 import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
@@ -118,7 +120,10 @@ public class SampleDialogFragment extends BlurDialogFragment {
             @Override
             public void onClick(View view) {
                 Toast.makeText(view.getContext(),"User Signed Out",Toast.LENGTH_SHORT).show();
+
                 mAuth.signOut();
+
+                startActivity(new Intent(getActivity(), GoogleSignIn.class) );
                 dismiss();
             }
         });

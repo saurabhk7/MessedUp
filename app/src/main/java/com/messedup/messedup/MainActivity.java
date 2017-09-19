@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPrefHandler sharedPrefHandler;
 
     //LOADED MENU ARRAYLIST TO POPULATE CARD VIEW
-    ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
+   // ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
 
     //USER TO CHECK IF BACK CLICKED TWICE
     boolean doubleBackToExitPressedOnce = false;
@@ -149,10 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.tab_menu:
 
                         selectedFragment = MenuFragment.newInstance();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("arraylist",MenuArrayList);
-                        selectedFragment.setArguments(bundle);
+;
                         if(PREVIOUS_TAB[0]==R.id.tab_profile)
                             replaceFragmentWithAnimationtoRight(selectedFragment, "tag");
                         else
@@ -178,9 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize the first fragment
         Fragment FirstFrag = MenuFragment.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("arraylist",MenuArrayList);
-        FirstFrag.setArguments(bundle);
+
         replaceFragmentWithAnimationtoRight(FirstFrag, "tag");
 
 
@@ -196,11 +193,16 @@ public class MainActivity extends AppCompatActivity {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             Intent adIntent=new Intent(this, AdMobsActivity.class);
-            // startActivity(adIntent);
+
+            if(isNetworkAvailable())
+             startActivity(adIntent);
+            else
+                appExit();
+
             //     this.finish(); // finish activity
             //  return;
 
-            moveTaskToBack(true);
+           // moveTaskToBack(true);
 
         }
 
@@ -321,6 +323,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void appExit () {
+        this.finish();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 
 }

@@ -278,7 +278,7 @@ public class MenuFragment extends Fragment {
 
                         intializeList(OnCreaterootView);
                         //initiateRefresh(OnCreaterootView);
-                     //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                        //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -382,24 +382,8 @@ public class MenuFragment extends Fragment {
         private String MessArea;
         JSONObject jObj = null;
         String json = "";
-        private String url_mess_menu = thiscontext.getString(R.string.url_mess_menu);
         // JSON Node names
-        private  final String TAG_SUCCESS = thiscontext.getString(R.string.TAG_SUCCESS);
-        private  final String TAG_MESSINFO = thiscontext.getString(R.string.TAG_MESSINFO);
-        private  final String TAG_MESSID =thiscontext.getString(R.string.TAG_MESSID);
-        private  final String TAG_NAME = thiscontext.getString(R.string.TAG_NAME);
-        private  final String TAG_RICE = thiscontext.getString(R.string.TAG_RICE);
-        private  final String TAG_ROTI = thiscontext.getString(R.string.TAG_ROTI);
-        private  final String TAG_SPECIAL = thiscontext.getString(R.string.TAG_SPECIAL);
-        private  final String TAG_SPECIAL_EXTRA = thiscontext.getString(R.string.TAG_SPECIAL_EXTRA);
-        private  final String TAG_VEGIE1 = thiscontext.getString(R.string.TAG_VEGIE1);
-        private  final String TAG_VEGIE2 = thiscontext.getString(R.string.TAG_VEGIE2);
-        private  final String TAG_VEGIE3 = thiscontext.getString(R.string.TAG_VEGIE3);
-        private  final String TAG_OTHER = thiscontext.getString(R.string.TAG_OTHER);
-        private  final String TAG_GCHARGE = thiscontext.getString(R.string.TAG_GCHARGE);
-        private  final String TAG_STATUS = thiscontext.getString(R.string.TAG_STATUS);
-        private  final String TAG_OPENTIME = thiscontext.getString(R.string.TAG_OPENTIME);
-        private  final String TAG_CLOSETIME = thiscontext.getString(R.string.TAG_CLOSETIME);
+
 
 
 
@@ -425,6 +409,22 @@ public class MenuFragment extends Fragment {
         }
 
 
+/*        final String TAG_SUCCESS = thiscontext.getString(R.string.TAG_SUCCESS);
+        final String TAG_MESSINFO = thiscontext.getString(R.string.TAG_MESSINFO);
+        final String TAG_MESSID =thiscontext.getString(R.string.TAG_MESSID);
+        final String TAG_NAME = thiscontext.getString(R.string.TAG_NAME);
+        final String TAG_RICE = thiscontext.getString(R.string.TAG_RICE);
+        final String TAG_ROTI = thiscontext.getString(R.string.TAG_ROTI);
+        final String TAG_SPECIAL = thiscontext.getString(R.string.TAG_SPECIAL);
+        final String TAG_SPECIAL_EXTRA = thiscontext.getString(R.string.TAG_SPECIAL_EXTRA);
+        final String TAG_VEGIE1 = thiscontext.getString(R.string.TAG_VEGIE1);
+        final String TAG_VEGIE2 = thiscontext.getString(R.string.TAG_VEGIE2);
+        final String TAG_VEGIE3 = thiscontext.getString(R.string.TAG_VEGIE3);
+        final String TAG_OTHER = thiscontext.getString(R.string.TAG_OTHER);
+        final String TAG_GCHARGE = thiscontext.getString(R.string.TAG_GCHARGE);
+        final String TAG_STATUS = thiscontext.getString(R.string.TAG_STATUS);
+        final String TAG_OPENTIME = thiscontext.getString(R.string.TAG_OPENTIME);
+        final String TAG_CLOSETIME = thiscontext.getString(R.string.TAG_CLOSETIME);*/
         /**
          * @use clear the initial Hashmap
          */
@@ -441,11 +441,15 @@ public class MenuFragment extends Fragment {
          */
         protected String doInBackground(String... args) {
 
+
+
             OutputStream os = null;
             InputStream is = null;
             HttpURLConnection conn = null;
             try {
                 //constants
+                String url_mess_menu = thiscontext.getString(R.string.url_mess_menu);
+
                 URL url = new URL(url_mess_menu);
                 JSONObject jsonObject = new JSONObject();
 

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_mess_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.messedup.messedup.MessInfoActivity">
+
+
+    <!--<android.support.design.widget.BottomNavigationView-->
+    <!--android:id="@+id/bottom_navigation"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="false"-->
+    <!--app:itemBackground="@color/colorPrimary"-->
+    <!--app:itemIconTint="@color/white"-->
+    <!--app:itemTextColor="@color/white"-->
+    <!--app:menu="@menu/top_options" />-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/navigationbar">
+
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_alignParentTop="true"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            android:id="@+id/toolbar3"
+            android:elevation="24dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toolbar Title"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="23sp"
+            android:id="@+id/toolbar_title" />
+</android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            android:layout_height="120dp"
+            android:id="@+id/toolbarImg"
+            app:srcCompat="@drawable/red_profile_background" />
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_below="@id/toolbar3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            app:itemBackground="@color/transparent"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/top_options" />
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/messinfo"
+        android:layout_below="@+id/navigationbar">
+
+        <!--<TextView-->
+        <!--android:text="Timings: 12pm - 2pm and 8pm to 10pm"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/textView3"-->
+        <!--android:textSize="18sp"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:paddingLeft="10dp" />-->
+
+        <!--<TextView-->
+        <!--android:text="Per Plate Cost: Rs. 60/-"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/textView2"-->
+        <!--android:textSize="18sp"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:paddingLeft="10dp" />-->
+
+        <!--<TextView-->
+        <!--android:text="Monthly Mess Cost: Rs. 3000/-"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/textView"-->
+        <!--android:textSize="18sp"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:paddingLeft="10dp" />-->
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:elevation="30dp"
+            android:id="@+id/cv_user"
+            app:cardCornerRadius="6dp"
+            android:layout_marginBottom="0dp"
+            app:cardUseCompatPadding="false"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp">
+
+                <RelativeLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ProfileLayout">
+
+                    <View
+                        android:id="@+id/header_cover_image"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="40dp"
+                        android:layout_height="1dp"
+                        android:background="#87cccccc"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_below="@+id/header_cover_image"
+                        android:background="@drawable/profile_circular_border_imageview"
+                        android:id="@+id/ProfilePicImg"
+                        android:layout_marginTop="-35dp"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="70dp" />
+
+                    <TextView
+                        android:id="@+id/AddTxtView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/ProfilePicImg"
+                        android:text="@string/gujratimessdetailsadd"
+                        android:textSize="15sp"
+                        android:textColor="@color/common_google_signin_btn_text_light_focused"
+                        android:layout_marginBottom="3dp"
+                        android:textAlignment="center"
+                        android:layout_marginTop="3dp"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_below="@id/AddTxtView"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/LunchTimingTxtView"
+                        android:text="Lunch:"
+                        android:visibility="visible"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        android:text="Dinner:"
+                        android:layout_width="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_below="@id/LunchTimingTxtView"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/DinnerTimingTxtView"
+                        android:visibility="visible" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_marginTop="7dp"
+                        android:layout_below="@id/DinnerTimingTxtView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/CostLayout">
+
+                        <TextView
+                            android:text="Daily Cost ₹75"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textAlignment="center"
+                            android:textColor="@color/common_google_signin_btn_text_light_focused"
+                            android:id="@+id/OneTimeCostText"
+                            android:layout_weight="1"
+                            android:textStyle="normal|bold"
+                            android:padding="2dp" />
+
+                        <TextView
+                            android:id="@+id/MonthlyCostTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Monthly Cost ₹3000"
+                            android:layout_weight="1"
+                            android:textSize="16sp"
+                            android:textColor="@color/common_google_signin_btn_text_light_focused"
+                            android:textAlignment="center"
+                            android:textStyle="normal|bold"
+                            android:padding="2dp" />
+                    </LinearLayout>
+
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/messinfo">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.design.widget.TabLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
+
+
+
+    <!--<android.support.v4.widget.DrawerLayout-->
+    <!--android:id="@+id/drawer_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/toolbar3">-->
+
+    <!--&lt;!&ndash; Real content goes here &ndash;&gt;-->
+    <!--&lt;!&ndash;<FrameLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/content"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="match_parent"/>&ndash;&gt;-->
+
+    <!--&lt;!&ndash; The navigation drawer &ndash;&gt;-->
+    <!--<android.support.design.widget.NavigationView-->
+    <!--android:id="@+id/navigation"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="start"-->
+    <!--app:menu="@menu/top_options"/>-->
+
+    <!--</android.support.v4.widget.DrawerLayout>-->
+
+    <!--<android.support.design.widget.CoordinatorLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/toolbar3">-->
+
+    <!--<android.support.design.widget.BottomNavigationView-->
+    <!--android:id="@+id/bottom_navigation"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="false"-->
+    <!--app:itemBackground="@color/colorPrimary"-->
+    <!--app:itemIconTint="@color/white"-->
+    <!--app:itemTextColor="@color/white"-->
+    <!--app:menu="@menu/top_options" />-->
+
+    <!--</android.support.design.widget.CoordinatorLayout>-->
+
+
+
+</RelativeLayout>

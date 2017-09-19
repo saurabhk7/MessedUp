@@ -18,7 +18,6 @@
     <string name="TAG_CLOSETIME">closetime</string>
     <string name="url_mess_menu">https://wanidipak56.000webhostapp.com/t.php</string>
 
-
     <string name="about_us_string"><u>About Us</u></string>
     <string name="contact_us_string"><u>Need Help? Contact Us</u></string>
 
@@ -30,8 +29,9 @@
     <string name="cummins">CUMMINS COEW, Karve Nagar</string>
 
 
-
     <string name="interstitial_full_screen">ca-app-pub-2262853430578478/1739195261</string>
+
+    <string name="gujratimessdetailsadd">Survey no.34/4, Prasad Bungalow, Katraj\nLandmark: Near Pune Cambridge School.</string>
 
 
 </resources>
