@@ -30,6 +30,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.messedup.messedup.MainActivity;
 import com.messedup.messedup.R;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
@@ -290,9 +291,10 @@ public class GoogleSignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_signin);
 
-        mAuth=FirebaseAuth.getInstance();
 
 
+
+/*
 
         mAuthListener=new FirebaseAuth.AuthStateListener() {
             @Override
@@ -306,6 +308,7 @@ public class GoogleSignIn extends AppCompatActivity {
 
             }
         };
+*/
 
 
 
@@ -321,6 +324,7 @@ public class GoogleSignIn extends AppCompatActivity {
 
 
 // set progress > 0 to start progress indicator animation
+
 
 
 
@@ -419,7 +423,7 @@ public class GoogleSignIn extends AppCompatActivity {
                     mDetailsSharedPref.updateNameSharedPrefs(account.getDisplayName());
                     mDetailsSharedPref.updateEmailSharedPrefs(account.getEmail());
                     if(account.getPhotoUrl()!=null)
-                    mDetailsSharedPref.updatePhotURLSharedPrefs(account.getPhotoUrl().toString());
+                        mDetailsSharedPref.updatePhotURLSharedPrefs(account.getPhotoUrl().toString());
 
                 }
 
@@ -457,9 +461,7 @@ public class GoogleSignIn extends AppCompatActivity {
 
 
 
-        Intent gotoPhoneAuthInt=new Intent(GoogleSignIn.this,PhoneNumberAuthentication.class);
-        gotoPhoneAuthInt.putExtra("GoogleCredential",credential);
-        startActivity(gotoPhoneAuthInt);
+        LinkingAuthProv(credential);
 
 
         /*mAuth.signInWithCredential(credential)
@@ -483,20 +485,74 @@ public class GoogleSignIn extends AppCompatActivity {
                         // ...
                     }
                 });*/
+
+        /*Intent gotoPhoneAuthInt=new Intent(GoogleSignIn.this,PhoneNumberAuthentication.class);
+       // gotoPhoneAuthInt.putExtra("GoogleCredential",credential);
+        startActivity(gotoPhoneAuthInt);*/
+
     }
 
     private void updateUI(FirebaseUser mUser)
     {
         if(mUser==null)
         {
+            btnSignIn
+                    .setProgress(-1);
             Toast.makeText(GoogleSignIn.this,"Sign In Failed",Toast.LENGTH_SHORT).show();
         }
     }
 
+    public void LinkingAuthProv(AuthCredential credential)
+    {
+
+       /* Log.d("IN LINKING AUTH CRED",GoogleSignInCredential.getProvider());*/
+        Log.d("LINKINGAUTHCURRENTUSER",FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+
+        FirebaseAuth.getInstance().getCurrentUser().linkWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("Linkingauth", "linkWithCredential:success");
+                            FirebaseUser user = task.getResult().getUser();
+                            Log.d("Linkingauth", user.getUid());
+
+
+                            FirebaseMessaging.getInstance().subscribeToTopic("allDevice");
+
+                            startActivity(new Intent(GoogleSignIn.this,MainActivity.class));
+                            finish();
+
+                            //updateUI(user);
+                        } else {
+
+                            btnSignIn
+                                    .setProgress(-1);
+                            Log.w("Linkingauth", "linkWithCredential:failure", task.getException());
+                            Toast.makeText(GoogleSignIn.this, "Welcome Back!",
+                                    Toast.LENGTH_SHORT).show();
+
+                            // updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+       // mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        moveTaskToBack(true);
     }
 
     @Override

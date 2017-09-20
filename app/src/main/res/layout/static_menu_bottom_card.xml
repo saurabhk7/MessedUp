@@ -37,7 +37,7 @@
                     android:layout_height="45dp" />
 
                 <TextView
-                    android:id="@+id/ContactUsTxtView"
+                    android:id="@+id/ClosingTxtView"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
@@ -51,7 +51,7 @@
                 <TextView
                     android:id="@+id/InfoTxtView"
                     android:layout_width="match_parent"
-                    android:layout_below="@id/ContactUsTxtView"
+                    android:layout_below="@id/ClosingTxtView"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
                     android:text="version 1.0.2"
@@ -59,8 +59,6 @@
                     android:textStyle="normal|bold"
                     android:textColor="@color/white"
                     android:textAlignment="center" />
-
-
 
 
             </RelativeLayout>

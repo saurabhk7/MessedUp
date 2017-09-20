@@ -6,12 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.messedup.messedup.R;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 
 public class ClosingActivity extends AppCompatActivity {
 
 
+    TextView ClosingMsgTxt;
     static int TIMEOUT=3000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +24,12 @@ public class ClosingActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_closing);
 
+        ClosingMsgTxt=(TextView)findViewById(R.id.ClosingTxtView);
+
+        DetailsSharedPref dobj=new DetailsSharedPref(this);
+
+        String name=dobj.getNameSharedPrefs();
+        ClosingMsgTxt.setText("Goodbye, "+name+"\n\nEnjoy Your Meal Today!");
         Handler handler = new Handler();
 
         handler.postDelayed(new Runnable() {

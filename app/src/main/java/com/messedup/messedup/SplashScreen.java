@@ -15,7 +15,11 @@ import android.widget.Toast;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.connection_check.ConnectionManager;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 
 import org.json.JSONArray;
@@ -41,6 +45,7 @@ import com.messedup.messedup.signin_package.GoogleSignIn;
  */
 public class SplashScreen extends AppCompatActivity {
 
+
     public ConnectionManager connectionManager;
     LoadAllMess lam;
     public DatabaseHandler db;
@@ -48,6 +53,9 @@ public class SplashScreen extends AppCompatActivity {
     int SPLASH_TIME_OUT;
     public ArrayList<HashMap<String, String>> AllMessInfoFromDatabaseSplash = new ArrayList<>();
     private static Context thiscontext;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,8 @@ public class SplashScreen extends AppCompatActivity {
         thiscontext=getBaseContext();
         lam = new LoadAllMess(thiscontext);
         db=new DatabaseHandler(thiscontext);
+
+        mAuth=FirebaseAuth.getInstance();
 
         connectionManager=new ConnectionManager(this);
         if(connectionManager.isNetworkAvailable())
@@ -98,10 +108,21 @@ public class SplashScreen extends AppCompatActivity {
 
                 else
                 {
-                    Intent i = new Intent(SplashScreen.this, GoogleSignIn.class);
-                    startActivity(i);
-                    Toast.makeText(getBaseContext(),"Oops,Error Updating Mess Menuhkfkfs",Toast.LENGTH_SHORT).show();
 
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                    if(currentUser!=null)
+                    {
+                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                        Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menuhkfkfs", Toast.LENGTH_SHORT).show();
+                        startActivity(i);
+                    }
+                    else {
+
+                        Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
+                        startActivity(i);
+
+                    }
                     // close this activity
                     finish();
                     //  Toast.makeText(getApplicationContext(),"could not load mess",Toast.LENGTH_LONG);
@@ -247,7 +268,21 @@ public class SplashScreen extends AppCompatActivity {
                     is.close();
                     json = sb.toString();
 
-                    db.updateMenuCard(MessArea,json);
+                    try {
+                        jObj = new JSONObject(json);
+                        int success = jObj.getInt("success");
+                        if (success == 1) {
+
+                            db.updateMenuCard(MessArea, json);
+                        }
+                        else
+                        {
+                            Log.e("%%%%%","NOT SUCCESS IN SPLASH");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
 
 
                 } catch (Exception e) {
@@ -352,18 +387,59 @@ public class SplashScreen extends AppCompatActivity {
 
                     Log.i("IN SPLASH SCREEN ", "``````````````````````" + AllMessInfoFromDatabaseSplash.toString());
 
-                    Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
 
-                    Intent i = new Intent(contextFinal, GoogleSignIn.class);
-                    startActivity(i);
-                    contextFinal.startActivity(i);
-                    finish();
+                    GeneralSharedPref gobj=new GeneralSharedPref(contextFinal);
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                    if(currentUser!=null)
+                    {
+                        Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        gobj.updateFromSharedPref("splash");
+                        Intent i = new Intent(contextFinal, MainActivity.class);
+                        startActivity(i);
+                        contextFinal.startActivity(i);
+                        finish();
+                    }
+                    else {
+                        Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        gobj.updateFromSharedPref("splash");
+                        Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
+                        startActivity(i);
+                        contextFinal.startActivity(i);
+                        finish();
+                    }
+
+
+
                     // close this activity
                     //contextFinal..finish();
 
-                } else {
+                }
+                else
+                {
                     Log.i("SPLASH SCREEN SHARED", "ERROR");
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    GeneralSharedPref gobj=new GeneralSharedPref(contextFinal);
 
+                    if(currentUser!=null)
+                    {
+                        Toast.makeText(contextFinal, "!#$!$$!,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        gobj.updateFromSharedPref("splash");
+
+                        Intent i = new Intent(contextFinal, MainActivity.class);
+                        startActivity(i);
+                        contextFinal.startActivity(i);
+                        finish();
+                    }
+                    else {
+                        Toast.makeText(contextFinal, "@%@%%@Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        gobj.updateFromSharedPref("splash");
+
+                        Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
+                        startActivity(i);
+                        contextFinal.startActivity(i);
+                        finish();
+                    }
                     updateSharedPrefs(thiscontext.getString(R.string.pict));
                     Toast.makeText(contextFinal, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                 }

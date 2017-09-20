@@ -46,7 +46,7 @@ public class MessInfoActivity extends AppCompatActivity {
     private TabsPagerAdapter mAdapter;
     private TabLayout tabLayout;
     private Toolbar toolbar;
-    private TextView toolbarTextView, LunchTimeTxt, DinnerTimeTxt;
+    private TextView toolbarTextView, LunchTimeTxt, DinnerTimeTxt,GuestTxt,MonthyTxt,AddressTxt;
     public static ArrayList<ArrayList> fullData = new ArrayList<>();
     public static HashMap<String, String> Hashmessinfo = new HashMap<>();
 
@@ -67,6 +67,9 @@ public class MessInfoActivity extends AppCompatActivity {
 
         LunchTimeTxt = (TextView) findViewById(R.id.LunchTimingTxtView);
         DinnerTimeTxt = (TextView) findViewById(R.id.DinnerTimingTxtView);
+        GuestTxt=(TextView)findViewById(R.id.OneTimeCostText);
+        MonthyTxt=(TextView)findViewById(R.id.MonthlyCostTxtView);
+        AddressTxt=(TextView)findViewById(R.id.AddTxtView);
 
 
 
@@ -94,10 +97,13 @@ public class MessInfoActivity extends AppCompatActivity {
                 MessObj = (MenuCardView) extras.getSerializable("messobj");
                 if (MessObj != null) {
                     MessID = MessObj.getMessID();
-                    Toast.makeText(this, "Show Info of : " + MessID, Toast.LENGTH_SHORT).show();
+                   String urlname= getURLString( MessID );
+                    Toast.makeText(this, "Show Info of : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
-
-                    setMessDetails(MessObj);
+                    GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
+                    obj.execute();
+                    GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
+                    Infoobj.execute();
 
 
                 }
@@ -106,8 +112,18 @@ public class MessInfoActivity extends AppCompatActivity {
             MessObj = (MenuCardView) savedInstanceState.getSerializable("messid");
             if (MessObj != null) {
                 MessID = MessObj.getMessID();
-                Toast.makeText(this, "Show Info of : " + MessID, Toast.LENGTH_SHORT).show();
+
+                String urlname =getURLString( MessID );
+
+                Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                 toolbarTextView.setText(MessID);
+
+                GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
+                obj.execute();
+                GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
+                Infoobj.execute();
+
+
 
 
             }
@@ -115,12 +131,11 @@ public class MessInfoActivity extends AppCompatActivity {
         }
 
 
-        GetMenu obj = new GetMenu(MessInfoActivity.this);
+       /* GetMenu obj = new GetMenu(MessInfoActivity.this);
         obj.execute();
         GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this);
         Infoobj.execute();
-
-        loadBottomNavigationView();
+*/
 
 
 
@@ -135,64 +150,15 @@ public class MessInfoActivity extends AppCompatActivity {
 
     }
 
-    private void loadBottomNavigationView() {
+    private String getURLString(String messID) {
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_call:
-//                                This is how to ask permission and make calls
-                                int REQUEST_PHONE_CALL = 1;
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+919555994342"));
-
-                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (ContextCompat.checkSelfPermission(MessInfoActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                        ActivityCompat.requestPermissions(MessInfoActivity.this, new String[]{android.Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
-                                    } else {
-                                        startActivity(intent);
-                                    }
-                                } else {
-                                    startActivity(intent);
-                                }
-                                break;
-
-                            case R.id.action_locate:
-                                String uri = String.format(Locale.ENGLISH, "https://goo.gl/maps/3r6R7FerPC52");//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
-                                Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                startActivity(intent1);
-                                break;
-
-                            case R.id.action_share:
-                                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                                sharingIntent.setType("text/plain");
-                                String shareBody = "Ae Bhenchod!";
-//                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-                                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-//                                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                                startActivity(sharingIntent);
-                                break;
-                        }
-                        return false;
-                    }
-                });
+        messID=messID.replace(",","");
+        messID=messID.replace(" ","%20");
+        return messID;
 
     }
 
-    private void setMessDetails(MenuCardView messObj) {
-
-        lunchtxt = "<b>Lunch: </b>"+messObj.getOTime()+" to "+messObj.getCTime();
-        dinnertxt = "<b>Dinner: </b>"+messObj.getOTime()+" to "+messObj.getCTime();
-
-        LunchTimeTxt.setText(Html.fromHtml(lunchtxt));
-        DinnerTimeTxt.setText(Html.fromHtml(dinnertxt));
-
-
-    }
 
     public void loadTabs() {
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -211,10 +177,12 @@ public class MessInfoActivity extends AppCompatActivity {
         private String TAG = MainActivity.class.getSimpleName();
         private ProgressDialog pDialog;
         private Context mcontext;
+        private String urlMess;
 //    public ArrayList<ArrayList> fullData = new ArrayList<>();
 
-        public GetMenu(Context context) {
+        public GetMenu(Context context,String urlname) {
             mcontext = context;
+            urlMess=urlname;
         }
 
         @Override
@@ -232,8 +200,8 @@ public class MessInfoActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
             HttpHandler sh = new HttpHandler();
-//            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + messname);
-            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
+            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + urlMess);
+           // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
 
             Log.e(TAG, "Response from url: " + jsonStr);
 
@@ -320,9 +288,11 @@ public class MessInfoActivity extends AppCompatActivity {
         private String TAG = MainActivity.class.getSimpleName();
         private ProgressDialog pDialog;
         private Context mcontext;
+        private String urlMess;
 
-        public GetMessInfo(Context context){
+        public GetMessInfo(Context context,String urlname){
             mcontext = context;
+            urlMess=urlname;
         }
 
         protected void onPreExecute() {
@@ -339,8 +309,9 @@ public class MessInfoActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
             HttpHandler sh = new HttpHandler();
-//            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + messname);
-            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
+            Log.e("url mess: ",urlMess);
+            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=" + urlMess);
+           // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
 
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
@@ -386,9 +357,97 @@ public class MessInfoActivity extends AppCompatActivity {
 //            loadmessinfo();
 
             Toast.makeText(mcontext, "Mess Info Updated", Toast.LENGTH_SHORT).show();
-
+            SetDetails(Hashmessinfo);
             Log.e("Mess Info ","*"+Hashmessinfo.toString());
         }
+    }
+
+    private void SetDetails(HashMap<String, String> hashmessinfo) {
+
+
+        loadBottomNavigationView(hashmessinfo.get("Contact"),hashmessinfo.get("Location"));
+        setMessTimeDetails(hashmessinfo.get("LunchOpen"),hashmessinfo.get("LunchClose"),
+                hashmessinfo.get("DinnerOpen"),hashmessinfo.get("DinnerClose"));
+        setPrices(hashmessinfo.get("GuestCharge"),hashmessinfo.get("MonthlyCharge"));
+        setAddress(hashmessinfo.get("Address"));
+
+
+    }
+
+
+
+
+    private void loadBottomNavigationView(final String num, String loc) {
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_call:
+//                                This is how to ask permission and make calls
+                                int REQUEST_PHONE_CALL = 1;
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+91"+num));
+
+                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    if (ContextCompat.checkSelfPermission(MessInfoActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(MessInfoActivity.this, new String[]{android.Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                                    } else {
+                                        startActivity(intent);
+                                    }
+                                } else {
+                                    startActivity(intent);
+                                }
+                                break;
+
+                            case R.id.action_locate:
+                                String uri = String.format(Locale.ENGLISH, "https://goo.gl/maps/3r6R7FerPC52");//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
+                                Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                startActivity(intent1);
+                                break;
+
+                            case R.id.action_share:
+                                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                sharingIntent.setType("text/plain");
+                                String shareBody = "Ae Bhenchod!";
+//                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+//                                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                                startActivity(sharingIntent);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+
+    }
+
+    private void setMessTimeDetails(String lotime,String lctime,String dotime,String dctime) {
+
+        lunchtxt = "<b>Lunch: </b>"+lotime+" to "+lctime;
+        dinnertxt = "<b>Dinner: </b>"+dotime+" to "+dctime;
+
+        LunchTimeTxt.setText(Html.fromHtml(lunchtxt));
+        DinnerTimeTxt.setText(Html.fromHtml(dinnertxt));
+
+
+    }
+
+    private void setPrices(String guestCharge, String monthlyCharge) {
+
+        GuestTxt.setText("Guest Charge: ₹"+guestCharge);
+        MonthyTxt.setText("Monthly Charge: ₹"+monthlyCharge);
+
+
+    }
+
+    private void setAddress(String address) {
+
+        AddressTxt.setText(address);
+
     }
 
 

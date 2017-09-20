@@ -48,7 +48,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String MENU_TABLE_Column_1_card_details="CardDetails";
     public static final String MENU_TABLE_Column_2_offer_details="OfferDetails";
     public static final String CREATE_TABLE_ALL_MENU
-            ="CREATE TABLE IF NOT EXISTS "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+" VARCHAR , "
+            ="CREATE TABLE IF NOT EXISTS "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+" VARCHAR PRIMARY KEY, "
             +MENU_TABLE_Column_1_card_details+" VARCHAR, "+MENU_TABLE_Column_2_offer_details+" VARCHAR) ";
 
 
@@ -92,10 +92,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateMenuCard(String nbcoll, String cardjsonlist){
         SQLiteDatabase database = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        String qq = "REPLACE INTO "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+","+MENU_TABLE_Column_1_card_details+
+                ") VALUES ('"+nbcoll+"','"+cardjsonlist+"');";
+        /*ContentValues values = new ContentValues();
         values.put(MENU_TABLE_Column_ID, nbcoll); // Contact Name
         values.put(MENU_TABLE_Column_1_card_details, cardjsonlist);
-        database.insert(MENU_TABLE_NAME, null, values);
+        database.insert(MENU_TABLE_NAME, null, values);*/
+
+        database.execSQL(qq);
         database.close();
     }
 
@@ -131,6 +135,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null&& cursor.getCount()>0) {
             json = cursor.getString(1);
 
+            Log.e("JSON DBHAND: ","********"+json);
+
+            if(json.equals("nodata"))
+            {
+                return null;
+            }
+
         }
         else
         {
@@ -150,6 +161,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     private ArrayList<HashMap<String, String>> JSONtoArrayList(JSONObject jObj) {
+
+
+
 
         ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
 
@@ -174,6 +188,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
         try {
+
+
             int success = jObj.getInt("success");
             if (success == 1) {
                 JSONArray mess2 = jObj.getJSONArray("messinfo");

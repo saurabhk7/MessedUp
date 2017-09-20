@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.messedup.messedup.R;
 import com.messedup.messedup.signin_package.GoogleSignIn;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 
 import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
@@ -123,7 +124,7 @@ public class SampleDialogFragment extends BlurDialogFragment {
 
                 mAuth.signOut();
 
-                startActivity(new Intent(getActivity(), GoogleSignIn.class) );
+                startActivity(new Intent(getActivity(), PhoneNumberAuthentication.class) );
                 dismiss();
             }
         });

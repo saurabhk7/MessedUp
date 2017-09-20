@@ -1,7 +1,7 @@
 package com.messedup.messedup;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
 import com.messedup.messedup.adapters.MyAdapter;
@@ -187,12 +188,6 @@ public class MenuFragment extends Fragment {
 
 
 
-
-
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -227,6 +222,10 @@ public class MenuFragment extends Fragment {
 
         final TextView hiddenTextView = new TextView(getContext());
         hiddenTextView.setVisibility(View.GONE);
+
+
+        final GeneralSharedPref gobj=new GeneralSharedPref(OnCreaterootView.getContext());
+
 
 
 
@@ -268,18 +267,28 @@ public class MenuFragment extends Fragment {
                     sharedPrefHandler = new SharedPrefHandler(OnCreaterootView.getContext());
 
                     //Populating the Menu ArrayList
-                    MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
-                    if (MenuArrayList == null) {
-                        Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("Total Menu : ", MenuArrayList.toString());
+
+                    if(gobj.getFromSharedPref().equals("splash")) {
+                        MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
+                        gobj.updateFromSharedPref("splashdone");
+
+                        if (MenuArrayList == null) {
+                            Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("Total Menu : ", MenuArrayList.toString());
 
 
 
-                        intializeList(OnCreaterootView);
-                        //initiateRefresh(OnCreaterootView);
-                        //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                            intializeList(OnCreaterootView);
+                            //initiateRefresh(OnCreaterootView);
+                            //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                        }
                     }
+                    else
+                    {
+                        initiateRefresh(OnCreaterootView);
+                    }
+
 
                 }
                 catch (Exception e)
@@ -355,14 +364,23 @@ public class MenuFragment extends Fragment {
         new LoadAllMess(view,area).execute();
     }
 
-    private void onRefreshComplete(String url) {
+    private void onRefreshComplete(String url,View v) {
         Log.i("REFRESH COMPLETE", "onRefreshComplete"+url);
 
         // Remove all items from the ListAdapter, and then replace them with the new items
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
 
         // Stop the refreshing indicator
-        mSwipeRefreshLayout.setRefreshing(false);
+
+        try {
+            if (mSwipeRefreshLayout.isRefreshing())
+                mSwipeRefreshLayout.setRefreshing(false);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
@@ -380,6 +398,9 @@ public class MenuFragment extends Fragment {
         private View mPassedView;
         private Context thiscontext;
         private String MessArea;
+        ProgressDialog progressDialog;
+
+
         JSONObject jObj = null;
         String json = "";
         // JSON Node names
@@ -432,6 +453,9 @@ public class MenuFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
 
+            progressDialog=new ProgressDialog(thiscontext);
+            progressDialog.setMessage("Loading your Menu!");
+            progressDialog.show();
             AllMessInfoFromDatabaseSplash.clear();
         }
 
@@ -495,7 +519,23 @@ public class MenuFragment extends Fragment {
                     is.close();
                     json = sb.toString();
 
-                    db.updateMenuCard(MessArea,json);
+                    try {
+                        jObj = new JSONObject(json);
+                        int success = jObj.getInt("success");
+                        if (success == 1) {
+
+                            db.updateMenuCard(MessArea, json);
+                            Log.e("JSON UPDATED: ",json);
+                        }
+                        else
+                        {
+                            db.updateMenuCard(MessArea,"nodata");
+                            Log.e("%%%%%","NOT SUCCESS IN MENUFRAG");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
 
 
                 } catch (Exception e) {
@@ -540,7 +580,7 @@ public class MenuFragment extends Fragment {
          **/
         protected void onPostExecute(String file_url) {
 
-
+            progressDialog.dismiss();
             try {
                 int success = jObj.getInt("success");
                 if (success == 1) {
@@ -607,6 +647,8 @@ public class MenuFragment extends Fragment {
                 } else {
                     Log.i("SPLASH SCREEN SHARED", "ERROR");
 
+
+                    Toast.makeText(thiscontext,"No data found",Toast.LENGTH_SHORT).show();
                     updateSharedPrefs(thiscontext.getString(R.string.pict));
                 }
 
@@ -626,9 +668,13 @@ public class MenuFragment extends Fragment {
 
     public View intializeList(final View mPassedView) {
 
-        Log.d("In initialize List", AllMessInfoFromDatabase.toString());
-        AllMessInfoFromDatabase=databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
-        Log.d("In initialize List", AllMessInfoFromDatabase.toString());
+      //  Log.d("In initialize List", AllMessInfoFromDatabase.toString());
+
+       DatabaseHandler databaseHandler1=new DatabaseHandler(mPassedView.getContext());
+       SharedPrefHandler sharedPrefHandler1 = new SharedPrefHandler(mPassedView.getContext());
+
+        AllMessInfoFromDatabase=databaseHandler1.getCardJson(sharedPrefHandler1.getSharedPrefs());
+        Log.e("In##initialize List", AllMessInfoFromDatabase.toString());
 
         AllMessMenu.clear();
 
@@ -765,12 +811,12 @@ public class MenuFragment extends Fragment {
         }
         catch (Exception e)
         {
-            // onRefreshComplete("complete");
+             //onRefreshComplete("complete",mPassedView);
             //  Toast.makeText(getActivity(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
             return mPassedView;
         }
-        onRefreshComplete("complete");
-        Toast.makeText(getActivity(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
+        onRefreshComplete("complete",mPassedView);
+        Toast.makeText(mPassedView.getContext(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
         return mPassedView;
 
 
@@ -924,7 +970,7 @@ public class MenuFragment extends Fragment {
             //  Toast.makeText(getActivity(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
             return mPassedView;
         }
-        onRefreshComplete("complete");
+        onRefreshComplete("complete",mPassedView);
         Toast.makeText(getActivity(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
         return mPassedView;
 

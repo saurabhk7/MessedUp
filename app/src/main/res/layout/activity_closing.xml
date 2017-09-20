@@ -19,7 +19,7 @@
         android:layout_centerInParent="true"
         android:layout_alignParentBottom="false"
         android:id="@+id/cv_info"
-        app:cardCornerRadius="4dp"
+        app:cardCornerRadius="10dp"
         android:layout_marginBottom="10dp"
         app:cardUseCompatPadding="false"
         android:layout_marginLeft="0dp"
@@ -43,18 +43,16 @@
 
                     android:src="@drawable/red_profile_background"
                     android:scaleType="centerCrop"
-                    android:layout_height="95dp" />
+                    android:layout_height="70dp" />
 
                 <TextView
-                    android:id="@+id/ContactUsTxtView"
+                    android:id="@+id/ClosingTxtView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Closing Messed Up ..."
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
                     android:textSize="17sp"
-                    android:textStyle="normal|bold"
                     android:textColor="@color/white"
                     android:textAlignment="center" />
 
@@ -68,7 +66,7 @@
                     android:textStyle="normal|bold"
                     android:textColor="@color/white"
                     android:textAlignment="center"
-                    android:layout_alignTop="@+id/ContactUsTxtView"
+                    android:layout_alignTop="@+id/ClosingTxtView"
                     android:visibility="invisible" />
 
 

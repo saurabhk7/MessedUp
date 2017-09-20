@@ -187,7 +187,8 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
 public class PhoneNumberAuthentication extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     AuthCredential GoogleSignInCredential;
 
 
@@ -196,11 +197,12 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent recvGoogleInt=getIntent();
-        GoogleSignInCredential= (AuthCredential) recvGoogleInt.getExtras().get("GoogleCredential");
-        Log.d("RECV CRED",GoogleSignInCredential.toString());
+       // Intent recvGoogleInt=getIntent();
+       // GoogleSignInCredential= (AuthCredential) recvGoogleInt.getExtras().get("GoogleCredential");
+       // Log.d("RECV CRED",GoogleSignInCredential.toString());
 
 
+        mAuth=FirebaseAuth.getInstance();
 
         // Toast.makeText(PhoneNumberAuthentication.this,"Signed In",Toast.LENGTH_SHORT).show();
 
@@ -211,6 +213,7 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
                                 Arrays.asList(
                                         new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
                                 ))
+                        .setIsSmartLockEnabled(true)
                         .build(),
                 RC_SIGN_IN);
 
@@ -227,8 +230,22 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
 
                 Log.d("RESULT CODE", "OK");
 
+                if(mAuth.getCurrentUser().getProviders().contains("google.com")){
 
-                LinkingAuthProv();
+                    Toast.makeText(PhoneNumberAuthentication.this, "Welcome Back!",
+                            Toast.LENGTH_SHORT).show();
+                    Intent gotoPhoneAuthInt = new Intent(PhoneNumberAuthentication.this, MainActivity.class);
+                    // gotoPhoneAuthInt.putExtra("GoogleCredential",credential);
+                    startActivity(gotoPhoneAuthInt);
+                }
+                else {
+
+                    Intent gotoPhoneAuthInt = new Intent(PhoneNumberAuthentication.this, GoogleSignIn.class);
+                    // gotoPhoneAuthInt.putExtra("GoogleCredential",credential);
+                    startActivity(gotoPhoneAuthInt);
+                }
+
+               // LinkingAuthProv();
 
 
 
@@ -320,7 +337,19 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+    @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        moveTaskToBack(true);
     }
 }
