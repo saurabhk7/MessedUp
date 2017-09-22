@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +20,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SplashScreen">
             <intent-filter>
@@ -29,44 +29,52 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".signin_package.PhoneNumberAuthentication" />
-        <activity android:name=".signin_package.GoogleSignIn" />
+        <activity android:name=".signin_package.PhoneNumberAuthentication"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".signin_package.GoogleSignIn"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
+            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".admobs_activity.AdMobsActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".admobs_activity.ClosingActivity"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MessInfoActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
 
         <service android:name=".firebase_messaging.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".firebase_messaging.FirebaseIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_spoonfork_notif" />
-        <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
+
+        <activity android:name=".AboutUsActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

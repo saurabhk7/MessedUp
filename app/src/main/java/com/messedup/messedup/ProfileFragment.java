@@ -19,6 +19,7 @@ import com.google.firebase.auth.UserInfo;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.ui_package.CircleTransform;
 import com.messedup.messedup.ui_package.SampleDialogFragment;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -27,9 +28,11 @@ import com.messedup.messedup.signin_package.GoogleSignIn;
 
 public class ProfileFragment extends Fragment {
 
-    Button SignOutBtn;
-    DetailsSharedPref mDetailsSharedPref;
+    Button ImInBtn;
     String email;
+    DetailsSharedPref mDetailsSharedPref;
+
+
     public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         return fragment;
@@ -49,13 +52,22 @@ public class ProfileFragment extends Fragment {
 
         View ProfileView = inflater.inflate(R.layout.activity_profile_fragment, container, false);
 
+        mDetailsSharedPref =new DetailsSharedPref(ProfileView.getContext());
+
         mNameTxtView = (TextView) ProfileView.findViewById(R.id.NameTxtView);
         mEmailTxtView = (TextView) ProfileView.findViewById(R.id.EmailTxtView);
         mContactTxtView = (TextView) ProfileView.findViewById(R.id.ContactTxtView);
-        SignOutBtn = (Button) ProfileView.findViewById(R.id.LogOutBtn);
+        ImInBtn = (Button) ProfileView.findViewById(R.id.ImInButton);
         ImageButton SignOutImgBtn = (ImageButton) ProfileView.findViewById(R.id.LogOUtImgBtn);
 
         mDetailsSharedPref = new DetailsSharedPref(ProfileView.getContext());
+
+        ImInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -71,36 +83,27 @@ public class ProfileFragment extends Fragment {
 
                 Log.d("-----PROVIDER " + i + " ----- ", "---- " + providerId + " ----");
                 // UID specific to the provider
-                String uid = profile.getUid();
-
 
                 // Name, email address, and profile photo Url
-                String name = profile.getDisplayName();
-
-                try {
-                    Log.e("profile.email ", "=== " + profile.getEmail());
-                    Log.e("profile.name ", "=== " + profile.getDisplayName());
-                    Log.e("profile.email.provi 5", profile.getProviderId());
 
 
-                    //  mEmailTxtView.setText(email);
-                } catch (Exception e) {
-                    Log.e("profile.email.provi ", profile.getProviderId());
-
-                }
-
-
-                if (providerId.equals("google.com"))
-                    Log.d("-----PROVIDER " + i + " ----- ", name);
 
                 if (providerId.equals("google.com")) {
-                    // mNameTxtView.setText(name);
+                    String nm = profile.getDisplayName();
+                    Log.e("EMAIL: ","Name got from "+providerId+" :"+nm);
+                    mDetailsSharedPref.updateEmailSharedPrefs(nm);
+                    mNameTxtView.setText(nm);
                 }
-                email = profile.getEmail();
-                Log.d("-----PROVIDER " + i + " ----- " + i, "+" + email);
 
-                if (providerId.equals("firebase"))
-                    Log.d("-----PROVIDER " + i + " ----- " + i, "++" + email);
+
+
+                if (providerId.equals("firebase")) {
+
+                    email = profile.getEmail();
+                    Log.e("EMAIL: ","Email got from "+providerId+" :"+email);
+                    mDetailsSharedPref.updateEmailSharedPrefs(email);
+                    mEmailTxtView.setText(email);
+                }
 
 
                 if (providerId.equals("google.com")) {
@@ -109,7 +112,7 @@ public class ProfileFragment extends Fragment {
                     final Uri photoUrl = profile.getPhotoUrl();
                     final ImageView ProfilePic = (ImageView) ProfileView.findViewById(R.id.ProfilePicImg);
 
-                    Log.d("-----PROVIDER " + i + " ----- ", photoUrl.toString());
+                    Log.e("EMAIL: ","PhotoUrl got from "+providerId+" :"+photoUrl);
                     try {
                         Picasso.with(inflater.getContext()).load(photoUrl).transform(new CircleTransform()).networkPolicy(NetworkPolicy.OFFLINE).into(ProfilePic, new Callback() {
                             @Override
@@ -129,7 +132,6 @@ public class ProfileFragment extends Fragment {
                     }
                 }
 
-                Log.d("-----PROVIDER " + i + " ----- ", "----------------");
             }
 
 
@@ -139,8 +141,11 @@ public class ProfileFragment extends Fragment {
         }
 
 
-        mEmailTxtView.setText(mDetailsSharedPref.getEmailSharedPrefs());
-        mNameTxtView.setText(mDetailsSharedPref.getNameSharedPrefs());
+        if(!mDetailsSharedPref.getEmailSharedPrefs().equals("EMAIL"))
+            mEmailTxtView.setText(mDetailsSharedPref.getEmailSharedPrefs());
+        if(!mDetailsSharedPref.getNameSharedPrefs().equals("NAME"))
+            mNameTxtView.setText(mDetailsSharedPref.getNameSharedPrefs());
+
         String ImgUrl=mDetailsSharedPref.getPhotoURLSharedPrefs();
 
         if (!ImgUrl.equals("URL"))
@@ -198,6 +203,9 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+
+
+
 
 
 

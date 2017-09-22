@@ -32,7 +32,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="136dp"
-        android:id="@+id/ToastTestBtn" />
+        android:id="@+id/ToastTestBtn"
+        android:visibility="invisible" />
 
     <com.dd.processbutton.iml.ActionProcessButton
         android:id="@+id/btnSignIn"
@@ -52,7 +53,8 @@
         app:pb_textError="Retry Sign In"
         app:pb_colorError="@android:color/white"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

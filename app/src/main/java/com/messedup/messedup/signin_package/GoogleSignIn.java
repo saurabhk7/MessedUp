@@ -114,6 +114,9 @@ public class GoogleSignIn extends AppCompatActivity {
                 }).addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
 
+
+
+
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -351,7 +354,10 @@ public class GoogleSignIn extends AppCompatActivity {
                 }).addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
 
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
+
+        btnSignIn.setClickable(false);
+
+      /*  btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -359,7 +365,7 @@ public class GoogleSignIn extends AppCompatActivity {
                 signIn();
 
             }
-        });
+        });*/
 
         mToastBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -546,6 +552,9 @@ public class GoogleSignIn extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        signIn();
+
        // mAuth.addAuthStateListener(mAuthListener);
     }
 

@@ -25,6 +25,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.messedup.messedup.MainActivity;
 import com.messedup.messedup.R;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 
 import java.util.Arrays;
 
@@ -190,6 +191,7 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     AuthCredential GoogleSignInCredential;
+    private DetailsSharedPref mDetailsSharedPref;
 
 
 
@@ -203,6 +205,7 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
 
 
         mAuth=FirebaseAuth.getInstance();
+        mDetailsSharedPref=new DetailsSharedPref(this);
 
         // Toast.makeText(PhoneNumberAuthentication.this,"Signed In",Toast.LENGTH_SHORT).show();
 
@@ -232,6 +235,8 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
 
                 if(mAuth.getCurrentUser().getProviders().contains("google.com")){
 
+                   /* mDetailsSharedPref.updateNameSharedPrefs(mAuth.getCurrentUser().getDisplayName());
+                    mDetailsSharedPref.updateEmailSharedPrefs(mAuth.getCurrentUser().getEmail());*/
                     Toast.makeText(PhoneNumberAuthentication.this, "Welcome Back!",
                             Toast.LENGTH_SHORT).show();
                     Intent gotoPhoneAuthInt = new Intent(PhoneNumberAuthentication.this, MainActivity.class);

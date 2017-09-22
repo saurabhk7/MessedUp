@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="6dp">
+
+
+    <TextView android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/notifDetailsTxt"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:textSize="17sp"
+        android:textColor="#353535"
+        android:paddingLeft="10dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:layout_toStartOf="@+id/new_notif_icon_2" />
+
+    <ImageView
+        android:id="@+id/new_notif_icon_2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@null"
+        android:layout_centerInParent="true"
+        android:padding="5dp"
+        android:src="@drawable/new_notif_256"
+         />
+
+</RelativeLayout>
+

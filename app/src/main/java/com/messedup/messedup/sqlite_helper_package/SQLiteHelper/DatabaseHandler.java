@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.messedup.messedup.R;
 
@@ -13,9 +14,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import com.messedup.messedup.adapters.CustomListAdapter;
 import com.messedup.messedup.signin_package.GoogleSignIn;
 
 /**
@@ -92,14 +96,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateMenuCard(String nbcoll, String cardjsonlist){
         SQLiteDatabase database = this.getWritableDatabase();
 
-        String qq = "REPLACE INTO "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+","+MENU_TABLE_Column_1_card_details+
+        /*String qq = "REPLACE INTO "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+","+MENU_TABLE_Column_1_card_details+
                 ") VALUES ('"+nbcoll+"','"+cardjsonlist+"');";
-        /*ContentValues values = new ContentValues();
+        *//*ContentValues values = new ContentValues();
         values.put(MENU_TABLE_Column_ID, nbcoll); // Contact Name
         values.put(MENU_TABLE_Column_1_card_details, cardjsonlist);
-        database.insert(MENU_TABLE_NAME, null, values);*/
+        database.insert(MENU_TABLE_NAME, null, values);*//*
 
-        database.execSQL(qq);
+        database.execSQL(qq);*/
+
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(MENU_TABLE_Column_ID, nbcoll); // the execution is different if _id is 2
+        initialValues.put(MENU_TABLE_Column_1_card_details, cardjsonlist);
+
+        int id = (int) database.insertWithOnConflict(MENU_TABLE_NAME, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
+        if (id == -1) {
+            database.update(MENU_TABLE_NAME, initialValues, MENU_TABLE_Column_ID+"=?", new String[] {nbcoll});  // number 1 is the _id here, update to variable for your code
+        }
         database.close();
     }
 
@@ -111,10 +125,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateOffer(String nbcoll, String offer){
         SQLiteDatabase database = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        /*String qq = "REPLACE INTO "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+","+MENU_TABLE_Column_1_card_details+
+                ") VALUES ('"+nbcoll+"','"+cardjsonlist+"');";
+        *//*ContentValues values = new ContentValues();
         values.put(MENU_TABLE_Column_ID, nbcoll); // Contact Name
-        values.put(MENU_TABLE_Column_2_offer_details, offer);
-        database.insert(MENU_TABLE_NAME, null, values);
+        values.put(MENU_TABLE_Column_1_card_details, cardjsonlist);
+        database.insert(MENU_TABLE_NAME, null, values);*//*
+
+        database.execSQL(qq);*/
+
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(MENU_TABLE_Column_ID, nbcoll); // the execution is different if _id is 2
+        initialValues.put(MENU_TABLE_Column_2_offer_details, offer);
+
+        int id = (int) database.insertWithOnConflict(MENU_TABLE_NAME, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
+        if (id == -1) {
+            database.update(MENU_TABLE_NAME, initialValues, MENU_TABLE_Column_ID+"=?", new String[] {nbcoll});  // number 1 is the _id here, update to variable for your code
+        }
         database.close();
     }
     /**
@@ -157,6 +185,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         return JSONtoArrayList(jObj);
+
+    }
+
+    /**
+     * @param id
+     * @use To get the Card Json
+     */
+    public String getOfferJson(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String json="";
+        JSONObject jObj=null;
+        Cursor cursor = db.query(MENU_TABLE_NAME, new String[] { MENU_TABLE_Column_ID,
+                        MENU_TABLE_Column_2_offer_details}, MENU_TABLE_Column_ID + "=?",
+                new String[] { id }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        if (cursor != null&& cursor.getCount()>0) {
+            json = cursor.getString(1);
+
+            Log.e("JSON DBHAND: ","********"+json);
+
+            /*if(!json.equals("nodata"))
+            {
+
+            }*/
+
+        }
+
+
+        return json;
 
     }
 
@@ -316,5 +376,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(MESS_INFO_Column_2_week_menu, menu);
         database.insert(MENU_TABLE_NAME, null, values);
         database.close();
+    }
+
+    public void getAll()
+    {
+        String selectQuery = "SELECT * FROM " + MENU_TABLE_NAME;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                //Contact contact = new Contact();
+                String id = cursor.getString(0);
+
+                Log.i("cursor",cursor.getString(0)+cursor.getString(1)+cursor.getString(2));
+
+
+            } while (cursor.moveToNext());
+        }
+
     }
 }

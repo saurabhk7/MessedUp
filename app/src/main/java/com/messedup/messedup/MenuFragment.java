@@ -2,11 +2,13 @@ package com.messedup.messedup;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,12 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
 import com.messedup.messedup.adapters.MyAdapter;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 
 import org.json.JSONArray;
@@ -203,6 +207,8 @@ public class MenuFragment extends Fragment {
         //DATABASE HANDLER OBJECT
         db=new DatabaseHandler(OnCreaterootView.getContext());
 
+        db.getAll();
+
         // Retrieve the SwipeRefreshLayout and ListView instances
         mSwipeRefreshLayout = (SwipeRefreshLayout) OnCreaterootView.findViewById(R.id.swiperefresh);
         // BEGIN_INCLUDE (change_colors) //TODO: See the changing colors of loading circle
@@ -284,6 +290,23 @@ public class MenuFragment extends Fragment {
                             //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
                         }
                     }
+                    else  if(gobj.getFromSharedPref().equals("splashdone")&&!isNetworkAvailable())
+                    {
+                        MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
+                        gobj.updateFromSharedPref("splashdone");
+
+                        if (MenuArrayList == null) {
+                            Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("Total Menu : ", MenuArrayList.toString());
+
+
+
+                            intializeList(OnCreaterootView);
+                            //initiateRefresh(OnCreaterootView);
+                            //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
                     else
                     {
                         initiateRefresh(OnCreaterootView);
@@ -350,7 +373,51 @@ public class MenuFragment extends Fragment {
          */
         //  new DummyBackgroundTask().execute();
 
-        new LoadAllMess(view).execute();
+        final LoadAllMess lam= new LoadAllMess(view);
+        lam.execute();
+        new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                // Start your app main activity
+
+                //
+
+                if(lam.getStatus() == AsyncTask.Status.FINISHED)
+                {
+
+                }
+
+                else
+                {
+
+                    final GeneralSharedPref gobj=new GeneralSharedPref(OnCreaterootView.getContext());
+                    MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
+                    gobj.updateFromSharedPref("splashdone");
+
+                    if (MenuArrayList == null) {
+                        Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("Total Menu : ", MenuArrayList.toString());
+                        intializeList(OnCreaterootView);
+                        //initiateRefresh(OnCreaterootView);
+                        //   Toast.makeText(OnCreaterootView.getContext(), MenuArrayList.toString(), Toast.LENGTH_LONG).show();
+                    }
+
+
+                }
+
+            }
+        }, 9000);
+
+
+
     }
 
     public void initiateRefresh(View view,String area) {
@@ -524,11 +591,13 @@ public class MenuFragment extends Fragment {
                         int success = jObj.getInt("success");
                         if (success == 1) {
 
+                            db.getAll();
                             db.updateMenuCard(MessArea, json);
                             Log.e("JSON UPDATED: ",json);
                         }
                         else
                         {
+                            db.getAll();
                             db.updateMenuCard(MessArea,"nodata");
                             Log.e("%%%%%","NOT SUCCESS IN MENUFRAG");
                         }
@@ -580,8 +649,11 @@ public class MenuFragment extends Fragment {
          **/
         protected void onPostExecute(String file_url) {
 
-            progressDialog.dismiss();
+
+
             try {
+            progressDialog.dismiss();
+
                 int success = jObj.getInt("success");
                 if (success == 1) {
                     JSONArray mess2 = jObj.getJSONArray("messinfo");
@@ -650,6 +722,7 @@ public class MenuFragment extends Fragment {
 
                     Toast.makeText(thiscontext,"No data found",Toast.LENGTH_SHORT).show();
                     updateSharedPrefs(thiscontext.getString(R.string.pict));
+                    onRefreshComplete("complete",mPassedView);
                 }
 
             } catch (Exception e) {

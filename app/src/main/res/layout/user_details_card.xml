@@ -147,7 +147,7 @@
             android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:id="@+id/LogOutBtn" />
+            android:id="@+id/ImInButton" />
 
         </RelativeLayout>
 

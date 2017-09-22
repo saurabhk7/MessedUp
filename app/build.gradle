@@ -61,6 +61,10 @@ dependencies {
     //FONT
     compile 'uk.co.chrisjenx:calligraphy:2.2.0' //SET UNIFORM FONT ACROSS THE APPLICATION
 
+
+    //TEMP TEST UI
+
+
     testCompile 'junit:junit:4.12'
 }
 

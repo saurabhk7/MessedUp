@@ -1,5 +1,6 @@
 package com.messedup.messedup;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,11 +40,16 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.admobs_activity.AdMobsActivity;
+import com.messedup.messedup.connection_handlers.HttpHandler;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 import com.messedup.messedup.ui_package.CustomAdapter;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPrefHandler sharedPrefHandler;
 
     //LOADED MENU ARRAYLIST TO POPULATE CARD VIEW
-   // ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
+    // ArrayList<HashMap<String, String>> MenuArrayList = new ArrayList<>();
 
     //USER TO CHECK IF BACK CLICKED TWICE
     boolean doubleBackToExitPressedOnce = false;
@@ -151,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.tab_menu:
 
                         selectedFragment = MenuFragment.newInstance();
-;
+                        ;
                         if(PREVIOUS_TAB[0]==R.id.tab_profile)
                             replaceFragmentWithAnimationtoRight(selectedFragment, "tag");
                         else
@@ -195,14 +202,14 @@ public class MainActivity extends AppCompatActivity {
             Intent adIntent=new Intent(this, AdMobsActivity.class);
 
             if(isNetworkAvailable())
-             startActivity(adIntent);
+                startActivity(adIntent);
             else
                 appExit();
 
             //     this.finish(); // finish activity
             //  return;
 
-           // moveTaskToBack(true);
+            // moveTaskToBack(true);
 
         }
 
@@ -257,34 +264,45 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        college_list.add(this.getString(R.string.pict));
-        college_list.add(this.getString(R.string.bvp));
-        college_list.add(this.getString(R.string.sinhagad));
+
+
+        college_list.clear();
+
+        if(isNetworkAvailable())
+            new GetNBCollege(this).execute();
+        else {
+
+
+            college_list.add(this.getString(R.string.pict));
+            college_list.add(this.getString(R.string.bvp));
+       /* college_list.add(this.getString(R.string.sinhagad));
         college_list.add(this.getString(R.string.skn));
         college_list.add(this.getString(R.string.vit));
-        college_list.add(this.getString(R.string.cummins));
-        Collections.sort(college_list);
+        college_list.add(this.getString(R.string.cummins));*/
+            Collections.sort(college_list);
 
-       // college_list.add(0,"Select your Area");
-
-
-        //SET THE SPINNER
-        spinner=(Spinner)findViewById(R.id.categorySpinner);
-        spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            // college_list.add(0,"Select your Area");
 
 
-        CustomAdapter customAdapter=new CustomAdapter(getApplicationContext(),college_list);
-        spinner.setAdapter(customAdapter);
+            //SET THE SPINNER
+            spinner = (Spinner) findViewById(R.id.categorySpinner);
+            spinner.setAdapter(null);
+            spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String PreStoredArea=preferences.getString("selectedarea",  this.getString(R.string.pict));
-        Log.d("MAINACTIVTY SHARED PREF","GOT STRING "+PreStoredArea);
 
-        int ind=college_list.indexOf(PreStoredArea);
+            CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), college_list);
+            spinner.setAdapter(customAdapter);
 
-        //INITIALIZE THE SPINNER POSITION
-        spinner.setSelection(ind);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String PreStoredArea = preferences.getString("selectedarea", this.getString(R.string.pict));
+            Log.d("MAINACTIVTY SHARED PREF", "GOT STRING " + PreStoredArea);
 
+            int ind = college_list.indexOf(PreStoredArea);
+
+            //INITIALIZE THE SPINNER POSITION
+            spinner.setSelection(ind);
+
+        }
         MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -336,6 +354,96 @@ public class MainActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+
+
+    class GetNBCollege extends AsyncTask<Void, Void, Void> {
+
+        private String TAG = MainActivity.class.getSimpleName();
+        private ProgressDialog pDialog;
+        private Context mcontext;
+
+        GetNBCollege(Context context)
+        {
+            mcontext=context;
+        }
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+//         Showing progress dialog
+//        pDialog = new ProgressDialog(mcontext);
+//        pDialog.setMessage("Getting the Near By Colleges...");
+//        pDialog.setCancelable(false);
+//        pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            HttpHandler sh = new HttpHandler();
+            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getNBCollege.php");
+
+            Log.e(TAG, "Response from url: " + jsonStr);
+            try {
+                if (jsonStr != null) {
+
+                    JSONObject Colleges = new JSONObject(jsonStr);
+
+                    JSONArray colleges = Colleges.getJSONArray("NBCollege");
+
+                    for(int i=0;i<colleges.length();i++)
+                    {
+                        Log.e("college "+i, colleges.getString(i));
+                        college_list.add(colleges.getString(i));
+                    }
+
+
+
+                } else {
+//                Toast.makeText(mcontext, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+//        if (pDialog.isShowing()) {
+
+
+            Collections.sort(college_list);
+
+            // college_list.add(0,"Select your Area");
+
+
+
+
+            //SET THE SPINNER
+            spinner=(Spinner)findViewById(R.id.categorySpinner);
+            spinner.setAdapter(null);
+            spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+
+
+            CustomAdapter customAdapter=new CustomAdapter(getApplicationContext(),college_list);
+            spinner.setAdapter(customAdapter);
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
+            String PreStoredArea=preferences.getString("selectedarea",  mcontext.getString(R.string.pict));
+            Log.d("MAINACTIVTY SHARED PREF","GOT STRING "+PreStoredArea);
+
+            int ind=college_list.indexOf(PreStoredArea);
+
+            //INITIALIZE THE SPINNER POSITION
+            spinner.setSelection(ind);
+
+
+//            pDialog.dismiss();
+//        }
+        }
     }
 
 

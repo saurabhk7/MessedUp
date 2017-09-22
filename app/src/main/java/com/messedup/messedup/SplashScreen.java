@@ -113,7 +113,10 @@ public class SplashScreen extends AppCompatActivity {
 
                     if(currentUser!=null)
                     {
+                        GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
+
                         Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                        gobj.updateFromSharedPref("splash");
                         Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menuhkfkfs", Toast.LENGTH_SHORT).show();
                         startActivity(i);
                     }
