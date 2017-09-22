@@ -49,7 +49,7 @@ public class ClosingActivity extends AppCompatActivity {
 
         }
 
-
+     
 
         if(!dobj.getNameSharedPrefs().equals("NAME")) {
             String name;
