@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -24,9 +25,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
@@ -95,6 +99,7 @@ public class MenuFragment extends Fragment {
     private static final String TAG_STATUS = "status";
     private static final String TAG_OPENTIME = "opentime";
     private static final String TAG_CLOSETIME = "closetime";
+    private static final String TAG_OPENCLOSE="openstatus";
     private static boolean POPULATED_FLAG=false;
     //  SpotsDialog LoadingDialog ;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -204,6 +209,8 @@ public class MenuFragment extends Fragment {
         //set up the view
         OnCreaterootView = inflater.inflate(R.layout.fragment_card, container, false);
 
+      //  startIntro(OnCreaterootView);
+
         //DATABASE HANDLER OBJECT
         db=new DatabaseHandler(OnCreaterootView.getContext());
 
@@ -296,6 +303,8 @@ public class MenuFragment extends Fragment {
                         gobj.updateFromSharedPref("splashdone");
 
                         if (MenuArrayList == null) {
+                            final DetailsSharedPref dsp=new DetailsSharedPref(OnCreaterootView.getContext());
+                            dsp.updateMealStatusSharedPref("OFFLINE");
                             Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e("Total Menu : ", MenuArrayList.toString());
@@ -368,6 +377,7 @@ public class MenuFragment extends Fragment {
     private void initiateRefresh(View view) {
         Log.i("IN INITIATE REFRESH", "initiateRefresh");
 
+        final DetailsSharedPref dsp=new DetailsSharedPref(view.getContext());
         /**
          * Execute the background task, which uses {@link AsyncTask} to load the data.
          */
@@ -402,6 +412,8 @@ public class MenuFragment extends Fragment {
                     gobj.updateFromSharedPref("splashdone");
 
                     if (MenuArrayList == null) {
+                        dsp.updateMealStatusSharedPref("OFFLINE");
+
                         Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("Total Menu : ", MenuArrayList.toString());
@@ -466,6 +478,8 @@ public class MenuFragment extends Fragment {
         private Context thiscontext;
         private String MessArea;
         ProgressDialog progressDialog;
+        private DetailsSharedPref dspobj;
+
 
 
         JSONObject jObj = null;
@@ -480,18 +494,24 @@ public class MenuFragment extends Fragment {
             mPassedView = PassedView;
             MessArea = getSharedPrefs();
             thiscontext=PassedView.getContext();
+            dspobj=new DetailsSharedPref(thiscontext);
+
         }
 
         LoadAllMess(View view, String area) {
             mPassedView = view;
             thiscontext=view.getContext();
             MessArea = area;
+            dspobj=new DetailsSharedPref(thiscontext);
+
         }
 
         LoadAllMess(Context cont) {
             thiscontext = cont;
             String preselectArea = getSharedPrefs();
             MessArea = preselectArea;
+
+            dspobj=new DetailsSharedPref(thiscontext);
 
             Log.i("SPLASH SCREEN SHARED", preselectArea);
         }
@@ -654,6 +674,8 @@ public class MenuFragment extends Fragment {
             try {
             progressDialog.dismiss();
 
+                dspobj.updateMealStatusSharedPref(jObj.getString("meal"));
+
                 int success = jObj.getInt("success");
                 if (success == 1) {
                     JSONArray mess2 = jObj.getJSONArray("messinfo");
@@ -671,6 +693,7 @@ public class MenuFragment extends Fragment {
                         String special = c.getString(TAG_SPECIAL).trim();
                         String special_extra = c.getString(TAG_SPECIAL_EXTRA).trim();
                         String other = c.getString(TAG_OTHER).trim();
+                        String openclose = c.getString(TAG_OPENCLOSE).trim();
 
                         String gcharge = c.getString(TAG_GCHARGE).trim();
                         String otime = c.getString(TAG_OPENTIME).trim();
@@ -700,6 +723,7 @@ public class MenuFragment extends Fragment {
                         map.put(TAG_OPENTIME, otime);
                         map.put(TAG_CLOSETIME, ctime);
                         map.put(TAG_STATUS, stat);
+                        map.put(TAG_OPENCLOSE,openclose);
 
 
                         Log.d("inDoinBackground: ID", "``````````````````````" + map.toString());
@@ -829,6 +853,9 @@ public class MenuFragment extends Fragment {
                         break;
                     case TAG_STATUS:
                         MessMenuObj.setStat(entry.getValue());
+                        break;
+                    case TAG_OPENCLOSE:
+                        MessMenuObj.setOpenClose(entry.getValue());
                         break;
 
 
@@ -1132,6 +1159,107 @@ public class MenuFragment extends Fragment {
     }
 
     //TODO:=========================================================================================
+
+    private void startIntro(View v)
+    {
+        TapTargetSequence sequence= new TapTargetSequence(getActivity())
+                .targets(
+                       /* TapTarget.forView(v.findViewById(R.id.shareMenuBtn), "Your College Area", "Tap to select your area!\n(If not found we are soon coming there:P)")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.transparentcol)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(135) ,                 // Specify the target radius (in dp),
+
+                        TapTarget.forView(v.findViewById(R.id.), "Menu of your selected area", "Menu of the Messes around your area!")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)  ,                // Specify the target radius (in dp)
+
+                        TapTarget.forView(v.findViewById(R.id.tab_notifs), "Notifications and Announcements", "You'll get all the updates regarding the Messes around your area!")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)  ,                // Specify the target radius (in dp)*/
+                        TapTarget.forView(v.findViewById(R.id.shareMenuBtn), "Your Profile", "Your details ! \n(Which you already know :P)")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)                 // Specify the target radius (in dp),
+
+
+                )
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+                    }
+                });
+
+        sequence.start();
+
+    }
 
 
 }

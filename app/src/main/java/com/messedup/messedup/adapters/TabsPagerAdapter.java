@@ -83,43 +83,43 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 HashMap<String, String> info0 = (HashMap<String, String>)node0.get(0);
                 String day0 = info0.get("day");
                 String date0 = info0.get("date");
-                return day0 + " " + date0;
+                return day0 + "  " + date0;
             case 1:
                 ArrayList node1 = (ArrayList)menuList.get(1);
                 HashMap<String, String> info = (HashMap<String, String>)node1.get(0);
                 String day1 = info.get("day");
                 String date1 = info.get("date");
-                return day1 + " " + date1;
+                return day1 + "  " + date1;
             case 2:
                 ArrayList node2 = (ArrayList)menuList.get(2);
                 HashMap<String, String> info2 = (HashMap<String, String>)node2.get(0);
                 String day2 = info2.get("day");
                 String date2 = info2.get("date");
-                return day2 + " " + date2;
+                return day2 + "  " + date2;
             case 3:
                 ArrayList node3 = (ArrayList)menuList.get(3);
                 HashMap<String, String> info3 = (HashMap<String, String>)node3.get(0);
                 String day3 = info3.get("day");
                 String date3 = info3.get("date");
-                return day3 + " " + date3;
+                return day3 + "  " + date3;
             case 4:
                 ArrayList node4 = (ArrayList)menuList.get(4);
                 HashMap<String, String> info4 = (HashMap<String, String>)node4.get(0);
                 String day4 = info4.get("day");
                 String date4 = info4.get("date");
-                return day4 + " " + date4;
+                return day4 + "  " + date4;
             case 5:
                 ArrayList node5 = (ArrayList)menuList.get(5);
                 HashMap<String, String> info5 = (HashMap<String, String>)node5.get(0);
                 String day5 = info5.get("day");
                 String date5 = info5.get("date");
-                return day5 + " " + date5;
+                return day5 + "  " + date5;
             case 6:
                 ArrayList node6 = (ArrayList)menuList.get(6);
                 HashMap<String, String> info6 = (HashMap<String, String>)node6.get(0);
                 String day6 = info6.get("day");
                 String date6 = info6.get("date");
-                return day6 + " " + date6;
+                return day6 + "  " + date6;
         }
         return null;
     }

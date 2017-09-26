@@ -3,6 +3,7 @@ package com.messedup.messedup;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,11 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.connection_check.ConnectionManager;
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
@@ -39,6 +42,8 @@ import java.util.HashMap;
 
 import com.messedup.messedup.signin_package.GoogleSignIn;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * @author saurabh
  * @use First Loading Screen ( Thread Used to load data in the background )
@@ -55,6 +60,7 @@ public class SplashScreen extends AppCompatActivity {
     private static Context thiscontext;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DetailsSharedPref dspobj2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +71,18 @@ public class SplashScreen extends AppCompatActivity {
         thiscontext=getBaseContext();
         lam = new LoadAllMess(thiscontext);
         db=new DatabaseHandler(thiscontext);
+        dspobj2=new DetailsSharedPref(thiscontext);
 
         mAuth=FirebaseAuth.getInstance();
+
+        ShimmerFrameLayout container =
+                (ShimmerFrameLayout) findViewById(R.id.shimmer_view_container);
+
+        Log.e("sdf", String.valueOf(container.getDropoff()));
+//        container.setBaseAlpha((float) 0.59);
+//        container.setIntensity((float) 0.1);
+        container.setDropoff((float) 0.6);
+        container.startShimmerAnimation();
 
         connectionManager=new ConnectionManager(this);
         if(connectionManager.isNetworkAvailable())
@@ -78,14 +94,15 @@ public class SplashScreen extends AppCompatActivity {
             SPLASH_TIME_OUT = 10000;
         }
         else {
+            dspobj2.updateMealStatusSharedPref("OFFLINE");
             SuperActivityToast.create(SplashScreen.this, new Style(), Style.TYPE_BUTTON)
                     .setIconResource(Style.ICONPOSITION_LEFT,R.drawable.ic_error_outline_white_24dp)
                     .setText("Oops, No Network Available!")
                     .setDuration(Style.DURATION_LONG)
                     .setFrame(Style.FRAME_LOLLIPOP)
-                    .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_AMBER))
+                    .setColor(Color.parseColor("#cb202d"))
                     .setAnimations(Style.ANIMATIONS_POP).show();
-            SPLASH_TIME_OUT = 2000;
+            SPLASH_TIME_OUT = 3000;
         }
         new Handler().postDelayed(new Runnable() {
 
@@ -117,6 +134,8 @@ public class SplashScreen extends AppCompatActivity {
 
                         Intent i = new Intent(SplashScreen.this, MainActivity.class);
                         gobj.updateFromSharedPref("splash");
+                        dspobj2.updateMealStatusSharedPref("OFFLINE");
+
                         Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menuhkfkfs", Toast.LENGTH_SHORT).show();
                         startActivity(i);
                     }
@@ -150,6 +169,8 @@ public class SplashScreen extends AppCompatActivity {
         private String MessArea;
         JSONObject jObj = null;
         String json = "";
+        private  DetailsSharedPref dspobj;
+
 
 
 
@@ -170,6 +191,7 @@ public class SplashScreen extends AppCompatActivity {
             contextFinal = cont;
             String preselectArea = getSharedPrefs();
             MessArea = preselectArea;
+             dspobj=new DetailsSharedPref(contextFinal);
 
             Log.i("SPLASH SCREEN SHARED", preselectArea);
         }
@@ -198,6 +220,7 @@ public class SplashScreen extends AppCompatActivity {
         private  final String TAG_STATUS = thiscontext.getString(R.string.TAG_STATUS);
         private  final String TAG_OPENTIME = thiscontext.getString(R.string.TAG_OPENTIME);
         private  final String TAG_CLOSETIME = thiscontext.getString(R.string.TAG_CLOSETIME);
+        private final String TAG_OPENCLOSE="openstatus";
 
 
         /**
@@ -331,9 +354,14 @@ public class SplashScreen extends AppCompatActivity {
         protected void onPostExecute(String file_url) {
 
 
+
             try {
+
                 int success = jObj.getInt("success");
                 if (success == 1) {
+                    dspobj.updateMealStatusSharedPref(jObj.getString("meal"));
+
+
                     JSONArray mess2 = jObj.getJSONArray("messinfo");
 
                     for (int i = 0; i < mess2.length(); i++) {
@@ -353,6 +381,8 @@ public class SplashScreen extends AppCompatActivity {
                         String gcharge = c.getString(TAG_GCHARGE).trim();
                         String otime = c.getString(TAG_OPENTIME).trim();
                         String ctime = c.getString(TAG_CLOSETIME).trim();
+                        String openclose = c.getString(TAG_OPENCLOSE).trim();
+
 
                         /*String otime = c.getString(TAG_OPENTIME).trim();
                         String ctime = c.getString(TAG_CLOSETIME).trim();*/
@@ -378,6 +408,7 @@ public class SplashScreen extends AppCompatActivity {
                         map.put(TAG_OPENTIME, otime);
                         map.put(TAG_CLOSETIME, ctime);
                         map.put(TAG_STATUS, stat);
+                        map.put(TAG_OPENCLOSE,openclose);
 
 
                         Log.d("inDoinBackground: ID", "``````````````````````" + map.toString());
@@ -444,6 +475,8 @@ public class SplashScreen extends AppCompatActivity {
                         finish();
                     }
                     updateSharedPrefs(thiscontext.getString(R.string.pict));
+                    dspobj.updateMealStatusSharedPref("OFFLINE");
+
                     Toast.makeText(contextFinal, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                 }
 
@@ -487,6 +520,11 @@ public class SplashScreen extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }
 

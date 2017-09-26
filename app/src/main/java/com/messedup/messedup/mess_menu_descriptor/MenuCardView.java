@@ -15,7 +15,7 @@ public class MenuCardView implements Serializable {
 
     /*private HashMap<String,String> MessDetailsHasMap=new HashMap<>();
     private HashMap<String ,String> MenuHashMap=new HashMap<>();*/
-    String MessID,Rice,VegieOne,VegieTwo,VegieThree,Roti,Special,SpecialExtra,Other,GCharge,OTime,CTime,Stat,FavMess;
+    String MessID,Rice,VegieOne,VegieTwo,VegieThree,Roti,Special,SpecialExtra,Other,GCharge,OTime,CTime,Stat,FavMess,OpenClose;
 
     public String getFavMess() {
         return FavMess;
@@ -129,6 +129,15 @@ public class MenuCardView implements Serializable {
         Other = other;
     }
 
+
+    public String getOpenClose() {
+        return OpenClose;
+    }
+
+    public void setOpenClose(String openClose) {
+        OpenClose = openClose;
+    }
+
     public MenuCardView(/*HashMap<String, String> messDetailsHasMap, HashMap<String, String> menuHashMap*/) {
        /* MessDetailsHasMap = messDetailsHasMap;
         MenuHashMap = menuHashMap;
@@ -222,4 +231,53 @@ public class MenuCardView implements Serializable {
             return "Menu of: "+MessID;
         }
     }
+
+    public String getMenuCard()
+    {
+        try
+        {
+
+            String menu = null;
+
+            if (VegieOne != null && !VegieOne.equals("null")) {
+                menu = "<b>"+ VegieOne +"</b>"+ ", ";
+            }
+            if (VegieTwo != null && !VegieTwo.equals("null")) {
+
+                if(menu!=null)
+                menu = menu +"<b>"+ VegieTwo +"</b>"+ ", ";
+                else
+                    menu ="<b>"+ VegieTwo +"</b>"+ ", ";
+
+            }
+            if (VegieThree != null && !VegieThree.equals("null")) {
+                if(menu!=null)
+                    menu = menu +"<b>"+ VegieThree +"</b>"+ ", ";
+                else
+                    menu ="<b>"+ VegieThree +"</b>"+ ", ";
+            }
+            if (Rice != null && !Rice.equals("null")) {
+                menu = menu + Rice + ", ";
+            }
+            if ((Roti != null && !Roti.equals("null")) && (Other != null && !Other.equals("null"))) {
+                menu = menu + Roti + ", ";
+            }
+            if ((Roti != null && !Roti.equals("null")) && (Other == null && Other.equals("null"))) {
+                menu = menu + Roti + ".";
+            }
+            if (Other != null && !Other.equals("null")) {
+                menu = menu + Other + ".";
+            }
+
+
+            return menu;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return "Menu of: "+MessID;
+        }
+
+    }
 }
+

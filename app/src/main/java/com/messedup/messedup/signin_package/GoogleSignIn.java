@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
@@ -293,6 +294,17 @@ public class GoogleSignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_signin);
+
+
+        ShimmerFrameLayout container =
+                (ShimmerFrameLayout) findViewById(R.id.shimmer_view_container);
+
+        Log.e("sdf", String.valueOf(container.getDropoff()));
+//        container.setBaseAlpha((float) 0.59);
+//        container.setIntensity((float) 0.1);
+        container.setDropoff((float) 0.6);
+        container.startShimmerAnimation();
+
 
 
 

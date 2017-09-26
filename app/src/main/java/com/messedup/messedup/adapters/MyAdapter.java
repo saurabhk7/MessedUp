@@ -1,9 +1,12 @@
 package com.messedup.messedup.adapters;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.messedup.messedup.MenuFragment;
 import com.messedup.messedup.R;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
 import com.squareup.picasso.Callback;
@@ -118,48 +122,58 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 
-                if ((position + 1) % 2 == 0) {
+                if (list.get(position).getOpenClose().equals("0")) {
                     holder.MessOpenBadge.setVisibility(View.INVISIBLE);
-                    holder.OpenImg.setVisibility(View.INVISIBLE);
                 } else {
                     holder.MessCloseBadge.setVisibility(View.INVISIBLE);
-                    holder.CloseImg.setVisibility(View.INVISIBLE);
 
                 }
 
                 holder.CurrentObj = list.get(position);
 
-                StorageReference imageRef= storageRef.child("specials").child("kheer"+".jpg");
+                StorageReference imageRef = null;
+                try {
+                    imageRef = storageRef.child("specials").child("kheer2" + ".jpg");
+                }catch (Exception e)
+                {
+                    Log.e("SPECIAL IMAGE","Image not found!");
+                }
 
 
+                if(imageRef.getDownloadUrl().toString()!=null) {
 
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(final Uri uri) {
-                        try {
-                            Picasso.with(Contextparent.getContext()).load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.SpecialImg, new Callback() {
-                                @Override
-                                public  void onSuccess() {
+                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(final Uri uri) {
+                            try {
+                                Picasso.with(Contextparent.getContext()).load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.SpecialImg, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
 
-                                }
+                                    }
 
-                                @Override
-                                public void onError() {
+                                    @Override
+                                    public void onError() {
 
-                                    Picasso.with(Contextparent.getContext()).load(uri).into(holder.SpecialImg);
+                                        Picasso.with(Contextparent.getContext()).load(uri).into(holder.SpecialImg);
 
-                                }
-                            });
-                        } catch (Exception e) {
-                            Log.v("E_VALUE", e.getMessage());
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Log.v("E_VALUE", e.getMessage());
+                            }
                         }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                    }
-                });
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+
+                }else
+                {
+                    Log.e("SPECIAL IMAGE","Image not found!");
+                }
 
 
         /*holder.itemView.setClickable(true);
@@ -208,7 +222,8 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
                 setSpecialList(holder, position);
-                setMenuLists(holder, position);
+                //setMenuLists(holder, position);
+                setMenuTxt(holder,position);
 
 
 
@@ -249,9 +264,9 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     list.get(position).setFavMess("true");
                                     Log.d("After Added","1"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
 
-                                   FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(list.get(position).getMessID()));
-                                   // FirebaseMessaging.getInstance().subscribeToTopic("tanmay");
-                                     MenuFragment menuFragment=new MenuFragment();
+                                    FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(list.get(position).getMessID()));
+                                    // FirebaseMessaging.getInstance().subscribeToTopic("tanmay");
+                                    MenuFragment menuFragment=new MenuFragment();
                                     menuFragment.intializeList(Contextparent);
 
                                 }
@@ -265,8 +280,8 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                                     Log.d("After Removed","2"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
                                     try {
-                                       FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicName(list.get(position).getMessID()));
-                                      //  FirebaseMessaging.getInstance().unsubscribeFromTopic("tanmay");
+                                        FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicName(list.get(position).getMessID()));
+                                        //  FirebaseMessaging.getInstance().unsubscribeFromTopic("tanmay");
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     } finally {
@@ -294,11 +309,28 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             {
                 HeaderViewHolder holder=(HeaderViewHolder)Viewholder;
 
+                DetailsSharedPref detailsSharedPref=new DetailsSharedPref(Contextparent.getContext());
+
+
+                holder.lunchdinnerTxt.setText(detailsSharedPref.getMealStatusSharedPrefs());
+
+                // holder.lunchdinnerTxt.setText("OFFLINE");
+
+
             }
 
             else if(Viewholder instanceof FooterViewHolder)
             {
                 FooterViewHolder holder=(FooterViewHolder)Viewholder;
+
+                PackageInfo pInfo = null;
+                try {
+                    pInfo = Contextparent.getContext().getPackageManager().getPackageInfo(Contextparent.getContext().getPackageName(), 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                holder.versionText.setText("version: "+pInfo.versionName);
+
 
             }
 
@@ -311,6 +343,13 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+    private void setMenuTxt(MyViewHolder holder, int position) {
+
+
+        holder.menuTxtCard.setText(Html.fromHtml(list.get(position).getMenuCard()));
+
+    }
+
     private void setMenuLists(MyViewHolder holder, int position) {
         Log.d("IN MY ADAPTER ",list.get(position).getMessID());
 
@@ -319,6 +358,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ArrayList<String> items2=new ArrayList<>();
         ArrayList<String> items3=new ArrayList<>();
 
+        int num1=0;
+        int num2=0;
+        int num3=0;
+
 
         int i=0;
         int j=0;
@@ -326,26 +369,38 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if(list.get(position).getVegieOne()!=null && !list.get(position).getVegieOne().equals("null")) {
             items1.add(i, list.get(position).getVegieOne());
+            if(list.get(position).getVegieOne().length()>10)
+                num1++;
             i++;
         }
         if(list.get(position).getVegieTwo()!=null && !list.get(position).getVegieTwo().equals("null")) {
             items1.add(i, list.get(position).getVegieTwo());
+            if(list.get(position).getVegieTwo().length()>10)
+                num1++;
             i++;
         }
         if(list.get(position).getVegieThree()!=null && !list.get(position).getVegieThree().equals("null")) {
             items2.add(j, list.get(position).getVegieThree());
+            if(list.get(position).getVegieThree().length()>10)
+                num2++;
             j++;
         }
         if(list.get(position).getRice()!=null && !list.get(position).getRice().equals("null")) {
             items2.add(j, list.get(position).getRice());
+            if(list.get(position).getRice().length()>10)
+                num2++;
             j++;
         }
         if(list.get(position).getRoti()!=null && !list.get(position).getRoti().equals("null")) {
             items3.add(k, list.get(position).getRoti());
+            if(list.get(position).getRoti().length()>10)
+                num3++;
             k++;
         }
         if(list.get(position).getOther()!=null && !list.get(position).getOther().equals("null")) {
             items3.add(k, list.get(position).getOther());
+            if(list.get(position).getOther().length()>10)
+                num3++;
             k++;
         }
 
@@ -360,10 +415,11 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.MenuListView2.setAdapter(itemsAdapter2);
         holder.MenuListView3.setAdapter(itemsAdapter3);
 
+//UNCOMMENT THIS FOR DYNAMIC HEIGHT
 
-        setListViewHeightBasedOnChildren(holder.MenuListView1);
-        setListViewHeightBasedOnChildren(holder.MenuListView2);
-        setListViewHeightBasedOnChildren(holder.MenuListView3);
+        setListViewHeightBasedOnChildren(holder.MenuListView1,num1);
+        setListViewHeightBasedOnChildren(holder.MenuListView2,num2);
+        setListViewHeightBasedOnChildren(holder.MenuListView3,num3);
 
 
         itemsAdapter1.notifyDataSetChanged();
@@ -393,7 +449,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if((Special1==null||Special1.equals("null")) && (Special2==null||Special2.equals("null")) )
         {
-            Specialitems.add("No Special Today!");
+            //Specialitems.add("No Special Today!");
         }
 
 
@@ -412,23 +468,29 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         holder.SpecialList.setAdapter(SpecialitemsAdapter);
-        setListViewHeightBasedOnChildren(holder.SpecialList);
+        setListViewHeightBasedOnChildren(holder.SpecialList,0);
 
         SpecialitemsAdapter.notifyDataSetChanged();
     }
 
-    private static void setListViewHeightBasedOnChildren(ListView listView) {
+    private static void setListViewHeightBasedOnChildren(ListView listView , int num) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             // pre-condition
             return;
         }
 
-        int totalHeight = 0;
+
+        Log.e("NUM","*"+num);
+       // int totalHeight = 50*num;
+        int totalHeight=0;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
+
+            Log.e("HEIGHT of ","----"+listView.toString()+" * i * "+listItem.toString()+" height "+listItem.getMeasuredHeight());
+
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
@@ -445,7 +507,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         if (list.size() == 0) {
-            //Return 1 here to show nothing
+            //Return 2 here to show nothing
             return 2;
         }
 

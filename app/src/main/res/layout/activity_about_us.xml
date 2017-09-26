@@ -10,21 +10,64 @@
     android:layout_height="wrap_content">
 
 
-    <android.support.v7.widget.CardView
+    <RelativeLayout
+        android:id="@+id/tematoplayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_alignParentTop="false"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            android:id="@+id/toolbar3"
+            android:elevation="24dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THE TEAM"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="23sp"
+                android:id="@+id/toolbar_title" />
+
+
+        </android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:src="@drawable/red_profile_background"
+            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="-40dp"
+            android:layout_height="100dp" />
+
+
+
+   <!-- <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardBackgroundColor="@android:color/transparent"
-        android:elevation="30dp"
+        android:layout_below="@id/toolbar3"
+        card_view:cardBackgroundColor="@color/transparent"
+        android:elevation="0dp"
         android:id="@+id/about_us_top"
+        android:layout_marginTop="-40dp"
         app:cardCornerRadius="0dp"
         android:backgroundTint="@color/transparent"
+        android:background="@color/transparent"
         android:layout_marginBottom="0dp"
         app:cardUseCompatPadding="false"
-        >
+        >-->
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/transparent"
             android:layout_marginBottom="0dp">
 
@@ -35,19 +78,23 @@
                 android:backgroundTint="@color/transparent"
                 android:id="@+id/ProfileLayout">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/red_profile_background"
-                    android:scaleType="centerCrop"
-                    android:layout_height="40dp" />
+                <!-- <ImageView
+                     android:layout_width="match_parent"
+                     android:src="@drawable/red_profile_background"
+                     android:scaleType="centerCrop"
+                     android:layout_alignParentTop="true"
+                     android:layout_marginTop="-60dp"
+                     android:layout_marginBottom="0dp"
+                     android:layout_height="100dp" />-->
 
                 <View
                     android:id="@+id/header_cover_image"
                     android:layout_width="match_parent"
                     android:layout_marginTop="40dp"
+
                     android:layout_height="1dp"
                     android:background="#87cccccc"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     />
 
                 <ImageView
@@ -56,7 +103,7 @@
                     android:layout_below="@+id/header_cover_image"
                     android:background="@drawable/profile_circular_border_imageview"
                     android:id="@+id/MenuHeaderIcon"
-                    android:layout_marginTop="-35dp"
+                    android:layout_marginTop="25dp"
                     android:elevation="8dp"
                     android:layout_centerHorizontal="true"
                     android:layout_height="70dp" />
@@ -82,348 +129,369 @@
                         android:textColor="@color/white"
                         android:layout_weight="1"
                         android:textAllCaps="true" />
-                    <TextView
-                        android:id="@+id/DayDetails"
-                        android:layout_width="match_parent"
-                        android:layout_height="35dp"
-                        android:text="Tue, Sept 5"
-                        android:textSize="15sp"
-                        android:gravity="center_horizontal"
-                        android:visibility="gone"
-                        android:textStyle="normal"
-                        android:textColor="@color/common_google_signin_btn_text_light_focused"
-                        android:layout_weight="1"
-                        />
+
                 </LinearLayout>
 
 
             </RelativeLayout>
 
+
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+   <!-- </android.support.v7.widget.CardView>-->
 
-    <android.support.v7.widget.CardView
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_below="@+id/tematoplayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="30dp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/about_us_top"
-        android:id="@+id/about_us_cv_1"
-        app:cardCornerRadius="4dp"
-        android:layout_marginBottom="0dp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            tools:clickable="false">
+            android:orientation="vertical" >
 
-            <ImageView
-                android:layout_width="60dp"
-                app:srcCompat="@drawable/user_default_pic"
-                android:layout_margin="10dp"
-                android:background="@drawable/profile_circular_border_imageview"
-                android:id="@+id/profile_pic_1"
-                android:layout_alignParentStart="true"
-                android:elevation="8dp"
-                android:layout_centerHorizontal="true"
-                android:layout_height="60dp" />
-
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_centerVertical="true"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/tematoplayout"
+                android:id="@+id/about_us_cv_1"
+                app:cardCornerRadius="4dp"
+                android:layout_marginBottom="0dp"
+                app:cardUseCompatPadding="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <TextView
-                    android:text="Developer 1 Name"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:id="@+id/name_text_1"
-                    android:textSize="18sp"
-                    android:layout_marginStart="75dp"
-                     />
+                    android:clickable="false"
+                    tools:clickable="false">
 
-                <TextView
-                    android:text="developer1@gmil.com"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="75dp"
-                    android:id="@+id/email_1"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="5dp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
+                    <ImageView
+                        android:layout_width="60dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/profile_circular_border_imageview"
+                        android:id="@+id/profile_pic_1"
+                        android:layout_alignParentStart="true"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="60dp" />
 
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="30dp"
-        android:layout_below="@id/about_us_cv_1"
-        android:id="@+id/about_us_cv_2"
-        app:cardCornerRadius="4dp"
-        android:layout_marginBottom="0dp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            tools:clickable="false">
+                        <TextView
+                            android:text="Developer 1 Name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:textColor="@color/colorPrimary"
+                            android:id="@+id/name_text_1"
+                            android:textSize="18sp"
+                            android:layout_marginStart="75dp"
+                            />
 
-            <ImageView
-                android:layout_width="60dp"
-                app:srcCompat="@drawable/user_default_pic"
-                android:layout_margin="10dp"
-                android:background="@drawable/profile_circular_border_imageview"
-                android:id="@+id/profile_pic_2"
-                android:layout_alignParentStart="true"
-                android:elevation="8dp"
-                android:layout_centerHorizontal="true"
-                android:layout_height="60dp" />
+                        <TextView
+                            android:text="developer1@gmil.com"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="75dp"
+                            android:id="@+id/email_1"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingBottom="5dp" />
 
+                    </LinearLayout>
 
+                </RelativeLayout>
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_centerVertical="true"
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="30dp"
+                android:layout_below="@id/about_us_cv_1"
+                android:id="@+id/about_us_cv_2"
+                app:cardCornerRadius="4dp"
+                android:layout_marginBottom="0dp"
+                app:cardUseCompatPadding="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <TextView
-                    android:text="Developer 2 Name"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:id="@+id/name_text_2"
-                    android:textSize="18sp"
-                    android:layout_marginStart="75dp"
-                    />
+                    android:clickable="false"
+                    tools:clickable="false">
 
-                <TextView
-                    android:text="developer2@gmil.com"
-                    android:layout_width="match_parent"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="75dp"
-                    android:id="@+id/email_2" />
-
-            </LinearLayout>
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="30dp"
-        android:layout_below="@id/about_us_cv_2"
-        android:id="@+id/about_us_cv_3"
-        app:cardCornerRadius="4dp"
-        android:layout_marginBottom="0dp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            tools:clickable="false">
-
-            <ImageView
-                android:layout_width="60dp"
-                app:srcCompat="@drawable/user_default_pic"
-                android:layout_margin="10dp"
-                android:background="@drawable/profile_circular_border_imageview"
-                android:id="@+id/profile_pic_3"
-                android:layout_alignParentStart="true"
-                android:elevation="8dp"
-                android:layout_centerHorizontal="true"
-                android:layout_height="60dp" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/profile_circular_border_imageview"
+                        android:id="@+id/profile_pic_2"
+                        android:layout_alignParentStart="true"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="60dp" />
 
 
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_centerVertical="true"
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Developer 2 Name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:textColor="@color/colorPrimary"
+                            android:id="@+id/name_text_2"
+                            android:textSize="18sp"
+                            android:layout_marginStart="75dp"
+                            />
+
+                        <TextView
+                            android:text="developer2@gmil.com"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingBottom="5dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="75dp"
+                            android:id="@+id/email_2" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="30dp"
+                android:layout_below="@id/about_us_cv_2"
+                android:id="@+id/about_us_cv_3"
+                app:cardCornerRadius="4dp"
+                android:layout_marginBottom="0dp"
+                app:cardUseCompatPadding="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <TextView
-                    android:text="Developer 3 Name"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:id="@+id/name_text_3"
-                    android:textSize="18sp"
-                    android:layout_marginStart="75dp"
-                    />
+                    android:clickable="false"
+                    tools:clickable="false">
 
-                <TextView
-                    android:text="developer3@gmil.com"
-                    android:layout_width="match_parent"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="75dp"
-                    android:id="@+id/email_3" />
-
-            </LinearLayout>
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="30dp"
-        android:layout_below="@id/about_us_cv_3"
-        android:id="@+id/about_us_cv_4"
-        app:cardCornerRadius="4dp"
-        android:layout_marginBottom="0dp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            tools:clickable="false">
-
-            <ImageView
-                android:layout_width="60dp"
-                app:srcCompat="@drawable/user_default_pic"
-                android:layout_margin="10dp"
-                android:background="@drawable/profile_circular_border_imageview"
-                android:id="@+id/profile_pic_4"
-                android:layout_alignParentStart="true"
-                android:elevation="8dp"
-                android:layout_centerHorizontal="true"
-                android:layout_height="60dp" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/profile_circular_border_imageview"
+                        android:id="@+id/profile_pic_3"
+                        android:layout_alignParentStart="true"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="60dp" />
 
 
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_centerVertical="true"
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Developer 3 Name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:textColor="@color/colorPrimary"
+                            android:id="@+id/name_text_3"
+                            android:textSize="18sp"
+                            android:layout_marginStart="75dp"
+                            />
+
+                        <TextView
+                            android:text="developer3@gmil.com"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingBottom="5dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="75dp"
+                            android:id="@+id/email_3" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="30dp"
+                android:layout_below="@id/about_us_cv_3"
+                android:id="@+id/about_us_cv_4"
+                app:cardCornerRadius="4dp"
+                android:layout_marginBottom="0dp"
+                app:cardUseCompatPadding="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <TextView
-                    android:text="Developer 4 Name"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:padding="5dp"
-                    android:id="@+id/name_text_4"
-                    android:textSize="18sp"
-                    android:layout_marginStart="75dp"
-                    />
+                    android:clickable="false"
+                    tools:clickable="false">
 
-                <TextView
-                    android:text="developer4@gmil.com"
-                    android:layout_width="match_parent"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="75dp"
-                    android:id="@+id/email_4" />
-
-            </LinearLayout>
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
+                    <ImageView
+                        android:layout_width="60dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/profile_circular_border_imageview"
+                        android:id="@+id/profile_pic_4"
+                        android:layout_alignParentStart="true"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="60dp" />
 
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="30dp"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/cv_info"
-        app:cardCornerRadius="6dp"
-        android:layout_marginBottom="58dp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:orientation="vertical"
+                        <TextView
+                            android:text="Developer 4 Name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorPrimary"
+                            android:padding="5dp"
+                            android:id="@+id/name_text_4"
+                            android:textSize="18sp"
+                            android:layout_marginStart="75dp"
+                            />
+
+                        <TextView
+                            android:text="developer4@gmil.com"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingBottom="5dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="75dp"
+                            android:id="@+id/email_4" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/InfoLayout">
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="30dp"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/cv_info"
+                app:cardCornerRadius="6dp"
+                android:layout_marginBottom="58dp"
+                app:cardUseCompatPadding="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <ImageView
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:id="@+id/BackImg"
-                    android:src="@drawable/red_profile_background"
-                    android:scaleType="centerCrop"
-                    android:layout_height="45dp" />
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/AbtUsTxtView"
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/contact_us_string"
-                    android:layout_marginTop="5dp"
-                    android:textSize="17sp"
-                    android:textStyle="normal|bold"
-                    android:textColor="@color/white"
-                    android:textAlignment="center" />
+                    <RelativeLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/InfoLayout">
 
-                <TextView
-                    android:id="@+id/InfoTxtView"
-                    android:layout_width="match_parent"
-                    android:layout_below="@id/AbtUsTxtView"
-                    android:layout_height="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:text="version 1.0.2"
-                    android:textSize="12sp"
-                    android:textStyle="normal|bold"
-                    android:textColor="@color/white"
-                    android:textAlignment="center" />
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:id="@+id/BackImg"
+                            android:src="@drawable/red_profile_background"
+                            android:scaleType="centerCrop"
+                            android:layout_height="70dp" />
+
+                       <!-- <TextView
+                            android:id="@+id/ContactUsTxtView"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/contact_us_string"
+                            android:layout_marginTop="5dp"
+                            android:textSize="17sp"
+                            android:textStyle="normal|bold"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />-->
+
+                        <TextView
+                            android:autoLink="phone"
+                            android:text="@string/contactusat"
+                            android:id="@+id/ClosingTxtView"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/white"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="15sp"
+                            android:textColorLink="@color/white"
+                            android:textStyle="normal|bold"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="end|bottom"
+                            android:paddingBottom="5dp"
+                            android:textAlignment="center"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/VersionAbtTxt"
+                            android:layout_width="match_parent"
+                            android:layout_below="@id/ClosingTxtView"
+                            android:layout_height="20dp"
+                            android:layout_centerHorizontal="true"
+                            android:text="version 1.0.2"
+                            android:textSize="12sp"
+                            android:textStyle="normal|bold"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />
 
 
 
 
-            </RelativeLayout>
+                    </RelativeLayout>
 
-        </RelativeLayout>
+                </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
-
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

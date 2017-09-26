@@ -33,12 +33,15 @@ public class AdMobsActivity extends AppCompatActivity {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            dialog=new ProgressDialog(this,android.R.style.Theme_Material_Light_NoActionBar);
+            dialog=new ProgressDialog(this,android.R.style.Theme_Material_NoActionBar);
         }
         else {
             dialog=new ProgressDialog(this,android.R.style.Theme_Holo_Light_NoActionBar);
 
         }
+
+
+
 
         dialog.setMessage("Please wait a moment!");
         dialog.setCancelable(false);
@@ -49,6 +52,8 @@ public class AdMobsActivity extends AppCompatActivity {
 
         // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+
+
 
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)

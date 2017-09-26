@@ -19,6 +19,31 @@ public class DetailsSharedPref {
         this.context = context;
     }
 
+
+    public void updateWalkThrough(String status) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("walk", status);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF walk : ",status);
+
+    }
+
+    public void updateMealStatusSharedPref(String mealtype) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("openstatus", mealtype);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF OPENStatus : ",mealtype);
+
+    }
+
     public void updateNameSharedPrefs(String name) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -80,6 +105,27 @@ public class DetailsSharedPref {
         String PreStoredArea = preferences.getString("userphotourl", "URL");
       //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         Log.e("SHRDPRF urlreturned: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getMealStatusSharedPrefs() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("openstatus", " ");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF openstatusret: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+
+    public String getWalkThroughStatus() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("walk", "notdone");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF walk: ",PreStoredArea);
 
         return PreStoredArea;
 

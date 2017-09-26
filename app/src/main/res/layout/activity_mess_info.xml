@@ -36,15 +36,15 @@
             android:id="@+id/toolbar3"
             android:elevation="24dp" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mess Name"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:textSize="23sp"
-            android:id="@+id/toolbar_title" />
-</android.support.v7.widget.Toolbar>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mess Name"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="23sp"
+                android:id="@+id/toolbar_title" />
+        </android.support.v7.widget.Toolbar>
 
         <ImageView
             android:layout_width="wrap_content"

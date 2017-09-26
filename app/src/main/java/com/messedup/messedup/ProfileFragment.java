@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment {
                 if (providerId.equals("google.com")) {
                     String nm = profile.getDisplayName();
                     Log.e("EMAIL: ","Name got from "+providerId+" :"+nm);
-                    mDetailsSharedPref.updateEmailSharedPrefs(nm);
+                    mDetailsSharedPref.updateNameSharedPrefs(nm);
                     mNameTxtView.setText(nm);
                 }
 

@@ -14,6 +14,7 @@
     <color name="blue">#448aff</color>
     <color name="black">#000000</color>
     <color name="orange">#bf360c</color>
+    <color name="transparentcol">#00ffffff</color>
 
 
     <color name="swipe_color_1">#B6DB49</color>

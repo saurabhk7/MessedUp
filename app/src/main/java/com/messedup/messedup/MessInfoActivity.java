@@ -365,7 +365,7 @@ public class MessInfoActivity extends AppCompatActivity {
     private void SetDetails(HashMap<String, String> hashmessinfo) {
 
 
-        loadBottomNavigationView(hashmessinfo.get("Contact"),hashmessinfo.get("Location"));
+        loadBottomNavigationView(hashmessinfo.get("Contact"),hashmessinfo.get("Location"),hashmessinfo);
         setMessTimeDetails(hashmessinfo.get("LunchOpen"),hashmessinfo.get("LunchClose"),
                 hashmessinfo.get("DinnerOpen"),hashmessinfo.get("DinnerClose"));
         setPrices(hashmessinfo.get("GuestCharge"),hashmessinfo.get("MonthlyCharge"));
@@ -377,7 +377,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
 
 
-    private void loadBottomNavigationView(final String num, String loc) {
+    private void loadBottomNavigationView(final String num, final String loc, final HashMap<String, String> hashmessinfo) {
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
@@ -404,7 +404,7 @@ public class MessInfoActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.action_locate:
-                                String uri = String.format(Locale.ENGLISH, "https://goo.gl/maps/3r6R7FerPC52");//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
+                                String uri = String.format(Locale.ENGLISH, loc);//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
                                 Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                                 startActivity(intent1);
                                 break;
@@ -412,7 +412,13 @@ public class MessInfoActivity extends AppCompatActivity {
                             case R.id.action_share:
                                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                                 sharingIntent.setType("text/plain");
-                                String shareBody = "Ae Bhenchod!";
+                                String shareBody = "*"+hashmessinfo.get("Name")+"*"
+                                        +"\n"+"Address: "+hashmessinfo.get("Address")
+                                        +"\n"+"Monthly Charge: ₹"+hashmessinfo.get("MonthlyCharge")
+                                        +"\n"+"Guest Charge: ₹"+hashmessinfo.get("GuestCharge")
+                                        +"\n"+"Contact: "+hashmessinfo.get("Contact")+
+                                        "\n\nTap for more: "+
+                               "https://goo.gl/KiLH44 \n\n";
 //                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
                                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 //                                startActivity(Intent.createChooser(sharingIntent, "Share via"));

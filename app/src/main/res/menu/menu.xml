@@ -10,12 +10,13 @@
         android:visible="true"
         android:title="Your College">
     </item>-->
-    <item
+   <!-- <item
         android:id="@+id/filtersorticon"
         android:icon="@drawable/ic_filter_list_white_24dp"
-        app:showAsAction="always"
+        android:visible="false"
+        app:showAsAction="never"
         android:title="Filter">
     </item>
-
+-->
 
 </menu>

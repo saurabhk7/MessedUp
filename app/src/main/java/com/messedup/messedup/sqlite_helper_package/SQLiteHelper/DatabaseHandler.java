@@ -244,6 +244,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         final String TAG_STATUS = context.getString(R.string.TAG_STATUS);
         final String TAG_OPENTIME = context.getString(R.string.TAG_OPENTIME);
         final String TAG_CLOSETIME = context.getString(R.string.TAG_CLOSETIME);
+        final String TAG_OPENCLOSE="openstatus";
 
 
 
@@ -267,6 +268,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     String special = c.getString(TAG_SPECIAL).trim();
                     String special_extra = c.getString(TAG_SPECIAL_EXTRA).trim();
                     String other = c.getString(TAG_OTHER).trim();
+                    String openclose=c.getString(TAG_OPENCLOSE).trim();
 
                     String gcharge = c.getString(TAG_GCHARGE).trim();
                     String otime = c.getString(TAG_OPENTIME).trim();
@@ -291,6 +293,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     map.put(TAG_SPECIAL, special);
                     map.put(TAG_SPECIAL_EXTRA, special_extra);
                     map.put(TAG_OTHER, other);
+                    map.put(TAG_OPENCLOSE,openclose);
 
                     map.put(TAG_GCHARGE, gcharge);
                     map.put(TAG_OPENTIME, otime);

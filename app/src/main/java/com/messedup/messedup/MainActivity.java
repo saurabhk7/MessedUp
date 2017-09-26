@@ -1,11 +1,14 @@
 package com.messedup.messedup;
 
+import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
@@ -17,8 +20,10 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -35,9 +40,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.admobs_activity.AdMobsActivity;
 import com.messedup.messedup.connection_handlers.HttpHandler;
@@ -54,6 +62,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -61,15 +71,14 @@ import static android.support.v4.app.FragmentTransaction.TRANSIT_NONE;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button SignOutBtn;
-    SearchView searchMess;
-    private String[] areaListArray;
-    ArrayAdapter<String> adapter;
-    public static int NOTIFICATION_COUNT;
-    LayerDrawable notif_icon;
-    private static int FLAG;
+
     public static  Spinner spinner;
-    public static final ArrayList<String> college_list=new ArrayList<>();
+    public static  ArrayList<String> college_list=new ArrayList<>();
+    public static final HashSet<String> college_list2=new HashSet<>();
+    public static AdRequest adRequest;
+    public BottomBarTab notifs;
+    private DetailsSharedPref detailsSharedPref;
+
 
     /*UI Attributes*/
     Toolbar toolbar;
@@ -105,24 +114,13 @@ public class MainActivity extends AppCompatActivity {
 
         //initializing the toolbar view
         initToolBar();
+        loadAddinBack();
 
-/*
 
-        //Setting Up Database and Shared Pref Objects to retrieve the Stored Menu
-        databaseHandler=new DatabaseHandler(this);
-        sharedPrefHandler=new SharedPrefHandler(this);
+        detailsSharedPref=new DetailsSharedPref(this);
 
-        //Populating the Menu ArrayList
-        MenuArrayList=databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
-        if(MenuArrayList==null)        {
-            Toast.makeText(this,"Please Check Your Connection and Refresh",Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Log.e("MAIN ACT ", MenuArrayList.toString());
-            Toast.makeText(this,MenuArrayList.toString(),Toast.LENGTH_LONG).show();
-        }
-*/
-
+        if(detailsSharedPref.getWalkThroughStatus().equals("notdone"))
+            startIntro(this);
 
         // Firebase User Error Handling
         TextView phoneTxtView = (TextView)findViewById(R.id.PhoneNumTxtView);
@@ -136,27 +134,100 @@ public class MainActivity extends AppCompatActivity {
         //Setting Up Bottombar
         BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         bottomBar.setDefaultTab(R.id.tab_menu); //sets the initial tab as menu tab
-        final BottomBarTab notifs = bottomBar.getTabWithId(R.id.tab_notifs);
+        notifs = bottomBar.getTabWithId(R.id.tab_notifs);
         int notifcount; //TODO: get the no. of offers count from count(*) off offers offline table
         notifcount=3;   //temp value
-        notifs.setBadgeCount(notifcount);
+        notifs.setBadgeCount(0);
+
+
+        int REQUEST_PHONE_CALL = 1;
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+        }
 
 
         final int[] PREVIOUS_TAB = {R.id.tab_menu};
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
-            public void onTabSelected(@IdRes int tabId) {
+            public void onTabSelected(@IdRes final int tabId) {
                 Fragment selectedFragment = null;
                 switch (tabId) {
                     case R.id.tab_notifs:
-                        selectedFragment = NotifFragment.newInstance();
+                        spinner = (Spinner) findViewById(R.id.categorySpinner);
+                        spinner.animate().alpha(0.0f).setDuration(500)
+                                .setListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
 
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        spinner.setVisibility(View.GONE);
+                                        TextView toolup=(TextView)toolbar.findViewById(R.id.spinner_text_title);
+                                        TextView tooldown=(TextView)toolbar.findViewById(R.id.spinner_text_view);
+
+                                        toolup.setVisibility(View.VISIBLE);
+                                        tooldown.setVisibility(View.VISIBLE);
+
+                                        toolup.setText("SELECTED AREA");
+
+                                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                        String PreStoredArea = preferences.getString("selectedarea", getApplicationContext().getString(R.string.pict));
+                                        tooldown.setText(PreStoredArea);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
+
+
+                        //  spinner.setVisibility(View.INVISIBLE);
+
+                        selectedFragment = NotifFragment.newInstance();
                         replaceFragmentWithAnimationtoRight(selectedFragment, "tag");
                         notifs.removeBadge();
                         PREVIOUS_TAB[0] =R.id.tab_notifs;
                         break;
                     case R.id.tab_menu:
+                        spinner = (Spinner) findViewById(R.id.categorySpinner);
+                        spinner.animate().alpha(1.0f).setDuration(0)
+                                .setListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
 
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        TextView toolup=(TextView)toolbar.findViewById(R.id.spinner_text_title);
+                                        TextView tooldown=(TextView)toolbar.findViewById(R.id.spinner_text_view);
+
+                                        toolup.setVisibility(View.GONE);
+                                        tooldown.setVisibility(View.GONE);
+                                        spinner.setVisibility(View.VISIBLE);
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
+
+                        //  spinner.setVisibility(View.VISIBLE);
                         selectedFragment = MenuFragment.newInstance();
                         ;
                         if(PREVIOUS_TAB[0]==R.id.tab_profile)
@@ -167,6 +238,43 @@ public class MainActivity extends AppCompatActivity {
                         PREVIOUS_TAB[0] =R.id.tab_menu;
                         break;
                     case R.id.tab_profile:
+                        spinner = (Spinner) findViewById(R.id.categorySpinner);
+                        spinner.animate().alpha(0.0f).setDuration(500)
+                                .setListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        spinner.setVisibility(View.GONE);
+                                        TextView toolup=(TextView)toolbar.findViewById(R.id.spinner_text_title);
+                                        TextView tooldown=(TextView)toolbar.findViewById(R.id.spinner_text_view);
+
+                                        toolup.setVisibility(View.VISIBLE);
+                                        tooldown.setVisibility(View.VISIBLE);
+
+                                        toolup.setText("SELECTED AREA");
+
+
+                                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                        String PreStoredArea = preferences.getString("selectedarea", getApplicationContext().getString(R.string.pict));
+                                        tooldown.setText(PreStoredArea);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                });
+
+                        // spinner.setVisibility(View.INVISIBLE);
                         selectedFragment = ProfileFragment.newInstance();
                         replaceFragmentWithAnimationtoLeft(selectedFragment, "tag");
                         PREVIOUS_TAB[0] =R.id.tab_profile;
@@ -189,10 +297,16 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     }
 
+    private void loadAddinBack() {
+
+        if(isNetworkAvailable())
+            new LoadAd(this).execute();
 
 
+    }
 
 
     @Override
@@ -265,16 +379,27 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
 
 
+        Log.e("BEFORE CLEAR","**"+college_list.toString());
 
         college_list.clear();
+
+        Log.e("AFTER CLEAR","**"+college_list.toString());
+
 
         if(isNetworkAvailable())
             new GetNBCollege(this).execute();
         else {
 
 
+            //TODO: take college list from spinner
             college_list.add(this.getString(R.string.pict));
             college_list.add(this.getString(R.string.bvp));
+
+            college_list=removeDup(college_list);
+
+            Log.e("ADDED NO INTER","**"+college_list.toString());
+
+
        /* college_list.add(this.getString(R.string.sinhagad));
         college_list.add(this.getString(R.string.skn));
         college_list.add(this.getString(R.string.vit));
@@ -329,13 +454,34 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+    private ArrayList<String> removeDup(ArrayList<String> college_list) {
+
+        ArrayList<String> nonDupList = new ArrayList<String>();
+
+        Iterator<String> dupIter = college_list.iterator();
+        while(dupIter.hasNext())
+        {
+            String dupWord = dupIter.next();
+            if(nonDupList.contains(dupWord))
+            {
+                dupIter.remove();
+            }else
+            {
+                nonDupList.add(dupWord);
+            }
+        }
+
+        return nonDupList;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 // Handle item selection
         switch (item.getItemId()) {
-            case R.id.filtersorticon:
+            /*case R.id.filtersorticon:
                 Toast.makeText(MainActivity.this, "Set The Filter Options", Toast.LENGTH_SHORT).show();
-                return true;
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -397,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
                         college_list.add(colleges.getString(i));
                     }
 
-
+                    Log.e("ADDED WITH INTER","**"+college_list.toString());
 
                 } else {
 //                Toast.makeText(mcontext, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
@@ -414,6 +560,8 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
 //        if (pDialog.isShowing()) {
 
+
+            college_list=removeDup(college_list);
 
             Collections.sort(college_list);
 
@@ -444,6 +592,161 @@ public class MainActivity extends AppCompatActivity {
 //            pDialog.dismiss();
 //        }
         }
+    }
+
+    class LoadAd extends AsyncTask<Void, Void, Void> {
+
+        private String TAG = MainActivity.class.getSimpleName();
+        private ProgressDialog pDialog;
+        private Context mcontext;
+
+        LoadAd(Context context)
+        {
+            mcontext=context;
+        }
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    // Check the LogCat to get your test device ID
+                    .addTestDevice("5C57F9C1972E25B91E244E6898A7A78B")
+                    .build();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            // Toast.makeText(mcontext,"Ad Loaded in back",Toast.LENGTH_SHORT).show();
+
+
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+
+
+    private void startIntro(final Context mContext)
+    {
+
+
+        TapTargetSequence sequence= new TapTargetSequence(this)
+                .targets(
+                        TapTarget.forView(findViewById(R.id.spinner_text_title), "Your College Area", "Tap to select your area!\n(If not found we are soon coming there:P)")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.transparentcol)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(135) ,                 // Specify the target radius (in dp),
+
+                        TapTarget.forView(findViewById(R.id.tab_menu), "Menu of your selected area", "Menu of the Messes around your area!")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)  ,                // Specify the target radius (in dp)
+
+                        TapTarget.forView(findViewById(R.id.tab_notifs), "Notifications and Announcements", "You'll get all the updates regarding the Messes around your area!")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)  ,                // Specify the target radius (in dp)
+                        TapTarget.forView(findViewById(R.id.tab_profile), "Your Profile", "Your details ! \n(Which you already know :P)")
+                                .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                                .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                                .titleTextSize(20)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.white)      // Specify the color of the title text
+                                .descriptionTextSize(18)            // Specify the size (in sp) of the description text
+                                .descriptionTextColor(R.color.blue)  // Specify the color of the description text
+                                .textColor(R.color.white)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                // .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                                .targetRadius(70)                 // Specify the target radius (in dp),
+
+
+                )
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+
+                        DetailsSharedPref dsp=new DetailsSharedPref(mContext);
+
+                        dsp.updateWalkThrough("done");
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+
+                        DetailsSharedPref dsp=new DetailsSharedPref(mContext);
+
+                        dsp.updateWalkThrough("done");
+                    }
+                });
+
+        sequence.start();
+
     }
 
 

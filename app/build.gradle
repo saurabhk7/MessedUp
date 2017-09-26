@@ -63,7 +63,10 @@ dependencies {
 
 
     //TEMP TEST UI
+    compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
 
+    //SPLASHCREEN UI
+    compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
 
     testCompile 'junit:junit:4.12'
 }

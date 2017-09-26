@@ -21,7 +21,7 @@ public class ClosingActivity extends AppCompatActivity {
 
 
     TextView ClosingMsgTxt;
-    static int TIMEOUT=3000;
+    static int TIMEOUT=1000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class ClosingActivity extends AppCompatActivity {
 
         }
 
-     
+
 
         if(!dobj.getNameSharedPrefs().equals("NAME")) {
             String name;

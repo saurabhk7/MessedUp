@@ -9,7 +9,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/black"
     tools:context="com.messedup.messedup.signin_package.GoogleSignIn">
+
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/logo_144"
+                android:id="@+id/imageView5"
+                android:scaleX="1"
+                android:scaleY="1"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:textColor="#fff"
+                android:textSize="27sp"
+                android:layout_marginTop="35dp"
+                android:gravity="center_horizontal"
+                android:layout_below="@id/imageView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3"
+                android:typeface="sans"
+                android:fontFamily="sans-serif-condensed"
+                android:text="Messed Up!"
+                android:textAlignment="center" />
+
+
+        </RelativeLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
 
     <com.google.android.gms.common.SignInButton
         android:layout_width="wrap_content"

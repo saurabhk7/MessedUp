@@ -1,10 +1,14 @@
 package com.messedup.messedup;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,15 +17,40 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class AboutUsActivity extends AppCompatActivity {
 
     TextView name1,name2,name3,name4;
     TextView email1,email2,email3,email4;
+    TextView versionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar3);
+        TextView toolbarTextView = (TextView) findViewById(R.id.toolbar_title);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        versionText=(TextView)findViewById(R.id.VersionAbtTxt);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        versionText.setText("version: "+pInfo.versionName);
+
 
 
         SetDetails1(this,"Dipak Wani","wanidipak56@gmail.com","https://wanidipak56.000webhostapp.com/Photos/Dipak.png");
@@ -158,6 +187,11 @@ public class AboutUsActivity extends AppCompatActivity {
         email4.setText(s1);
 
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
 
