@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,12 +25,16 @@ import android.transition.Explode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.messedup.messedup.adapters.TabsPagerAdapter;
 import com.messedup.messedup.connection_handlers.HttpHandler;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
+import com.messedup.messedup.ui_package.CircleTransform;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +79,9 @@ public class MessInfoActivity extends AppCompatActivity {
 
 
 
+
+
+
         toolbarTextView = (TextView) findViewById(R.id.toolbar_title);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -87,7 +96,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
 
         String MessID;
-        MenuCardView MessObj;
+        MenuCardView MessObj = null;
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -97,7 +106,7 @@ public class MessInfoActivity extends AppCompatActivity {
                 MessObj = (MenuCardView) extras.getSerializable("messobj");
                 if (MessObj != null) {
                     MessID = MessObj.getMessID();
-                   String urlname= getURLString( MessID );
+                    String urlname= getURLString( MessID );
                     Toast.makeText(this, "Show Info of : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
                     GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
@@ -129,6 +138,35 @@ public class MessInfoActivity extends AppCompatActivity {
             }
 
         }
+
+
+        final ImageView ProfilePic = (ImageView)findViewById(R.id.ProfilePicImg);
+
+
+
+
+        String name= null;
+        if (MessObj != null) {
+            name = (MessObj.getMessID().substring(0,1)).toLowerCase();
+        }
+
+        TextDrawable drawable=TextDrawable.builder()
+                .beginConfig()
+                .fontSize(90)
+                .bold()
+                .toUpperCase()
+                .endConfig()
+                .buildRound(name, Color.parseColor("#da3340"));
+
+        ProfilePic.setImageDrawable(drawable);
+
+      /*  int id = getResources().getIdentifier("com.messedup.messedup:drawable/" + name, null, null);
+
+
+        Picasso.with(this).load(id).transform(new CircleTransform()).into(ProfilePic);
+*/
+
+
 
 
        /* GetMenu obj = new GetMenu(MessInfoActivity.this);
@@ -201,7 +239,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + urlMess);
-           // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
+            // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
 
             Log.e(TAG, "Response from url: " + jsonStr);
 
@@ -311,7 +349,7 @@ public class MessInfoActivity extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             Log.e("url mess: ",urlMess);
             String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=" + urlMess);
-           // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
+            // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
 
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
@@ -418,7 +456,7 @@ public class MessInfoActivity extends AppCompatActivity {
                                         +"\n"+"Guest Charge: ₹"+hashmessinfo.get("GuestCharge")
                                         +"\n"+"Contact: "+hashmessinfo.get("Contact")+
                                         "\n\nTap for more: "+
-                               "https://goo.gl/KiLH44 \n\n";
+                                        "https://goo.gl/KiLH44 \n\n";
 //                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
                                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 //                                startActivity(Intent.createChooser(sharingIntent, "Share via"));

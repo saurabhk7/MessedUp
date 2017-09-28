@@ -20,6 +20,18 @@ public class DetailsSharedPref {
     }
 
 
+    public void updateDetailsSent(String status) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("details", status);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF details : ",status);
+
+    }
+
     public void updateWalkThrough(String status) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -29,6 +41,18 @@ public class DetailsSharedPref {
         editor.commit();
 
         Log.e("SHRDPRF walk : ",status);
+
+    }
+
+    public void updateRate(String rate) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("rate", rate);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF rate : ",rate);
 
     }
 
@@ -126,6 +150,26 @@ public class DetailsSharedPref {
         String PreStoredArea = preferences.getString("walk", "notdone");
         //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         Log.e("SHRDPRF walk: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getRateStatus() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("rate", "show");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF rate: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getDetailsSent() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("details", "notsuccess");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF detailsret: ",PreStoredArea);
 
         return PreStoredArea;
 

@@ -1,13 +1,17 @@
 package com.messedup.messedup;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,8 +21,12 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.connection_check.ConnectionManager;
@@ -51,6 +59,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class SplashScreen extends AppCompatActivity {
 
 
+    private static final String COMP_UPDATE_KEY = "compulsary_update";
+    private static final String STORE_VERSION_KEY = "store_version_code";
+
+
+
     public ConnectionManager connectionManager;
     LoadAllMess lam;
     public DatabaseHandler db;
@@ -61,6 +74,7 @@ public class SplashScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DetailsSharedPref dspobj2;
+    public FirebaseRemoteConfig mFirebaseRemoteConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +89,26 @@ public class SplashScreen extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
 
+
+        //   ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
+
+
+        /*mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+
+
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+
+        fetchWelcome();
+
+*/
+
+
+
+
         ShimmerFrameLayout container =
                 (ShimmerFrameLayout) findViewById(R.id.shimmer_view_container);
 
@@ -84,16 +118,88 @@ public class SplashScreen extends AppCompatActivity {
         container.setDropoff((float) 0.6);
         container.startShimmerAnimation();
 
+
+
+
         connectionManager=new ConnectionManager(this);
+
+        if(connectionManager.isNetworkAvailable()) {
+
+            SPLASH_TIME_OUT=7000;
+
+        }
+        else
+        {
+            SPLASH_TIME_OUT=3000;
+        }
+
         if(connectionManager.isNetworkAvailable())
         {
 
 
             lam = new LoadAllMess(thiscontext);
             lam.execute();
-            SPLASH_TIME_OUT = 10000;
+
+
+
+            new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+                @Override
+                public void run() {
+                    if(lam.getStatus() == AsyncTask.Status.RUNNING)
+                    {
+                        lam.cancel(true);
+                        Toast.makeText(SplashScreen.this, "Slow Internet :/", Toast.LENGTH_SHORT).show();
+
+
+               /* }
+
+                else
+                {
+*/
+                        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                        if(currentUser!=null)
+                        {
+                            GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
+
+                            Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                            gobj.updateFromSharedPref("splash");
+                            dspobj2.updateMealStatusSharedPref("OFFLINE");
+
+                            Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menu", Toast.LENGTH_SHORT).show();
+                            startActivity(i);
+                        }
+                        else {
+
+                            GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
+                            dspobj2.updateMealStatusSharedPref("OFFLINE");
+                            gobj.updateFromSharedPref("splash");
+
+                            Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
+                            startActivity(i);
+
+                        }
+                        // close this activity
+                        finish();
+                        //  Toast.makeText(getApplicationContext(),"could not load mess",Toast.LENGTH_LONG);
+                    }
+
+
+                }
+            }, SPLASH_TIME_OUT);
+
+
         }
         else {
+
+
+
             dspobj2.updateMealStatusSharedPref("OFFLINE");
             SuperActivityToast.create(SplashScreen.this, new Style(), Style.TYPE_BUTTON)
                     .setIconResource(Style.ICONPOSITION_LEFT,R.drawable.ic_error_outline_white_24dp)
@@ -102,56 +208,61 @@ public class SplashScreen extends AppCompatActivity {
                     .setFrame(Style.FRAME_LOLLIPOP)
                     .setColor(Color.parseColor("#cb202d"))
                     .setAnimations(Style.ANIMATIONS_POP).show();
-            SPLASH_TIME_OUT = 3000;
-        }
-        new Handler().postDelayed(new Runnable() {
+
+
+            new Handler().postDelayed(new Runnable() {
 
             /*
              * Showing splash screen with a timer. This will be useful when you
              * want to show case your app logo / company
              */
 
-            @Override
-            public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
+                @Override
+                public void run() {
 
-                //
+                    GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
 
-                if(lam.getStatus() == AsyncTask.Status.FINISHED)
-                {
+                    Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                    gobj.updateFromSharedPref("splash");
+                    dspobj2.updateMealStatusSharedPref("OFFLINE");
+
+                    startActivity(i);
 
                 }
+            },SPLASH_TIME_OUT);
 
-                else
-                {
 
-                    FirebaseUser currentUser = mAuth.getCurrentUser();
 
-                    if(currentUser!=null)
-                    {
-                        GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
 
-                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        gobj.updateFromSharedPref("splash");
-                        dspobj2.updateMealStatusSharedPref("OFFLINE");
 
-                        Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menuhkfkfs", Toast.LENGTH_SHORT).show();
-                        startActivity(i);
-                    }
-                    else {
+        }
+    }
 
-                        Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
-                        startActivity(i);
-
-                    }
-                    // close this activity
-                    finish();
-                    //  Toast.makeText(getApplicationContext(),"could not load mess",Toast.LENGTH_LONG);
-                }
-
-            }
-        }, SPLASH_TIME_OUT);
+    /*  @Override
+      public void onUpdateNeeded(final String updateUrl) {
+          AlertDialog dialog = new AlertDialog.Builder(this)
+                  .setTitle("New version available")
+                  .setMessage("Please, update app to new version to continue reposting.")
+                  .setPositiveButton("Update",
+                          new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(DialogInterface dialog, int which) {
+                                  redirectStore(updateUrl);
+                              }
+                          }).setNegativeButton("No, thanks",
+                          new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(DialogInterface dialog, int which) {
+                                  finish();
+                              }
+                          }).create();
+          dialog.show();
+      }
+  */
+    private void redirectStore(String updateUrl) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 
@@ -191,7 +302,7 @@ public class SplashScreen extends AppCompatActivity {
             contextFinal = cont;
             String preselectArea = getSharedPrefs();
             MessArea = preselectArea;
-             dspobj=new DetailsSharedPref(contextFinal);
+            dspobj=new DetailsSharedPref(contextFinal);
 
             Log.i("SPLASH SCREEN SHARED", preselectArea);
         }
@@ -521,6 +632,61 @@ public class SplashScreen extends AppCompatActivity {
 
 
     }
+
+
+    private void fetchWelcome() {
+        Toast.makeText(this,mFirebaseRemoteConfig.getString(COMP_UPDATE_KEY),Toast.LENGTH_SHORT).show();
+
+        Log.e("1","1"+mFirebaseRemoteConfig.getString(COMP_UPDATE_KEY));
+
+        long cacheExpiration = 3600; // 1 hour in seconds.
+        // If your app is using developer mode, cacheExpiration is set to 0, so each fetch will
+        // retrieve values from the service.
+        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+            cacheExpiration = 0;
+        }
+
+        // [START fetch_config_with_callback]
+        // cacheExpirationSeconds is set to cacheExpiration here, indicating the next fetch request
+        // will use fetch data from the Remote Config service, rather than cached parameter values,
+        // if cached parameter values are more than cacheExpiration seconds old.
+        // See Best Practices in the README for more information.
+        mFirebaseRemoteConfig.fetch(cacheExpiration)
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SplashScreen.this, "Fetch Succeeded",
+                                    Toast.LENGTH_SHORT).show();
+
+                            // After config data is successfully fetched, it must be activated before newly fetched
+                            // values are returned.
+                            mFirebaseRemoteConfig.activateFetched();
+                        } else {
+                            Toast.makeText(SplashScreen.this, "Fetch Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        displayDialog();
+                    }
+                });
+        // [END fetch_config_with_callback]
+    }
+
+
+    private void displayDialog() {
+        // [START get_config_values]
+        String welcomeMessage = mFirebaseRemoteConfig.getString(STORE_VERSION_KEY);
+        // [END get_config_values]
+        if (mFirebaseRemoteConfig.getBoolean(COMP_UPDATE_KEY)) {
+            Toast.makeText(this,"!"+welcomeMessage,Toast.LENGTH_SHORT).show();
+            Log.e("2","2"+welcomeMessage);
+        } else {
+            Log.e("3","3"+welcomeMessage);
+        }
+    }
+
+
+
 
     @Override
     protected void attachBaseContext(Context newBase) {

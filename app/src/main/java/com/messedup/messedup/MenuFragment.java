@@ -25,10 +25,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidsx.rateme.RateMeDialogTimer;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
@@ -38,6 +41,8 @@ import com.messedup.messedup.adapters.MyAdapter;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
+import com.messedup.messedup.ui_package.RateUsDialogFragment;
+import com.messedup.messedup.ui_package.SampleDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -209,6 +214,10 @@ public class MenuFragment extends Fragment {
         //set up the view
         OnCreaterootView = inflater.inflate(R.layout.fragment_card, container, false);
 
+
+
+      //  getUserDetails2(OnCreaterootView);
+
       //  startIntro(OnCreaterootView);
 
         //DATABASE HANDLER OBJECT
@@ -282,6 +291,8 @@ public class MenuFragment extends Fragment {
                     //Populating the Menu ArrayList
 
                     if(gobj.getFromSharedPref().equals("splash")) {
+
+                        Log.e("FROM: ","splash");
                         MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
                         gobj.updateFromSharedPref("splashdone");
 
@@ -308,8 +319,6 @@ public class MenuFragment extends Fragment {
                             Toast.makeText(OnCreaterootView.getContext(), "Please Check Your Connection and Refresh", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e("Total Menu : ", MenuArrayList.toString());
-
-
 
                             intializeList(OnCreaterootView);
                             //initiateRefresh(OnCreaterootView);
@@ -340,7 +349,13 @@ public class MenuFragment extends Fragment {
         return OnCreaterootView;
     }
 
+    private void showRateUsDialog(View onCreaterootView) {
 
+        RateUsDialogFragment fragment
+                = RateUsDialogFragment.newInstance(5,10.0f,true,false);
+        fragment.show(getActivity().getFragmentManager(), "blur_sample");
+
+    }
 
 
     @Override
@@ -455,6 +470,7 @@ public class MenuFragment extends Fragment {
         try {
             if (mSwipeRefreshLayout.isRefreshing())
                 mSwipeRefreshLayout.setRefreshing(false);
+            afterRefresh();
         }
         catch (Exception e)
         {
@@ -462,9 +478,76 @@ public class MenuFragment extends Fragment {
         }
     }
 
+    private void getUserDetails2(View view) {
+
+        String Username,UserID,UserEmail,UserContact;
 
 
 
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            int i = 0;
+            FirebaseUser CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            Log.e("USERID: ",""+CurrentUser.getUid());
+
+
+            for (UserInfo profile : CurrentUser.getProviderData()) {
+
+                i++;
+                // Id of the provider (ex: google.com)
+                String providerId = profile.getProviderId();
+
+                // UID specific to the provider
+
+                // Name, email address, and profile photo Url
+
+
+
+                if (providerId.equals("google.com")) {
+                    Username = profile.getDisplayName();
+                    Log.e("NAME: ",Username);
+
+                }
+
+
+
+                if (providerId.equals("firebase")) {
+
+                    UserEmail = profile.getEmail();
+                    Log.e("EMAIL: ",UserEmail);
+
+                }
+
+
+
+            }
+
+
+            UserContact=CurrentUser.getPhoneNumber();
+            Log.e("PHONE: ",""+UserContact);
+
+            UserID=CurrentUser.getUid();
+            Log.e("UID: ",""+UserID);
+
+
+        }
+
+
+
+    }
+
+    private void afterRefresh() {
+
+        RateMeDialogTimer.onStart(OnCreaterootView.getContext());
+
+        DetailsSharedPref dsp=new DetailsSharedPref(OnCreaterootView.getContext());
+        if (RateMeDialogTimer.shouldShowRateDialog(OnCreaterootView.getContext(), 0, 0)&&!dsp.getRateStatus().equals("notshow")) {
+            // show the dialog with the code above
+
+             showRateUsDialog(OnCreaterootView);
+        }
+
+    }
 
 
     /**
@@ -1150,6 +1233,9 @@ public class MenuFragment extends Fragment {
 
         return messID;
     }
+
+
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

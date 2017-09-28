@@ -139,7 +139,7 @@
                         android:layout_width="70dp"
                         app:srcCompat="@drawable/user_default_pic"
                         android:layout_below="@+id/header_cover_image"
-                        android:background="@drawable/profile_circular_border_imageview"
+                        android:background="@drawable/messinfo_circular_border_imageview"
                         android:id="@+id/ProfilePicImg"
                         android:layout_marginTop="-35dp"
                         android:elevation="8dp"

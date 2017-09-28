@@ -145,6 +145,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         database.close();
     }
+
+
+    public ArrayList<String> getAllNBCollege()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> nbcoll = new ArrayList<>();
+        Cursor cursor = db.query(MENU_TABLE_NAME, new String[] { MENU_TABLE_Column_ID}, null,
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                nbcoll.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return nbcoll;
+    }
+
+
     /**
      * @param id
      * @use To get the Card Json
@@ -184,6 +203,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
 
+        cursor.close();
         return JSONtoArrayList(jObj);
 
     }

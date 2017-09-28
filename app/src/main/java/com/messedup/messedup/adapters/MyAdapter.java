@@ -115,9 +115,9 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 holder.costTextView.setText(" ₹ "+list.get(position).getGCharge());
 
 
-                if (list.get(position).getStat().equals("0"))
+                if (list.get(position).getStat().equals("1"))
                     holder.MenuUpdatedTextView.setVisibility(View.INVISIBLE);
-                else if(list.get(position).getStat().equals("1"))
+                else if(list.get(position).getStat().equals("0"))
                     holder.MenuUpdatedTextView.setVisibility(View.VISIBLE);
 
 
@@ -133,7 +133,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 StorageReference imageRef = null;
                 try {
-                    imageRef = storageRef.child("specials").child("kheer2" + ".jpg");
+                    imageRef = storageRef.child("specials").child("kheer" + ".jpg");
                 }catch (Exception e)
                 {
                     Log.e("SPECIAL IMAGE","Image not found!");
@@ -503,7 +503,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //  Log.d("IN MY ADAPTER ",""+list.size());
 
         if (list == null) {
-            return 0;
+            return 2;
         }
 
         if (list.size() == 0) {

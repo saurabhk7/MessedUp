@@ -34,6 +34,14 @@
 
     <string name="interstitial_full_screen">ca-app-pub-2262853430578478/1739195261</string>
 
+
+    <string name="my_own_title">Rate Us!</string>
+    <string name="my_own_message">If you love our App, please take a moment to rate it on Google Play!</string>
+    <string name="my_own_rate">Rate</string>
+    <string name="my_own_thanks">No, Thanks</string>
+    <string name="my_own_cancel">Maybe Later</string>
+
+
     <string name="gujratimessdetailsadd">Survey no.34/4, Prasad Bungalow, Katraj\nLandmark: Near Pune Cambridge School.</string>
 
 

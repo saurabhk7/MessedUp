@@ -8,7 +8,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,6 +43,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.0.4'
     compile 'com.firebaseui:firebase-ui-storage:0.6.0' //FIREBASE STORAGE
     compile 'com.google.firebase:firebase-ads:11.0.4'
+    compile 'com.google.firebase:firebase-config:11.0.4' //REMOTE CONFIG
+
 
 
     //GENERAL UI
@@ -67,6 +69,13 @@ dependencies {
 
     //SPLASHCREEN UI
     compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
+
+    //RATE US DIALOG TIMER
+    compile 'com.androidsx:rate-me:4.0.3'
+
+    //ICON PACK UI
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
 
     testCompile 'junit:junit:4.12'
 }

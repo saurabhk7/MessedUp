@@ -65,7 +65,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
         MessCloseBadge = (TextView) v.findViewById(R.id.MessCloseBadge);
         MessCloseBadge.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_white_24dp, 0, 0, 0);
         MenuUpdatedTextView = (TextView) v.findViewById(R.id.menu_update_status);
-        MenuUpdatedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_done_all_white_24dp, 0, 0, 0);
+        MenuUpdatedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_light_bulb, 0, 0, 0);
         costTextView = (TextView) v.findViewById(R.id.costTextView);
         costTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_coins, 0, 0, 0);
         favorite = (MaterialFavoriteButton) v.findViewById(R.id.favButton);

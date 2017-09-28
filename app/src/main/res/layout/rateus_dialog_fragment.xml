@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/my_own_title"
+        android:id="@+id/DialogtextView"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DialogtextView"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/my_own_message"
+        android:id="@+id/DialogDetails"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/DialogDetails"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/ratingBar2" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_below="@id/ratingBar2"
+        android:layout_height="wrap_content">
+
+
+        <Button
+            android:text="@string/my_own_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_trans_border_2"
+            android:id="@+id/RateNowBtn"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/app_green"
+            android:textStyle="normal|bold" />
+
+        <Button
+            android:text="@string/my_own_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_trans_border_3"
+            android:id="@+id/MaybeLaterBtn"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="#FFC107"
+            android:textStyle="normal|bold" />
+
+
+        <Button
+            android:text="@string/my_own_thanks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/NoThanksBtn"
+            android:layout_weight="1"
+            android:background="@drawable/button_trans_border"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="normal|bold"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

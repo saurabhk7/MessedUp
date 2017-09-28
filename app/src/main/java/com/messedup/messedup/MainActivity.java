@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,20 +47,36 @@ import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
+import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.admobs_activity.AdMobsActivity;
 import com.messedup.messedup.connection_handlers.HttpHandler;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
+import com.messedup.messedup.ui_package.CircleTransform;
 import com.messedup.messedup.ui_package.CustomAdapter;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,6 +88,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static android.support.v4.app.FragmentTransaction.TRANSIT_NONE;
 
 public class MainActivity extends AppCompatActivity {
+
 
 
     public static  Spinner spinner;
@@ -117,7 +136,14 @@ public class MainActivity extends AppCompatActivity {
         loadAddinBack();
 
 
+
+
+
         detailsSharedPref=new DetailsSharedPref(this);
+
+        if(!detailsSharedPref.getDetailsSent().equals("success"))
+            getUserDetails(this);
+
 
         if(detailsSharedPref.getWalkThroughStatus().equals("notdone"))
             startIntro(this);
@@ -300,6 +326,81 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void getUserDetails(Context context) {
+
+        String Username = null,UserID,UserEmail=null,UserContact;
+
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            int i = 0;
+            FirebaseUser CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+            for (UserInfo profile : CurrentUser.getProviderData()) {
+
+                i++;
+                // Id of the provider (ex: google.com)
+                String providerId = profile.getProviderId();
+
+                // UID specific to the provider
+
+                // Name, email address, and profile photo Url
+
+
+
+                if (providerId.equals("google.com")) {
+                    Username = profile.getDisplayName();
+
+                }
+
+
+
+                if (providerId.equals("firebase")) {
+
+                    UserEmail = profile.getEmail();
+
+                }
+
+
+
+            }
+
+
+            UserContact=CurrentUser.getPhoneNumber();
+
+            UserID=CurrentUser.getUid();
+
+            sendUserDetails(UserID,Username,UserEmail,UserContact,context);
+
+        }
+
+
+
+
+
+
+    }
+
+    public void sendUserDetails(String UserID,String Username,String UserEmail,String UserContact ,Context context)
+    {
+        Log.e("UID: ",""+UserID);
+
+        Log.e("NAME: ",Username);
+
+        Log.e("EMAIL: ",UserEmail);
+
+        Log.e("PHONE: ",""+UserContact);
+
+
+        SendUserDetails sendUserDetails=new SendUserDetails(UserID,Username,UserEmail,UserContact,context);
+
+
+        sendUserDetails.execute();
+
+    }
+
     private void loadAddinBack() {
 
         if(isNetworkAvailable())
@@ -375,8 +476,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        final ProgressDialog pDialogGetNB;
 
 
         Log.e("BEFORE CLEAR","**"+college_list.toString());
@@ -386,14 +491,107 @@ public class MainActivity extends AppCompatActivity {
         Log.e("AFTER CLEAR","**"+college_list.toString());
 
 
-        if(isNetworkAvailable())
-            new GetNBCollege(this).execute();
+        if(isNetworkAvailable()) {
+
+
+           Toast.makeText(this,"Searching messes in your Area!",Toast.LENGTH_SHORT).show();
+
+
+            int SPLASH_TIME_OUT=6000;
+            final GetNBCollege getNBCollege=new GetNBCollege(this);
+            getNBCollege.execute();
+
+            new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+                @Override
+                public void run() {
+
+                    if(getNBCollege.getStatus() == AsyncTask.Status.RUNNING)
+                    {
+                        getNBCollege.cancel(true);
+                        Toast.makeText(MainActivity.this, "Slow Internet :/", Toast.LENGTH_LONG).show();
+
+                        DetailsSharedPref dspobj2=new DetailsSharedPref(getApplicationContext());
+                        dspobj2.updateMealStatusSharedPref("OFFLINE");
+
+
+                        DatabaseHandler mdDatabaseHandleroffline=new DatabaseHandler(getApplicationContext());
+
+                        college_list= mdDatabaseHandleroffline.getAllNBCollege();
+
+                        Log.e("SIZE:","+"+college_list.size());
+
+                       /* if(college_list.size()==0)
+                        {
+                            college_list.add(getBaseContext().getString(R.string.pict));
+
+                            DatabaseHandler mDatabaseHandleraddDummy=new DatabaseHandler(getBaseContext());
+
+
+
+                            String json = "{\"messinfo\":[{\"messid\":\"Please Check you connection!\",\"rice\":null,\"vegieone\":null,\"vegietwo\":null,\"vegiethree\":null,\"roti\":null,\"special\":null,\"specialextra\":null,\"other\":null,\"opentime\":\"19:00\",\"closetime\":\"21:30\",\"openstatus\":\"0\",\"gcharge\":null,\"status\":\"0\"},{\"messid\":\"Anand Food Xprs\",\"rice\":\"Rice\",\"vegieone\":\"Kutte\",\"vegietwo\":\"Free Account\",\"null\":\"null\",\"roti\":\"null\",\"special\":\"\",\"specialextra\":\"null\",\"other\":\"null\",\"opentime\":\"null\",\"closetime\":\"null\",\"openstatus\":\"0\",\"gcharge\":\"null\",\"status\":\"0\"}],\"meal\":\"offline\",\"success\":1}";
+                            mDatabaseHandleraddDummy.updateMenuCard(getBaseContext().getString(R.string.pict),json);
+
+                            Log.e("updated dummy: ","+"+json);
+
+                        }
+*/
+
+                        //TODO: take college list from spinner
+
+                        college_list=removeDup(college_list);
+
+                        Log.e("ADDED NO INTER","**"+college_list.toString());
+
+                        Collections.sort(college_list);
+
+                        // college_list.add(0,"Select your Area");
+
+
+                        //SET THE SPINNER
+                        spinner = (Spinner) findViewById(R.id.categorySpinner);
+                        spinner.setAdapter(null);
+                        spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+
+
+                        CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), college_list);
+                        spinner.setAdapter(customAdapter);
+
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        String PreStoredArea = preferences.getString("selectedarea", getApplicationContext().getString(R.string.pict));
+                        Log.d("MAINACTIVTY SHARED PREF", "GOT STRING " + PreStoredArea);
+
+                        int ind = college_list.indexOf(PreStoredArea);
+
+                        //INITIALIZE THE SPINNER POSITION
+                        spinner.setSelection(ind);
+
+                    }
+
+
+                }
+            }, SPLASH_TIME_OUT);
+
+
+
+
+        }
         else {
 
 
-            //TODO: take college list from spinner
+            DatabaseHandler mdDatabaseHandleroffline=new DatabaseHandler(this);
+
+            college_list= mdDatabaseHandleroffline.getAllNBCollege();
+
+
+            /*//TODO: take college list from spinner
             college_list.add(this.getString(R.string.pict));
-            college_list.add(this.getString(R.string.bvp));
+            college_list.add(this.getString(R.string.bvp));*/
 
             college_list=removeDup(college_list);
 
@@ -588,6 +786,10 @@ public class MainActivity extends AppCompatActivity {
             //INITIALIZE THE SPINNER POSITION
             spinner.setSelection(ind);
 
+           /* if(pDialogGetNB.isShowing())
+                pDialogGetNB.dismiss();
+*/
+
 
 //            pDialog.dismiss();
 //        }
@@ -748,6 +950,175 @@ public class MainActivity extends AppCompatActivity {
         sequence.start();
 
     }
+
+
+    class SendUserDetails extends AsyncTask<String , Void ,String> {
+
+
+        private View mPassedView;
+        private Context thiscontext;
+        String uid,username,useremail,usercontact;
+
+        String json = "";
+
+        SendUserDetails(String s1,String s2,String s3,String s4,Context context)
+        {
+
+            uid=s1;
+            username=s2;
+            useremail=s3;
+            usercontact=s4;
+
+            thiscontext=context;
+
+
+        }
+
+
+        // products JSONArray
+
+        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
+        private String url_mess_menu = "https://wanidipak56.000webhostapp.com/postUserInfo.php";
+        //ArrayList<HashMap<String, String>> messList;
+
+
+        /**
+         * @use clear the initial Hashmap
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL(url_mess_menu);
+                JSONObject jsonObject = new JSONObject();
+
+
+                Log.e("!!!UID: ",uid);
+
+                Log.e("!!!NAME: ",username);
+
+                Log.e("!!!EMAIL: ",useremail);
+
+                Log.e("!!!PHONE: ",usercontact);
+
+
+                jsonObject.put("userid", uid);
+                jsonObject.put("name", username);
+                jsonObject.put("email", useremail);
+                jsonObject.put("phone", usercontact);
+
+
+
+                String message = jsonObject.toString();
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                Log.i("nnnReply",json);
+
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+
+            if (json.equals("success")) {
+
+                DetailsSharedPref dsp=new DetailsSharedPref(thiscontext);
+
+                Toast.makeText(thiscontext,json,Toast.LENGTH_SHORT).show();
+
+                dsp.updateDetailsSent("success");
+
+            }
+
+        }
+
+
+
+
+
+    }
+
 
 
 }
