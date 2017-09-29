@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
-        android:allowBackup="true"
         android:name=".ApplicationClass"
+        android:allowBackup="true"
         android:icon="@mipmap/logo_red"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -23,31 +23,32 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SplashScreen"
-            android:theme="@style/AppTheme.NoActionTitleBar"
-            android:screenOrientation="portrait">
+        <activity
+            android:name=".SplashScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".signin_package.PhoneNumberAuthentication"
+        <activity
+            android:name=".signin_package.PhoneNumberAuthentication"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".signin_package.GoogleSignIn"
             android:screenOrientation="portrait"
-            />
-        <activity android:name=".signin_package.GoogleSignIn"
-            android:theme="@style/AppTheme.NoActionTitleBar"
-            android:screenOrientation="portrait"
-            />
+            android:theme="@style/AppTheme.NoActionTitleBar" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
-            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".admobs_activity.AdMobsActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".admobs_activity.ClosingActivity"
@@ -58,11 +59,10 @@
             android:name=".MessInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".AboutUsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".AboutUsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".firebase_messaging.MyFirebaseMessagingService">
             <intent-filter>
@@ -82,7 +82,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
-
+        <activity android:name=".IntroActivity"></activity>
     </application>
 
 </manifest>

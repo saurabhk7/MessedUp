@@ -76,6 +76,14 @@ dependencies {
     //ICON PACK UI
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
+    //CHECK UPDATES
+    compile 'com.github.rampo.updatechecker:library:2.1.8'
+
+    //ZOOM IMAGE
+    compile 'com.github.stfalcon:frescoimageviewer:0.5.0'
+
+
+
 
     testCompile 'junit:junit:4.12'
 }

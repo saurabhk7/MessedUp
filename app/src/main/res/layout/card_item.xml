@@ -78,6 +78,20 @@
                     android:paddingRight="15dp"
                     android:paddingLeft="15dp" />-->
 
+               <!--<TextView
+                    android:text=" ₹75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/costTextView"
+                    android:padding="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+
+                    android:textStyle="normal|bold"
+                    android:textSize="16sp"
+                    android:textColor="#303030"
+                    />-->
+
 
                 <TextView
                     android:text="Menu:"
@@ -269,7 +283,7 @@
                 android:background="@drawable/menu_not_updated_badge"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/cardview_light_background"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:clickable="false"
                 tools:clickable="false" />
 
@@ -279,7 +293,7 @@
             <TextView
                 android:text=" Open!"
                 android:textSize="9sp"
-                android:textColor="#59c614"
+                android:textColor="#fff"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/mess_open_state_badge"
                 android:layout_width="wrap_content"

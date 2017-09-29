@@ -422,8 +422,11 @@ public class MenuFragment extends Fragment {
                 else
                 {
 
+                    DatabaseHandler dbhandler=new DatabaseHandler(OnCreaterootView.getContext());
+                    SharedPrefHandler shrprefhndlr=new SharedPrefHandler(OnCreaterootView.getContext());
+
                     final GeneralSharedPref gobj=new GeneralSharedPref(OnCreaterootView.getContext());
-                    MenuArrayList = databaseHandler.getCardJson(sharedPrefHandler.getSharedPrefs());
+                    MenuArrayList = dbhandler.getCardJson(shrprefhndlr.getSharedPrefs());
                     gobj.updateFromSharedPref("splashdone");
 
                     if (MenuArrayList == null) {
@@ -649,6 +652,8 @@ public class MenuFragment extends Fragment {
 
 
                 jsonObject.put("college", MessArea);
+                jsonObject.put("userid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
 
 
                 String message = jsonObject.toString();

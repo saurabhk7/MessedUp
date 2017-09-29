@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +54,7 @@ import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.GeneralSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPrefHandler;
 import com.messedup.messedup.admobs_activity.AdMobsActivity;
+import com.messedup.messedup.admobs_activity.ClosingActivity;
 import com.messedup.messedup.connection_handlers.HttpHandler;
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
@@ -97,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
     public static AdRequest adRequest;
     public BottomBarTab notifs;
     private DetailsSharedPref detailsSharedPref;
+    public InterstitialAd mInterstitialAd= new InterstitialAd(this);
+
+
 
 
     /*UI Attributes*/
@@ -403,8 +408,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadAddinBack() {
 
-        if(isNetworkAvailable())
-            new LoadAd(this).execute();
+        DetailsSharedPref dsp3=new DetailsSharedPref(this);
+        dsp3.updateAdLoadStatus("notloaded");
+
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+
+        if(isNetworkAvailable()) {
+            LoadAd mLoadAd=new LoadAd(this);
+            mLoadAd.execute();
+
+        }
+
 
 
     }
@@ -417,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
             Intent adIntent=new Intent(this, AdMobsActivity.class);
 
             if(isNetworkAvailable())
-                startActivity(adIntent);
+                showInterstitial();
             else
                 appExit();
 
@@ -439,6 +453,17 @@ public class MainActivity extends AppCompatActivity {
                 doubleBackToExitPressedOnce=false;
             }
         }, 2000);
+    }
+
+    private void showInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+        else
+        {
+            appExit();
+            Log.e("AD NOT LOADED","NOT LOADED");
+        }
     }
 
 
@@ -494,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
         if(isNetworkAvailable()) {
 
 
-           Toast.makeText(this,"Searching messes in your Area!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Searching messes in your Area!",Toast.LENGTH_SHORT).show();
 
 
             int SPLASH_TIME_OUT=6000;
@@ -799,7 +824,6 @@ public class MainActivity extends AppCompatActivity {
     class LoadAd extends AsyncTask<Void, Void, Void> {
 
         private String TAG = MainActivity.class.getSimpleName();
-        private ProgressDialog pDialog;
         private Context mcontext;
 
         LoadAd(Context context)
@@ -828,6 +852,44 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
+
+            mInterstitialAd.loadAd(adRequest);
+
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    DetailsSharedPref dsp3=new DetailsSharedPref(mcontext);
+                    dsp3.updateAdLoadStatus("loaded");
+                    Toast.makeText(getApplicationContext(), "Ad is loaded! in back", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onAdClosed() {
+
+
+                    Toast.makeText(getApplicationContext(), "Ad is closed! in back", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this,ClosingActivity.class));
+                }
+
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    Toast.makeText(getApplicationContext(), "Ad failed to load! error code: in back" + errorCode, Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this,ClosingActivity.class));
+
+                }
+
+                @Override
+                public void onAdLeftApplication() {
+                    Toast.makeText(getApplicationContext(), "Ad left application! in back", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onAdOpened() {
+                    Toast.makeText(getApplicationContext(), "Ad is opened! in back", Toast.LENGTH_SHORT).show();
+                }
+            });
             // Toast.makeText(mcontext,"Ad Loaded in back",Toast.LENGTH_SHORT).show();
 
 

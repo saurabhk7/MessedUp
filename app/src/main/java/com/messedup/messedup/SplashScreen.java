@@ -1,9 +1,11 @@
 package com.messedup.messedup;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,6 +51,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.messedup.messedup.signin_package.GoogleSignIn;
+import com.rampo.updatechecker.UpdateChecker;
+import com.rampo.updatechecker.UpdateCheckerResult;
+import com.rampo.updatechecker.notice.Notice;
+import com.rampo.updatechecker.store.Store;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -56,7 +62,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * @author saurabh
  * @use First Loading Screen ( Thread Used to load data in the background )
  */
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreen extends AppCompatActivity implements UpdateCheckerResult {
 
 
     private static final String COMP_UPDATE_KEY = "compulsary_update";
@@ -76,18 +82,34 @@ public class SplashScreen extends AppCompatActivity {
     private DetailsSharedPref dspobj2;
     public FirebaseRemoteConfig mFirebaseRemoteConfig;
 
+    UpdateChecker checker = new UpdateChecker(this);
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         // Splash screen timer
 
+
+
         thiscontext=getBaseContext();
         lam = new LoadAllMess(thiscontext);
         db=new DatabaseHandler(thiscontext);
         dspobj2=new DetailsSharedPref(thiscontext);
 
+        checker.setStore(Store.GOOGLE_PLAY);
+        checker.setSuccessfulChecksRequired(1);
+        checker.setNotice(Notice.DIALOG);
+        checker.start();
+
+
+
+
         mAuth=FirebaseAuth.getInstance();
+
+        checkupdate(this);
 
 
         //   ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
@@ -155,13 +177,6 @@ public class SplashScreen extends AppCompatActivity {
                     {
                         lam.cancel(true);
                         Toast.makeText(SplashScreen.this, "Slow Internet :/", Toast.LENGTH_SHORT).show();
-
-
-               /* }
-
-                else
-                {
-*/
                         FirebaseUser currentUser = mAuth.getCurrentUser();
 
                         if(currentUser!=null)
@@ -174,6 +189,7 @@ public class SplashScreen extends AppCompatActivity {
 
                             Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menu", Toast.LENGTH_SHORT).show();
                             startActivity(i);
+                            finish();
                         }
                         else {
 
@@ -181,8 +197,19 @@ public class SplashScreen extends AppCompatActivity {
                             dspobj2.updateMealStatusSharedPref("OFFLINE");
                             gobj.updateFromSharedPref("splash");
 
-                            Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
-                            startActivity(i);
+                            if(dspobj2.getIntroDone().equals("notdone")) {
+                                Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+                                startActivity(i);
+                                finish();
+
+                            }
+                            else
+                            {
+                                Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
+                                startActivity(i);
+                                finish();
+
+                            }
 
                         }
                         // close this activity
@@ -227,6 +254,8 @@ public class SplashScreen extends AppCompatActivity {
                     dspobj2.updateMealStatusSharedPref("OFFLINE");
 
                     startActivity(i);
+                    finish();
+
 
                 }
             },SPLASH_TIME_OUT);
@@ -238,31 +267,63 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
-    /*  @Override
-      public void onUpdateNeeded(final String updateUrl) {
-          AlertDialog dialog = new AlertDialog.Builder(this)
-                  .setTitle("New version available")
-                  .setMessage("Please, update app to new version to continue reposting.")
-                  .setPositiveButton("Update",
-                          new DialogInterface.OnClickListener() {
-                              @Override
-                              public void onClick(DialogInterface dialog, int which) {
-                                  redirectStore(updateUrl);
-                              }
-                          }).setNegativeButton("No, thanks",
-                          new DialogInterface.OnClickListener() {
-                              @Override
-                              public void onClick(DialogInterface dialog, int which) {
-                                  finish();
-                              }
-                          }).create();
-          dialog.show();
-      }
-  */
+    private void checkupdate(Activity thiscontext) {
+
+
+
+    }
+
     private void redirectStore(String updateUrl) {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void foundUpdateAndShowIt(String versionDonwloadable) {
+
+    }
+
+    @Override
+    public void foundUpdateAndDontShowIt(String versionDonwloadable) {
+
+    }
+
+    @Override
+    public void returnUpToDate(String versionDonwloadable) {
+
+    }
+
+    @Override
+    public void returnMultipleApksPublished() {
+
+    }
+
+    @Override
+    public void returnNetworkError() {
+
+    }
+
+    @Override
+    public void returnAppUnpublished() {
+
+        Log.e("UpdateChecker", "App is not published " + "CurrentVersion" + mVersionInstalled());
+        Toast.makeText(getApplicationContext(), "App is not published", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private String mVersionInstalled() {
+
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        return null;
+    }
+
+    @Override
+    public void returnStoreError() {
+
     }
 
 
@@ -365,6 +426,9 @@ public class SplashScreen extends AppCompatActivity {
 
 
                 jsonObject.put("college", MessArea);
+
+
+
 
 
                 String message = jsonObject.toString();
@@ -538,7 +602,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     if(currentUser!=null)
                     {
-                        Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contextFinal, "Menu Updated Successfully", Toast.LENGTH_SHORT).show();
                         gobj.updateFromSharedPref("splash");
                         Intent i = new Intent(contextFinal, MainActivity.class);
                         startActivity(i);
@@ -546,12 +610,26 @@ public class SplashScreen extends AppCompatActivity {
                         finish();
                     }
                     else {
-                        Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
-                        gobj.updateFromSharedPref("splash");
-                        Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
-                        startActivity(i);
-                        contextFinal.startActivity(i);
-                        finish();
+
+                        if(dspobj2.getIntroDone().equals("notdone")) {
+                            Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                            gobj.updateFromSharedPref("splash");
+                            Intent i = new Intent(contextFinal, IntroActivity.class);
+                            startActivity(i);
+                            contextFinal.startActivity(i);
+                            finish();
+                        }
+                        else
+                        {
+                            Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                            gobj.updateFromSharedPref("splash");
+                            Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
+                            startActivity(i);
+                            contextFinal.startActivity(i);
+                            finish();
+                        }
+
+
                     }
 
 
@@ -568,7 +646,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     if(currentUser!=null)
                     {
-                        Toast.makeText(contextFinal, "!#$!$$!,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contextFinal, "success==0 error", Toast.LENGTH_SHORT).show();
                         gobj.updateFromSharedPref("splash");
 
                         Intent i = new Intent(contextFinal, MainActivity.class);

@@ -19,6 +19,31 @@ public class DetailsSharedPref {
         this.context = context;
     }
 
+    public void updateIntroDone(String status) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("intro", status);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF intro : ",status);
+
+    }
+
+
+    public void updateAdLoadStatus(String status) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("adload", status);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF adload : ",status);
+
+    }
+
 
     public void updateDetailsSent(String status) {
 
@@ -170,6 +195,26 @@ public class DetailsSharedPref {
         String PreStoredArea = preferences.getString("details", "notsuccess");
         //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         Log.e("SHRDPRF detailsret: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getIntroDone() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("intro", "notdone");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF intro: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getAdLoadStatus() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("adload", "notloaded");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF adload: ",PreStoredArea);
 
         return PreStoredArea;
 
