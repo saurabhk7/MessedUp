@@ -173,7 +173,7 @@
 
 
                 <TextView
-                    android:text="  Tap to expand"
+                    android:text="  Tap to Zoom in/out"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
