@@ -29,7 +29,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                app:srcCompat="@drawable/kamkaali_kheer"
+                app:srcCompat="@drawable/menu_default_img"
                 android:scaleType="centerCrop"
                 android:id="@+id/SpecialImgView"
                 android:background="@drawable/text_gradient"

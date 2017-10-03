@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.messedup.messedup.IntroActivity;
 import com.messedup.messedup.MainActivity;
 import com.messedup.messedup.R;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
@@ -204,6 +205,9 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
        // Log.d("RECV CRED",GoogleSignInCredential.toString());
 
 
+       // startActivity(new Intent(this, IntroActivity.class));
+
+
         mAuth=FirebaseAuth.getInstance();
         mDetailsSharedPref=new DetailsSharedPref(this);
 
@@ -277,7 +281,7 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
                     SuperActivityToast.create(PhoneNumberAuthentication.this, new Style(), Style.TYPE_BUTTON)
                             .setButtonText("RETRY")
                             .setIconResource(Style.ICONPOSITION_LEFT,R.drawable.ic_error_outline_white_24dp)
-                            .setText("   No Internet Connection!")
+                            .setText("   Come again later! ;)")
                             .setDuration(Style.DURATION_LONG)
                             .setFrame(Style.FRAME_LOLLIPOP)
                             .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_AMBER))
@@ -345,7 +349,6 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
     }
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -355,6 +358,15 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        moveTaskToBack(true);
+        appExit();
+    }
+
+
+    public void appExit () {
+        this.finish();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

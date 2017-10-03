@@ -8,14 +8,16 @@ import android.widget.Button;
 
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 
-public class IntroActivity extends AppCompatActivity {
+import agency.tango.materialintroscreen.MaterialIntroActivity;
+import agency.tango.materialintroscreen.SlideFragmentBuilder;
+
+public class IntroActivity extends MaterialIntroActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
 
-        Button ContinueBtn=(Button)findViewById(R.id.ContBtn);
+       /* Button ContinueBtn=(Button)findViewById(R.id.ContBtn);
 
 
         ContinueBtn.setOnClickListener(new View.OnClickListener() {
@@ -23,6 +25,43 @@ public class IntroActivity extends AppCompatActivity {
             public void onClick(View view) {
                 startActivity(new Intent(IntroActivity.this, PhoneNumberAuthentication.class));
             }
-        });
+        });*/
+
+
+        addSlide(new CustomSlide2());
+
+        addSlide(new CustomSlide1());
+
+
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorSlide7)
+                .buttonsColor(R.color.colorBlack)
+//                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+//                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+                .image(R.drawable.offers_compressed)
+                .title("Never miss out Offers")
+                .description("Get notified about nearby offers and mess updates instantly.")
+                .build());
+
+
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorSlide8)
+                .buttonsColor(R.color.colorBlack)
+//                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+//                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+                .image(R.drawable.share_compressed)
+                .title("Sharing is Caring")
+                .description("Let your friends know where you are gonna eat today, so that you have a great company!")
+                .build());
+
+
+    }
+
+    @Override
+    public void onFinish() {
+        super.onFinish();
+
+        startActivity(new Intent(this,PhoneNumberAuthentication.class));
+
     }
 }

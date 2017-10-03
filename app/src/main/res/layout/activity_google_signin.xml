@@ -57,21 +57,6 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
 
-
-    <com.google.android.gms.common.SignInButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:hapticFeedbackEnabled="true"
-        android:visibility="gone"
-        android:id="@+id/googleBtn"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
-
-    </com.google.android.gms.common.SignInButton>
-
     <Button
         android:text="Show Toast"
         android:layout_width="wrap_content"
@@ -82,26 +67,41 @@
         android:id="@+id/ToastTestBtn"
         android:visibility="invisible" />
 
+    <com.google.android.gms.common.SignInButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hapticFeedbackEnabled="true"
+        android:visibility="gone"
+        android:id="@+id/googleBtn"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:layout_below="@+id/shimmer_view_container"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+
+    </com.google.android.gms.common.SignInButton>
+
     <com.dd.processbutton.iml.ActionProcessButton
         android:id="@+id/btnSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Google Sign In"
+        android:text="Tap to Google Sign In"
         android:hapticFeedbackEnabled="true"
-        android:textColor="@color/grey"
+        android:textColor="@color/white"
         android:drawableStart="@drawable/googleg_standard_color_18"
         android:textSize="18sp"
         app:pb_colorComplete="@color/green_complete"
-        app:pb_colorNormal="@color/white"
-        app:pb_colorPressed="@color/colorPrimaryDark"
+        app:pb_colorNormal="@color/transparent"
+        app:pb_colorPressed="@color/transparent"
         app:pb_colorProgress="@color/blue_pressed"
         app:pb_textComplete="Success"
         app:pb_textProgress="Signing In..."
         app:pb_textError="Retry Sign In"
         app:pb_colorError="@android:color/white"
-        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:visibility="invisible" />
+        android:layout_marginTop="117dp" />
 
 
 </RelativeLayout>

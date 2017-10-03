@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -216,9 +217,9 @@ public class MenuFragment extends Fragment {
 
 
 
-      //  getUserDetails2(OnCreaterootView);
+        //  getUserDetails2(OnCreaterootView);
 
-      //  startIntro(OnCreaterootView);
+        //  startIntro(OnCreaterootView);
 
         //DATABASE HANDLER OBJECT
         db=new DatabaseHandler(OnCreaterootView.getContext());
@@ -544,10 +545,10 @@ public class MenuFragment extends Fragment {
         RateMeDialogTimer.onStart(OnCreaterootView.getContext());
 
         DetailsSharedPref dsp=new DetailsSharedPref(OnCreaterootView.getContext());
-        if (RateMeDialogTimer.shouldShowRateDialog(OnCreaterootView.getContext(), 0, 0)&&!dsp.getRateStatus().equals("notshow")) {
+        if (RateMeDialogTimer.shouldShowRateDialog(OnCreaterootView.getContext(), 20, 7)&&!dsp.getRateStatus().equals("notshow")) {
             // show the dialog with the code above
 
-             showRateUsDialog(OnCreaterootView);
+            showRateUsDialog(OnCreaterootView);
         }
 
     }
@@ -760,7 +761,7 @@ public class MenuFragment extends Fragment {
 
 
             try {
-            progressDialog.dismiss();
+                progressDialog.dismiss();
 
                 dspobj.updateMealStatusSharedPref(jObj.getString("meal"));
 
@@ -853,10 +854,10 @@ public class MenuFragment extends Fragment {
 
     public View intializeList(final View mPassedView) {
 
-      //  Log.d("In initialize List", AllMessInfoFromDatabase.toString());
+        //  Log.d("In initialize List", AllMessInfoFromDatabase.toString());
 
-       DatabaseHandler databaseHandler1=new DatabaseHandler(mPassedView.getContext());
-       SharedPrefHandler sharedPrefHandler1 = new SharedPrefHandler(mPassedView.getContext());
+        DatabaseHandler databaseHandler1=new DatabaseHandler(mPassedView.getContext());
+        SharedPrefHandler sharedPrefHandler1 = new SharedPrefHandler(mPassedView.getContext());
 
         AllMessInfoFromDatabase=databaseHandler1.getCardJson(sharedPrefHandler1.getSharedPrefs());
         Log.e("In##initialize List", AllMessInfoFromDatabase.toString());
@@ -882,7 +883,7 @@ public class MenuFragment extends Fragment {
                 {
                     Log.e("getTopicName"," "+MessInfoObj.get(TAG_MESSID));
                 }
-                Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
                 MessMenuObj.setFavMess("true");
 
             } else {
@@ -986,9 +987,37 @@ public class MenuFragment extends Fragment {
         MyRecyclerView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (AllMessMenu.size() > 0 & MyRecyclerView != null) {
+        if (AllMessMenu.size()>0&&MyRecyclerView != null) {
+
             MyRecyclerView.setAdapter(new MyAdapter(AllMessMenu));
         }
+        else
+        {
+            ImageView ErrorImg=(ImageView)mPassedView.findViewById(R.id.ErrorImgView);
+            TextView ErrotTxt=(TextView)mPassedView.findViewById(R.id.ErrorTxtView);
+
+            ErrorImg.setVisibility(View.VISIBLE);
+            ErrotTxt.setVisibility(View.VISIBLE);
+        }
+       /* if(AllMessMenu.size() ==0 || MyRecyclerView==null)
+        {
+            ImageView ErrorImg=(ImageView)mPassedView.findViewById(R.id.ErrorImgView);
+            TextView ErrotTxt=(TextView)mPassedView.findViewById(R.id.ErrorTxtView);
+
+            ErrorImg.setVisibility(View.VISIBLE);
+            ErrotTxt.setVisibility(View.VISIBLE);
+
+
+
+        }
+        else
+        {
+            ImageView ErrorImg=(ImageView)mPassedView.findViewById(R.id.ErrorImgView);
+            TextView ErrotTxt=(TextView)mPassedView.findViewById(R.id.ErrorTxtView);
+
+            ErrorImg.setVisibility(View.INVISIBLE);
+            ErrotTxt.setVisibility(View.INVISIBLE);
+        }*/
         MyRecyclerView.setLayoutManager(MyLayoutManager);
         POPULATED_FLAG = true;
 
@@ -999,7 +1028,7 @@ public class MenuFragment extends Fragment {
         }
         catch (Exception e)
         {
-             //onRefreshComplete("complete",mPassedView);
+            //onRefreshComplete("complete",mPassedView);
             //  Toast.makeText(getActivity(), "Your Menu is Up to Date!", Toast.LENGTH_SHORT).show();
             return mPassedView;
         }
@@ -1040,7 +1069,7 @@ public class MenuFragment extends Fragment {
                 {
                     Log.e("getTopicName"," "+MessInfoObj.get(TAG_MESSID));
                 }
-                Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
                 MessMenuObj.setFavMess("true");
 
             } else {

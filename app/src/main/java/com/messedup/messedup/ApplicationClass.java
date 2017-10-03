@@ -3,6 +3,7 @@ package com.messedup.messedup;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,7 +30,10 @@ public class ApplicationClass extends Application {
 
     @Override
     public void onCreate() {
+        MultiDex.install(this);
         super.onCreate();
+
+
 
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()

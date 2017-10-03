@@ -31,6 +31,18 @@ public class DetailsSharedPref {
 
     }
 
+    public void updateImInStatus(String status) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("iamin", status);
+        editor.apply();
+        editor.commit();
+
+        Log.e("SHRDPRF iamin : ",status);
+
+    }
+
 
     public void updateAdLoadStatus(String status) {
 
@@ -215,6 +227,16 @@ public class DetailsSharedPref {
         String PreStoredArea = preferences.getString("adload", "notloaded");
         //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         Log.e("SHRDPRF adload: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getImInStatus() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("iamin", "notdone");
+        //  Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF iamin: ",PreStoredArea);
 
         return PreStoredArea;
 

@@ -9,6 +9,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -24,6 +25,13 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    //MULTIDEX LIBRARY
+    compile 'com.android.support:multidex:1.0.1'
+
+    //INTRO SCREEN UI
+    compile 'agency.tango.android:material-intro-screen:0.0.5'
+
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0' //GSON FOR SHARED PREFERANCES
@@ -81,6 +89,10 @@ dependencies {
 
     //ZOOM IMAGE
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
+
+    //BUTTON ANIMATION
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
+
 
 
 

@@ -378,14 +378,106 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @use To Update the Mess Info in Database
      */
     public void updateMessInfo(String id, String info){
+
+
+        /*
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(MENU_TABLE_Column_ID, nbcoll); // the execution is different if _id is 2
+        initialValues.put(MENU_TABLE_Column_2_offer_details, offer);
+
+        int id = (int) database.insertWithOnConflict(MENU_TABLE_NAME, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
+        if (id == -1) {
+            database.update(MENU_TABLE_NAME, initialValues, MENU_TABLE_Column_ID+"=?", new String[] {nbcoll});  // number 1 is the _id here, update to variable for your code
+        }
+        database.close();
+         */
         SQLiteDatabase database = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MESS_INFO_Column_ID, id); // Contact Name
-        values.put(MESS_INFO_Column_1_mess_details, info);
-        database.insert(MENU_TABLE_NAME, null, values);
+        values.put(MESS_INFO_Column_2_week_menu, info);
+
+
+        int fromDBid = (int) database.insertWithOnConflict(MESS_INFO_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        if (fromDBid == -1) {
+            database.update(MESS_INFO_TABLE_NAME, values, MESS_INFO_Column_ID+"=?", new String[] {id});  // number 1 is the _id here, update to variable for your code
+        }
+
         database.close();
     }
+
+
+    public HashMap<String, String> getMessInfo(String messID)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String json="";
+        JSONObject jObj=null;
+        Cursor cursor = db.query(MESS_INFO_TABLE_NAME, new String[] { MESS_INFO_Column_ID,
+                        MESS_INFO_Column_2_week_menu }, MESS_INFO_Column_ID + "=?",
+                new String[] { messID }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        if (cursor != null&& cursor.getCount()>0) {
+            json = cursor.getString(1);
+
+            Log.e("JSON DBHAND: ","********"+json);
+
+            if(json.equals("nodata"))
+            {
+                return null;
+            }
+
+        }
+        else
+        {
+            return null;
+        }
+
+        // return contact
+
+        try {
+            jObj = new JSONObject(json);
+        } catch (JSONException e) {
+            Log.e("JSON Parser", "Error parsing data " + e.toString());
+        }
+
+        cursor.close();
+        return JSONtoArrayList_Info(jObj);
+
+    }
+
+    private HashMap<String,String> JSONtoArrayList_Info(JSONObject messinfo) {
+
+
+        HashMap<String,String> Hashmessinfo=new HashMap<>();
+
+        try {
+
+        Hashmessinfo.put("Name", messinfo.getString("Name"));
+        Hashmessinfo.put("GuestCharge", messinfo.getString("GuestCharge"));
+        Hashmessinfo.put("LunchOpen", messinfo.getString("LunchOpen"));
+        Hashmessinfo.put("LunchClose", messinfo.getString("LunchClose"));
+        Hashmessinfo.put("DinnerOpen", messinfo.getString("DinnerOpen"));
+        Hashmessinfo.put("DinnerClose", messinfo.getString("DinnerClose"));
+        Hashmessinfo.put("MonthlyCharge", messinfo.getString("MonthlyCharge"));
+        Hashmessinfo.put("Contact", messinfo.getString("Contact"));
+        Hashmessinfo.put("Address", messinfo.getString("Address"));
+        Hashmessinfo.put("Location", messinfo.getString("Location"));
+        Hashmessinfo.put("NBCollege", messinfo.getString("NBCollege"));
+
+            Hashmessinfo.put("Owner", messinfo.getString("Owner"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return  Hashmessinfo;
+    }
+
+
     /**
      * @param id
      * @param menu

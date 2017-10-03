@@ -198,14 +198,19 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                             gobj.updateFromSharedPref("splash");
 
                             if(dspobj2.getIntroDone().equals("notdone")) {
+                               // Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
                                 Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
                                 startActivity(i);
-                                finish();
+                                finish();                                //startActivity(i);
+                               // finish();
 
                             }
                             else
                             {
-                                Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
+                                /*Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);*/
+                                Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
                                 startActivity(i);
                                 finish();
 
@@ -249,12 +254,54 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
                     GeneralSharedPref gobj=new GeneralSharedPref(thiscontext);
 
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                    if(currentUser!=null)
+                    {
+
+                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                        gobj.updateFromSharedPref("splash");
+                        dspobj2.updateMealStatusSharedPref("OFFLINE");
+                        Toast.makeText(getBaseContext(), "Oops,Error Updating Mess Menu", Toast.LENGTH_SHORT).show();
+                        startActivity(i);
+                        finish();
+                    }
+                    else {
+
+                        dspobj2.updateMealStatusSharedPref("OFFLINE");
+                        gobj.updateFromSharedPref("splash");
+
+                        if(dspobj2.getIntroDone().equals("notdone")) {
+                            // Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);
+                            Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+                            gobj.updateFromSharedPref("splash");
+                            startActivity(i);
+                            finish();                                //startActivity(i);
+                            // finish();
+
+                        }
+                        else
+                        {
+                                /*Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);*/
+                            Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+                            gobj.updateFromSharedPref("splash");
+                            dspobj2.updateMealStatusSharedPref("OFFLINE");
+                            startActivity(i);
+                            finish();
+
+                        }
+
+                    }
+
+/*
+
                     Intent i = new Intent(SplashScreen.this, MainActivity.class);
                     gobj.updateFromSharedPref("splash");
                     dspobj2.updateMealStatusSharedPref("OFFLINE");
 
                     startActivity(i);
                     finish();
+*/
 
 
                 }
@@ -612,19 +659,30 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                     else {
 
                         if(dspobj2.getIntroDone().equals("notdone")) {
-                            Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(contextFinal, "21111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                             gobj.updateFromSharedPref("splash");
-                            Intent i = new Intent(contextFinal, IntroActivity.class);
-                            startActivity(i);
+/*
+                            Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
+*/
+
+                            Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
+                            // startActivity(i);
                             contextFinal.startActivity(i);
-                            finish();
+                            finish();                           // startActivity(i);
+                           // contextFinal.startActivity(i);
+                           // finish();
                         }
                         else
                         {
-                            Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(contextFinal, "11111Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                             gobj.updateFromSharedPref("splash");
+/*
                             Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
-                            startActivity(i);
+*/
+                            Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
+                            // startActivity(i);
                             contextFinal.startActivity(i);
                             finish();
                         }
@@ -646,7 +704,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
                     if(currentUser!=null)
                     {
-                        Toast.makeText(contextFinal, "success==0 error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contextFinal, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                         gobj.updateFromSharedPref("splash");
 
                         Intent i = new Intent(contextFinal, MainActivity.class);
@@ -655,10 +713,15 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                         finish();
                     }
                     else {
-                        Toast.makeText(contextFinal, "@%@%%@Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contextFinal, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
                         gobj.updateFromSharedPref("splash");
 
+/*
                         Intent i = new Intent(contextFinal, PhoneNumberAuthentication.class);
+*/
+
+                        Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
                         startActivity(i);
                         contextFinal.startActivity(i);
                         finish();
@@ -700,7 +763,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
          */
         private String getSharedPrefs() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contextFinal);
-            String PreStoredArea = preferences.getString("selectedarea", "PICT, Dhankawadi");
+            String PreStoredArea = preferences.getString("selectedarea", "PICT, BVP, Katraj");
             Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
             return PreStoredArea;
 

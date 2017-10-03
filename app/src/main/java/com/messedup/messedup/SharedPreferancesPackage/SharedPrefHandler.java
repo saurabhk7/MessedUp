@@ -33,7 +33,7 @@ public class SharedPrefHandler {
      */
     public String getSharedPrefs() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String PreStoredArea = preferences.getString("selectedarea", "PICT, Dhankawadi");
+        String PreStoredArea = preferences.getString("selectedarea", "PICT, BVP, Katraj");
         Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         return PreStoredArea;
 

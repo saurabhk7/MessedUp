@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,11 +19,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.messedup.messedup.MainActivity;
 import com.messedup.messedup.MessInfoActivity;
 import com.messedup.messedup.R;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.SharedPreferancesPackage.SharedPreference;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
 
@@ -57,6 +61,9 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
 
         context = v.getContext();
 
+        final DetailsSharedPref detailsSharedPref=new DetailsSharedPref(v.getContext());
+
+
         SpecialImg = (ImageView) v.findViewById(R.id.SpecialImgView);
 
         MessNameTxtView = (TextView) v.findViewById(R.id.mess_name);
@@ -88,15 +95,40 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 // item clicked
-                Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("messobj", CurrentObj);
-                InfoIntent.putExtras(bundle);
-                view.getContext().startActivity(InfoIntent);
+
+                String meal2=detailsSharedPref.getMealStatusSharedPrefs();
+
+                if(isNetworkAvailable()&&!meal2.equalsIgnoreCase("OFFLINE")) {
+                    Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("messobj", CurrentObj);
+                    InfoIntent.putExtras(bundle);
+                    view.getContext().startActivity(InfoIntent);
+                }
+                else
+                {
+                    Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("messobj", CurrentObj);
+                    InfoIntent.putExtras(bundle);
+                    view.getContext().startActivity(InfoIntent);
+                    Toast.makeText(view.getContext(),"You are currently offline!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
 
+
+        String meal=detailsSharedPref.getMealStatusSharedPrefs();
+
+
+        if(meal.equalsIgnoreCase("OFFLINE")||meal.equals(" "))
+        {
+            meal="Menu";
+        }
+
+
+        final String finalMeal = meal;
         ShareMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,11 +136,11 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
                     Intent i = new Intent(Intent.ACTION_SEND);
                     i.setType("text/plain");
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
-                    String sAux = "\nHey!\nCheckout today's Lunch at *" + CurrentObj.getMessID() + "* !" +
+                    String sAux = "\nHey!\nCheckout today's "+ finalMeal +" at *" + CurrentObj.getMessID() + "* !" +
                             "\n" + CurrentObj + "\n\nTap for more: ";
                     sAux = sAux + "https://goo.gl/KiLH44 \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
-                    view.getContext().startActivity(Intent.createChooser(i, "Share to"));
+                    view.getContext().startActivity(Intent.createChooser(i, "Share "+CurrentObj.getMessID()+"'s Menu"+" with"));
                 } catch (Exception e) {
                     //e.toString();
                 }
@@ -179,6 +211,16 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
         });*/
 
 
+
+
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager)view.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

@@ -133,7 +133,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 StorageReference imageRef = null;
                 try {
-                    imageRef = storageRef.child("specials").child("kheer" + ".jpg");
+
+                    if(!list.get(position).getSpecial().equalsIgnoreCase("null"))
+                        imageRef = storageRef.child("specials").child(getSpecialName(list.get(position).getSpecial()) + ".jpg");
+                    else if(!list.get(position).getSpecialExtra().equalsIgnoreCase("null"))
+                        imageRef = storageRef.child("specials").child(getSpecialName(list.get(position).getSpecialExtra()) + ".jpg");
+
                 }catch (Exception e)
                 {
                     Log.e("SPECIAL IMAGE","Image not found!");
@@ -343,6 +348,14 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+    private String getSpecialName(String special) {
+
+        special=special.replace(" ","_");
+        special=special.toLowerCase();
+        special=special.trim();
+        return special;
+    }
+
     private void setMenuTxt(MyViewHolder holder, int position) {
 
 
@@ -482,7 +495,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         Log.e("NUM","*"+num);
-       // int totalHeight = 50*num;
+        // int totalHeight = 50*num;
         int totalHeight=0;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
@@ -517,6 +530,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
+
         if(position == 0) {
             return STATIC_CARD;
         } else if(position==list.size()+1)
@@ -535,6 +549,8 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         messID=messID.trim();
         return messID;
     }
+
+
 
 
 

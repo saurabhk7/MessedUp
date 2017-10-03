@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,9 +32,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.adapters.TabsPagerAdapter;
 import com.messedup.messedup.connection_handlers.HttpHandler;
 import com.messedup.messedup.mess_menu_descriptor.MenuCardView;
+import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 import com.messedup.messedup.ui_package.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -56,6 +60,8 @@ public class MessInfoActivity extends AppCompatActivity {
     public static ArrayList<ArrayList> fullData = new ArrayList<>();
     public static HashMap<String, String> Hashmessinfo = new HashMap<>();
 
+    public  String MessID;
+    public MenuCardView MessObj = null;
 
 
     private String lunchtxt,dinnertxt;
@@ -95,8 +101,7 @@ public class MessInfoActivity extends AppCompatActivity {
         // overridePendingTransition(R.anim.my_slide_in_left, R.anim.my_slide_out_right);
 
 
-        String MessID;
-        MenuCardView MessObj = null;
+
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -107,12 +112,39 @@ public class MessInfoActivity extends AppCompatActivity {
                 if (MessObj != null) {
                     MessID = MessObj.getMessID();
                     String urlname= getURLString( MessID );
-                    Toast.makeText(this, "Show Info of : " + urlname, Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(this, "Show Info of : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
+
                     GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
-                    obj.execute();
+
+                    if(isNetworkAvailable())
+                        obj.execute();
+                    else
+                    {
+                        fullData.clear();
+                        // loadTabs();
+
+                    }
+
                     GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
-                    Infoobj.execute();
+                    if(isNetworkAvailable())
+                        Infoobj.execute();
+                    else
+                    {
+
+                        Hashmessinfo.clear();
+
+                        DatabaseHandler databaseHandler=new DatabaseHandler(this);
+
+                        Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+
+                        if(Hashmessinfo!=null)
+                            SetDetails(Hashmessinfo);
+
+
+                        //get from sqite
+                    }
+
 
 
                 }
@@ -124,13 +156,37 @@ public class MessInfoActivity extends AppCompatActivity {
 
                 String urlname =getURLString( MessID );
 
-                Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                 toolbarTextView.setText(MessID);
 
                 GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
-                obj.execute();
+
+                if(isNetworkAvailable())
+                    obj.execute();
+                else
+                {
+                    fullData.clear();
+                    loadTabs();
+
+                }
+
                 GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
-                Infoobj.execute();
+                if(isNetworkAvailable())
+                    Infoobj.execute();
+                else
+                {
+
+                    Hashmessinfo.clear();
+
+
+                    DatabaseHandler databaseHandler=new DatabaseHandler(this);
+
+                    Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+
+                    SetDetails(Hashmessinfo);
+
+                    //get from sqite
+                }
 
 
 
@@ -351,9 +407,15 @@ public class MessInfoActivity extends AppCompatActivity {
             String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=" + urlMess);
             // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
 
+            DatabaseHandler databaseHandler =new DatabaseHandler(mcontext);
+
+
+
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
                 if (jsonStr != null) {
+
+                    databaseHandler.updateMessInfo(MessObj.getMessID(),jsonStr);
 
                     JSONObject messinfo = new JSONObject(jsonStr);
 
@@ -508,5 +570,12 @@ public class MessInfoActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }

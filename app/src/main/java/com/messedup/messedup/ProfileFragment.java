@@ -4,11 +4,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +28,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.CircularProgressButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.ui_package.CircleTransform;
 import com.messedup.messedup.ui_package.SampleDialogFragment;
 
@@ -35,6 +42,11 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import com.messedup.messedup.signin_package.GoogleSignIn;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ProfileFragment extends Fragment {
 
@@ -50,6 +62,7 @@ public class ProfileFragment extends Fragment {
     // duration is ideal for subtle animations or animations that occur
     // very frequently.
     private int mShortAnimationDuration;
+    public CircularProgressButton circularProgressButton;
 
 
     public static ProfileFragment newInstance() {
@@ -76,21 +89,71 @@ public class ProfileFragment extends Fragment {
         mNameTxtView = (TextView) ProfileView.findViewById(R.id.NameTxtView);
         mEmailTxtView = (TextView) ProfileView.findViewById(R.id.EmailTxtView);
         mContactTxtView = (TextView) ProfileView.findViewById(R.id.ContactTxtView);
+/*
         ImInBtn = (Button) ProfileView.findViewById(R.id.ImInButton);
+*/
         ImageButton SignOutImgBtn = (ImageButton) ProfileView.findViewById(R.id.LogOUtImgBtn);
+        ImageButton RateAppBtn = (ImageButton) ProfileView.findViewById(R.id.rateAppBtn);
+
+       circularProgressButton=(CircularProgressButton)ProfileView.findViewById(R.id.AnimImInBtn);
+
+
+
 
         TapToExpandTxt = (TextView) ProfileView.findViewById(R.id.tap_to_expand_badge);
         TapToExpandTxt.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_zoom_out_map_white_24dp, 0, 0, 0);
 
         mDetailsSharedPref = new DetailsSharedPref(ProfileView.getContext());
 
-        ImInBtn.setOnClickListener(new View.OnClickListener() {
+
+
+        if(mDetailsSharedPref.getImInStatus().equals("notdone")) //TODO: finalise this after testing
+        {
+            circularProgressButton.setIndeterminateProgressMode(true); // turn on indeterminate progress
+
+            circularProgressButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+/*
+                Toast.makeText(ProfileView.getContext(),"Thank You!",Toast.LENGTH_SHORT).show();
+*/
+                    circularProgressButton.setProgress(50);
+                   /* new Handler().postDelayed(new Runnable() {
+                        public void run() {
+
+*/
+                            addImIn(ProfileView);
+
+
+/*
+
+                        }
+                    }, 3000);
+*/
+
+                }
+            });
+
+        }
+        else
+        {
+
+            circularProgressButton.setProgress(100);
+
+          //  Toast.makeText(ProfileView.getContext(),"Thank You, Already Noted!",Toast.LENGTH_SHORT).show();
+
+        }
+
+        /*ImInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(ProfileView.getContext(),"Clicked! Button",Toast.LENGTH_SHORT).show();
 
             }
         });
+
+
+*/
 
 
 
@@ -235,6 +298,9 @@ public class ProfileFragment extends Fragment {
         });
 
 
+
+
+
         ImageButton shareBtn=(ImageButton)ProfileView.findViewById(R.id.shareAppBtn);
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,11 +311,35 @@ public class ProfileFragment extends Fragment {
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout and Download Messed Up! on Google Play. Download and " +
                             "get Mess Menu Updates!\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.messedup.saurabh.mess2 \n\n";
+                    sAux = sAux + "https://goo.gl/KiLH44 \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
-                    startActivity(Intent.createChooser(i, "Share to"));
+                    startActivity(Intent.createChooser(i, "Share Messed Up App to"));
                 } catch(Exception e) {
                     //e.toString();
+                }
+            }
+        });
+
+
+        RateAppBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(),"Your feedback is appreciated!",Toast.LENGTH_SHORT).show();
+
+                Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                            Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                }
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())));
                 }
             }
         });
@@ -277,6 +367,79 @@ public class ProfileFragment extends Fragment {
 
 
     }
+
+    private void addImIn(View view) {
+
+        HitCount hitCount=new HitCount(view);
+
+        hitCount.execute("http://wanidipak56.000webhostapp.com/imincount.php");
+
+    }
+
+
+
+
+    public class HitCount extends AsyncTask<String , Void ,String> {
+
+
+        private View mView;
+
+/*
+        public CircularProgressButton circularProgressButton=(CircularProgressButton)mView.findViewById(R.id.AnimImInBtn);
+*/
+
+
+
+
+        public HitCount(View c)
+        {
+            mView=c;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+
+            URL url;
+            HttpURLConnection urlConnection;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                int responseCode = urlConnection.getResponseCode();
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    Log.v("CatalogClient", "OK");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+
+
+            DetailsSharedPref mdetails=new DetailsSharedPref(mView.getContext());
+
+            mdetails.updateImInStatus("done");
+            circularProgressButton.setProgress(100); // turn off indeterminate progress
+
+        }
+    }
+
 
 
     private void zoomImageFromThumb(final View thumbView, int imageResId,View profileview) {

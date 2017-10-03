@@ -78,6 +78,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,6 +140,10 @@ public class MainActivity extends AppCompatActivity {
         //initializing the toolbar view
         initToolBar();
         loadAddinBack();
+        addHitCount();
+
+
+        //startActivity(new Intent(MainActivity.this, IntroActivity.class));
 
 
 
@@ -154,13 +159,13 @@ public class MainActivity extends AppCompatActivity {
             startIntro(this);
 
         // Firebase User Error Handling
-        TextView phoneTxtView = (TextView)findViewById(R.id.PhoneNumTxtView);
+        /*TextView phoneTxtView = (TextView)findViewById(R.id.PhoneNumTxtView);
         phoneTxtView.setVisibility(View.GONE);
         if(FirebaseAuth.getInstance().getCurrentUser()==null)
         {
             Toast.makeText(this,"Some Error occurred, Please try again!",Toast.LENGTH_SHORT).show();
         }
-
+*/
 
         //Setting Up Bottombar
         BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
@@ -330,6 +335,56 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private void addHitCount() {
+
+        HitCount hitCount=new HitCount();
+
+        hitCount.execute("http://wanidipak56.000webhostapp.com/updateHitCount.php");
+
+    }
+
+
+
+
+    public class HitCount extends AsyncTask<String , Void ,String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+
+            URL url;
+            HttpURLConnection urlConnection;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                int responseCode = urlConnection.getResponseCode();
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    Log.v("CatalogClient", "OK");
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+        }
+    }
+
 
     private void getUserDetails(Context context) {
 
@@ -551,9 +606,19 @@ public class MainActivity extends AppCompatActivity {
 
                         Log.e("SIZE:","+"+college_list.size());
 
-                       /* if(college_list.size()==0)
+                        college_list=removeDup(college_list);
+
+
+                        if(college_list.size()==0)
                         {
-                            college_list.add(getBaseContext().getString(R.string.pict));
+
+
+                            ImageView ErrorImg=(ImageView)findViewById(R.id.ErrorImgView);
+                            TextView ErrotTxt=(TextView)findViewById(R.id.ErrorTxtView);
+
+                            ErrorImg.setVisibility(View.VISIBLE);
+                            ErrotTxt.setVisibility(View.VISIBLE);
+                            /*college_list.add(getBaseContext().getString(R.string.pict));
 
                             DatabaseHandler mDatabaseHandleraddDummy=new DatabaseHandler(getBaseContext());
 
@@ -562,14 +627,28 @@ public class MainActivity extends AppCompatActivity {
                             String json = "{\"messinfo\":[{\"messid\":\"Please Check you connection!\",\"rice\":null,\"vegieone\":null,\"vegietwo\":null,\"vegiethree\":null,\"roti\":null,\"special\":null,\"specialextra\":null,\"other\":null,\"opentime\":\"19:00\",\"closetime\":\"21:30\",\"openstatus\":\"0\",\"gcharge\":null,\"status\":\"0\"},{\"messid\":\"Anand Food Xprs\",\"rice\":\"Rice\",\"vegieone\":\"Kutte\",\"vegietwo\":\"Free Account\",\"null\":\"null\",\"roti\":\"null\",\"special\":\"\",\"specialextra\":\"null\",\"other\":\"null\",\"opentime\":\"null\",\"closetime\":\"null\",\"openstatus\":\"0\",\"gcharge\":\"null\",\"status\":\"0\"}],\"meal\":\"offline\",\"success\":1}";
                             mDatabaseHandleraddDummy.updateMenuCard(getBaseContext().getString(R.string.pict),json);
 
-                            Log.e("updated dummy: ","+"+json);
+                            Log.e("updated dummy: ","+"+json);*/
 
                         }
-*/
+                        else if((college_list.size()==1&&college_list.contains("Select your Area")))
+                        {
+                            ImageView ErrorImg=(ImageView)findViewById(R.id.ErrorImgView);
+                            TextView ErrotTxt=(TextView)findViewById(R.id.ErrorTxtView);
+
+                            ErrorImg.setVisibility(View.VISIBLE);
+                            ErrotTxt.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            ImageView ErrorImg=(ImageView)findViewById(R.id.ErrorImgView);
+                            TextView ErrotTxt=(TextView)findViewById(R.id.ErrorTxtView);
+
+                            ErrorImg.setVisibility(View.INVISIBLE);
+                            ErrotTxt.setVisibility(View.INVISIBLE);
+                        }
 
                         //TODO: take college list from spinner
 
-                        college_list=removeDup(college_list);
 
                         Log.e("ADDED NO INTER","**"+college_list.toString());
 
@@ -861,33 +940,33 @@ public class MainActivity extends AppCompatActivity {
 
                     DetailsSharedPref dsp3=new DetailsSharedPref(mcontext);
                     dsp3.updateAdLoadStatus("loaded");
-                    Toast.makeText(getApplicationContext(), "Ad is loaded! in back", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getApplicationContext(), "Ad is loaded! in back", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onAdClosed() {
 
 
-                    Toast.makeText(getApplicationContext(), "Ad is closed! in back", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getApplicationContext(), "Ad is closed! in back", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this,ClosingActivity.class));
                 }
 
 
                 @Override
                 public void onAdFailedToLoad(int errorCode) {
-                    Toast.makeText(getApplicationContext(), "Ad failed to load! error code: in back" + errorCode, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getApplicationContext(), "Ad failed to load! error code: in back" + errorCode, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this,ClosingActivity.class));
 
                 }
 
                 @Override
                 public void onAdLeftApplication() {
-                    Toast.makeText(getApplicationContext(), "Ad left application! in back", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getApplicationContext(), "Ad left application! in back", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onAdOpened() {
-                    Toast.makeText(getApplicationContext(), "Ad is opened! in back", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getApplicationContext(), "Ad is opened! in back", Toast.LENGTH_SHORT).show();
                 }
             });
             // Toast.makeText(mcontext,"Ad Loaded in back",Toast.LENGTH_SHORT).show();
@@ -895,6 +974,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -1167,7 +1247,7 @@ public class MainActivity extends AppCompatActivity {
 
                 DetailsSharedPref dsp=new DetailsSharedPref(thiscontext);
 
-                Toast.makeText(thiscontext,json,Toast.LENGTH_SHORT).show();
+               // Toast.makeText(thiscontext,json,Toast.LENGTH_SHORT).show();
 
                 dsp.updateDetailsSent("success");
 

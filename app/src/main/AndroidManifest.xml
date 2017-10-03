@@ -82,7 +82,10 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
-        <activity android:name=".IntroActivity"></activity>
+        <activity
+            android:name=".IntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Intro" />
     </application>
 
 </manifest>

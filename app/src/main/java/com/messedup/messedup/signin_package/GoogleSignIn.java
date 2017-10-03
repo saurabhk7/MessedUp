@@ -369,7 +369,7 @@ public class GoogleSignIn extends AppCompatActivity {
 
         btnSignIn.setClickable(false);
 
-      /*  btnSignIn.setOnClickListener(new View.OnClickListener() {
+       btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -377,7 +377,7 @@ public class GoogleSignIn extends AppCompatActivity {
                 signIn();
 
             }
-        });*/
+        });
 
         mToastBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -449,9 +449,11 @@ public class GoogleSignIn extends AppCompatActivity {
                 //  Toast.makeText(GoogleSignIn.this,account.getEmail(),Toast.LENGTH_SHORT).show();
 
                 firebaseAuthWithGoogle(account);
-            } else {
+            }
+            else {
 
 
+                signIn();
                 SuperActivityToast.create(GoogleSignIn.this, new Style(), Style.TYPE_BUTTON)
                         .setButtonText("RETRY")
                         .setIconResource(Style.ICONPOSITION_LEFT,R.drawable.ic_error_outline_white_24dp)
@@ -567,7 +569,7 @@ public class GoogleSignIn extends AppCompatActivity {
 
         signIn();
 
-       // mAuth.addAuthStateListener(mAuthListener);
+        // mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override

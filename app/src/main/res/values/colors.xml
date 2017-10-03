@@ -26,4 +26,20 @@
     <color name="swipe_color_4">#7CAF00</color>
 
     <color name="app_green">#59c614</color>
+
+    <color name="app_green_dark">#1b5e20</color>
+
+
+
+    <color name="colorSlide1">#00c853</color>
+    <color name="colorSlide2">#90c400</color>
+    <color name="colorSlide3">#ff5722</color>
+    <color name="colorSlide4">#cb202d</color>
+    <color name="colorGreen">#59c614</color>
+    <color name="colorBlack">#b9020000</color>
+    <color name="colorSlide5">#558B2F</color>
+    <color name="colorSlide6">#F9A825</color>
+    <color name="colorSlide7">#EF6C00</color>
+    <color name="colorSlide8">#C62828</color>
+
 </resources>
