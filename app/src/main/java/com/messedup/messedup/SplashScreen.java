@@ -210,7 +210,6 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                             {
                                 /*Intent i = new Intent(SplashScreen.this, PhoneNumberAuthentication.class);*/
                                 Intent i = new Intent(SplashScreen.this, IntroActivity.class);
-
                                 startActivity(i);
                                 finish();
 

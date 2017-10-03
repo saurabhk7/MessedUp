@@ -351,7 +351,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //  Toast.makeText(ProfileView.getContext(),"Clicked!",Toast.LENGTH_SHORT).show();
-                zoomImageFromThumb(thumb1View, R.drawable.info_latest,ProfileView);
+                zoomImageFromThumb(thumb1View, R.drawable.info_latest_2,ProfileView);
             }
         });
 

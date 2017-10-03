@@ -3,6 +3,7 @@
         android:id="@+id/rowTextView"
         android:layout_width="fill_parent"
         android:gravity="center"
+        android:text="No Menu Found!"
         android:layout_height="wrap_content"
         android:textSize="16sp" >
     </TextView>
