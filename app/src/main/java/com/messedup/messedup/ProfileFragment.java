@@ -311,7 +311,7 @@ public class ProfileFragment extends Fragment {
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout and Download Messed Up! on Google Play. Download and " +
                             "get Mess Menu Updates!\n\n";
-                    sAux = sAux + "https://goo.gl/KiLH44 \n\n";
+                    sAux = sAux + "https://goo.gl/rseyyY \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "Share Messed Up App to"));
                 } catch(Exception e) {

@@ -1,6 +1,7 @@
 package com.messedup.messedup.adapters;
 
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,8 +37,18 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 ArrayList node0 = (ArrayList)menuList.get(0);
                 HashMap<String, ArrayList> m20 = (HashMap<String, ArrayList>)node0.get(1);
+
                 ArrayList m30 = m20.get("menu");
+
+/*
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("valuesArray", m30);
+                day0 myFragment = new day0();
+                myFragment.setArguments(bundle);
+                return myFragment;*/
                 return new day0(m30);
+
+
             case 1:
                 ArrayList node1 = (ArrayList)menuList.get(1);
                 HashMap<String, ArrayList> m21 = (HashMap<String, ArrayList>)node1.get(1);

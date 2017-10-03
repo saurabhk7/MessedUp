@@ -79,6 +79,7 @@ public class day0 extends Fragment {
 
 
 
+
         View rootView = inflater.inflate(R.layout.fragment_day0, container, false);
         if(menu.size() > 0){
             if(menu.get(0).get("Meal").equals("Lunch")){
