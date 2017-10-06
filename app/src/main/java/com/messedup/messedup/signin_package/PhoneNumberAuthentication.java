@@ -270,7 +270,7 @@ public class PhoneNumberAuthentication extends AppCompatActivity {
                             .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_AMBER))
                             .setAnimations(Style.ANIMATIONS_POP).show();
 
-                    startActivity(new Intent(this,GoogleSignIn.class));
+                   // startActivity(new Intent(this,GoogleSignIn.class));
 
 
                     Log.e("Login","Login canceled by User");

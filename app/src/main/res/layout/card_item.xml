@@ -140,7 +140,7 @@
 
 
                 <TextView
-                    android:text="TextView"
+                    android:text="Oh snap, Menu not found!"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/menuTxtViewCard"

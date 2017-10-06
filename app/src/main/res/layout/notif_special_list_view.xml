@@ -26,7 +26,7 @@
         android:background="@null"
         android:layout_centerInParent="true"
         android:padding="5dp"
-        android:src="@drawable/new_notif_256"
+        android:src="@drawable/announcement_notif"
          />
 
 </RelativeLayout>

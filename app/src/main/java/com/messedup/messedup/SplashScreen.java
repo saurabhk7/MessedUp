@@ -651,8 +651,9 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                         Toast.makeText(contextFinal, "Menu Updated Successfully", Toast.LENGTH_SHORT).show();
                         gobj.updateFromSharedPref("splash");
                         Intent i = new Intent(contextFinal, MainActivity.class);
+
                         startActivity(i);
-                        contextFinal.startActivity(i);
+                      //  contextFinal.startActivity(i);
                         finish();
                     }
                     else {
@@ -666,8 +667,8 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
                             Intent i = new Intent(SplashScreen.this, IntroActivity.class);
 
-                            // startActivity(i);
-                            contextFinal.startActivity(i);
+                            startActivity(i);
+                           // contextFinal.startActivity(i);
                             finish();                           // startActivity(i);
                            // contextFinal.startActivity(i);
                            // finish();
@@ -681,8 +682,8 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 */
                             Intent i = new Intent(SplashScreen.this, IntroActivity.class);
 
-                            // startActivity(i);
-                            contextFinal.startActivity(i);
+                            startActivity(i);
+                           // contextFinal.startActivity(i);
                             finish();
                         }
 
@@ -708,7 +709,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
                         Intent i = new Intent(contextFinal, MainActivity.class);
                         startActivity(i);
-                        contextFinal.startActivity(i);
+                      //  contextFinal.startActivity(i);
                         finish();
                     }
                     else {
@@ -722,7 +723,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                         Intent i = new Intent(SplashScreen.this, IntroActivity.class);
 
                         startActivity(i);
-                        contextFinal.startActivity(i);
+                      //  contextFinal.startActivity(i);
                         finish();
                     }
                     updateSharedPrefs(thiscontext.getString(R.string.pict));

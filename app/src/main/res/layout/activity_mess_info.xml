@@ -152,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_below="@id/ProfilePicImg"
-                        android:text="@string/gujratimessdetailsadd"
+                        android:text="Mess Address"
                         android:textSize="15sp"
                         android:textColor="@color/common_google_signin_btn_text_light_focused"
                         android:layout_marginBottom="3dp"
@@ -188,7 +188,7 @@
                         android:id="@+id/CostLayout">
 
                         <TextView
-                            android:text="Daily Cost ₹75"
+                            android:text="Daily Cost "
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
@@ -203,7 +203,7 @@
                             android:id="@+id/MonthlyCostTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Monthly Cost ₹3000"
+                            android:text="Monthly Cost "
                             android:layout_weight="1"
                             android:textSize="16sp"
                             android:textColor="@color/common_google_signin_btn_text_light_focused"

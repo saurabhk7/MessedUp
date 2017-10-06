@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +24,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by saurabh on 25/9/17.
  */
 
-public class ApplicationClass extends Application {
+public class ApplicationClass extends MultiDexApplication {
 
 
     private static final String TAG = ApplicationClass.class.getSimpleName();

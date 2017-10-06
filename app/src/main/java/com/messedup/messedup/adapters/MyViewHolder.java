@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -99,11 +100,16 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
                 String meal2=detailsSharedPref.getMealStatusSharedPrefs();
 
                 if(isNetworkAvailable()&&!meal2.equalsIgnoreCase("OFFLINE")) {
+
+
+
                     Intent InfoIntent = new Intent(view.getContext(), MessInfoActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("messobj", CurrentObj);
                     InfoIntent.putExtras(bundle);
                     view.getContext().startActivity(InfoIntent);
+
+
                 }
                 else
                 {

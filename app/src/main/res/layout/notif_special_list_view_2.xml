@@ -9,7 +9,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:visibility="gone"
-        android:src="@drawable/new_notif_256"
+        android:src="@drawable/announcement_notif"
         android:padding="5dp" />
 
     <LinearLayout android:layout_width="wrap_content"

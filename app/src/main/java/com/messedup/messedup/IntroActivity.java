@@ -28,9 +28,28 @@ public class IntroActivity extends MaterialIntroActivity {
         });*/
 
 
-        addSlide(new CustomSlide2());
+       /* addSlide(new CustomSlide2());
 
-        addSlide(new CustomSlide1());
+        addSlide(new CustomSlide1());*/
+
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorSlide5)
+                .buttonsColor(R.color.colorBlack)
+//                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+//                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+                .image(R.drawable.menu)
+                .title("Menu at your fingertips")
+                .description("Now no need to go and check menu of every mess. Get next 7 days menu instantly!")
+                .build());
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorSlide6)
+                .buttonsColor(R.color.colorBlack)
+//                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+//                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+                .image(R.drawable.offers_compressed)
+                .title("Your Favourites First")
+                .description("Just add your favourite mess, and get notified about their real time updates!")
+                .build());
 
 
         addSlide(new SlideFragmentBuilder()
@@ -38,7 +57,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.offers_compressed)
+                .image(R.drawable.copped_cardview)
                 .title("Never miss out Offers")
                 .description("Get notified about nearby offers and mess updates instantly.")
                 .build());

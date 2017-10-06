@@ -1,3 +1,4 @@
+/*
 package com.messedup.messedup;
 
 import android.content.Context;
@@ -41,3 +42,4 @@ public class CustomSlide2 extends SlideFragment {
         return R.color.colorBlack;
     }
 }
+*/

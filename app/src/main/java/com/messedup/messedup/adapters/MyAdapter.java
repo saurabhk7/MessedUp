@@ -265,7 +265,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 {
                                     sharedPreference.addFavorite(Contextparent.getContext(),
                                             list.get(position).getMessID());
-                                    Toast.makeText(Contextparent.getContext(),"Fav Added of: "+list.get(position).getMessID(),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Contextparent.getContext(),list.get(position).getMessID()+ " added to your Favourites!",Toast.LENGTH_SHORT).show();
                                     list.get(position).setFavMess("true");
                                     Log.d("After Added","1"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
 
@@ -281,7 +281,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                             list.get(position).getMessID());
                                     list.get(position).setFavMess("false");
 
-                                    Toast.makeText(Contextparent.getContext(),"Fav Removed of: "+list.get(position).getMessID(),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Contextparent.getContext(),list.get(position).getMessID()+" removed from your Favourites",Toast.LENGTH_SHORT).show();
 
                                     Log.d("After Removed","2"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
                                     try {

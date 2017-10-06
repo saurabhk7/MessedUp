@@ -377,7 +377,12 @@ public class MenuFragment extends Fragment {
             public void onRefresh() {
                 Log.i("IN ON REFRESH", "onRefresh called from SwipeRefreshLayout");
 
-                initiateRefresh(view);
+                if(isNetworkAvailable())
+                    initiateRefresh(view);
+                else
+                {
+                    Toast.makeText(view.getContext(),"Oops, No network available!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         // END_INCLUDE (setup_refreshlistener)
@@ -883,7 +888,7 @@ public class MenuFragment extends Fragment {
                 {
                     Log.e("getTopicName"," "+MessInfoObj.get(TAG_MESSID));
                 }
-              //  Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
                 MessMenuObj.setFavMess("true");
 
             } else {
@@ -1069,7 +1074,7 @@ public class MenuFragment extends Fragment {
                 {
                     Log.e("getTopicName"," "+MessInfoObj.get(TAG_MESSID));
                 }
-               // Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(mPassedView.getContext(), "Yours Fav: " + MessInfoObj.get(TAG_MESSID), Toast.LENGTH_SHORT).show();
                 MessMenuObj.setFavMess("true");
 
             } else {

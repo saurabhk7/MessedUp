@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -63,6 +64,13 @@ public class MessInfoActivity extends AppCompatActivity {
     public  String MessID;
     public MenuCardView MessObj = null;
 
+    public ProgressDialog pDialog1;
+
+
+    public ProgressDialog pDialog2;
+
+
+
 
     private String lunchtxt,dinnertxt;
 
@@ -85,6 +93,8 @@ public class MessInfoActivity extends AppCompatActivity {
 
 
 
+        pDialog1 = new ProgressDialog(this);
+        pDialog2 = new ProgressDialog(this);
 
 
 
@@ -96,6 +106,11 @@ public class MessInfoActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+
+
+        final boolean[] done1 = {false};
+        final boolean[] done2 = {false};
 
 
         // overridePendingTransition(R.anim.my_slide_in_left, R.anim.my_slide_out_right);
@@ -111,43 +126,108 @@ public class MessInfoActivity extends AppCompatActivity {
                 MessObj = (MenuCardView) extras.getSerializable("messobj");
                 if (MessObj != null) {
                     MessID = MessObj.getMessID();
-                    String urlname= getURLString( MessID );
-                    //  Toast.makeText(this, "Show Info of : " + urlname, Toast.LENGTH_SHORT).show();
+
+                    String urlname =getURLString( MessID );
+
+                    // Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
 
-                    GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
+                    final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
 
-                    if(isNetworkAvailable())
+                    if(isNetworkAvailable()) {
+
+
+
                         obj.execute();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if(obj.getStatus() == AsyncTask.Status.RUNNING) {
+                                    obj.cancel(true);
+                                    Toast.makeText(MessInfoActivity.this, "Oops, Slow Internet, couldn't load menu data!", Toast.LENGTH_SHORT).show();
+                                    Log.e("Slow internet","Menu obj cancelled");
+
+                                    if(pDialog1.isShowing())
+                                        pDialog1.dismiss();
+                                    done1[0] =true;
+                                    fullData.clear();
+//                                    loadTabs();
+                                }
+
+
+                            }
+                        },9000);
+                    }
                     else
                     {
+                        done1[0] =true;
                         fullData.clear();
                         // loadTabs();
 
                     }
 
-                    GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
-                    if(isNetworkAvailable())
+                    final GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
+                    if(isNetworkAvailable()) {
+
+
                         Infoobj.execute();
+
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                if(Infoobj.getStatus() == AsyncTask.Status.RUNNING) {
+                                    Infoobj.cancel(true);
+                                    //Toast.makeText(MessInfoActivity.this, "Slow Internet :/", Toast.LENGTH_SHORT).show();
+
+                                    Log.e("Slow internet","Info obj cancelled");
+                                    if(Hashmessinfo!=null)
+                                        Hashmessinfo.clear();
+
+                                    if(pDialog2.isShowing())
+                                        pDialog2.dismiss();
+
+                                    done2[0] =true;
+                                    DatabaseHandler databaseHandler=new DatabaseHandler(getApplicationContext());
+                                    if(Hashmessinfo!=null)
+                                        Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+
+                                    if(Hashmessinfo!=null)
+                                        SetDetails(Hashmessinfo);
+
+                                    //get from sqite
+                                }
+
+
+                            }
+                        },9000);
+                    }
                     else
                     {
 
-                        Hashmessinfo.clear();
+                        if(Hashmessinfo!=null) {
+                            Hashmessinfo.clear();
 
-                        DatabaseHandler databaseHandler=new DatabaseHandler(this);
 
-                        Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+                            done2[0] = true;
+                            DatabaseHandler databaseHandler = new DatabaseHandler(this);
 
-                        if(Hashmessinfo!=null)
+                            Hashmessinfo = databaseHandler.getMessInfo(MessObj.getMessID());
+
                             SetDetails(Hashmessinfo);
-
+                        }
 
                         //get from sqite
                     }
 
 
 
+
                 }
+
             }
         } else {
             MessObj = (MenuCardView) savedInstanceState.getSerializable("messid");
@@ -159,31 +239,97 @@ public class MessInfoActivity extends AppCompatActivity {
                 // Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                 toolbarTextView.setText(MessID);
 
-                GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
+                final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
 
-                if(isNetworkAvailable())
+                if(isNetworkAvailable()) {
+
+
+
                     obj.execute();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if(obj.getStatus() == AsyncTask.Status.RUNNING) {
+                                obj.cancel(true);
+                                Toast.makeText(MessInfoActivity.this, "Oops, Slow Internet, couldn't load menu data!", Toast.LENGTH_SHORT).show();
+                                Log.e("Slow internet","Menu obj cancelled");
+
+                                if(pDialog1.isShowing())
+                                    pDialog1.dismiss();
+
+                                done1[0] =true;
+                                fullData.clear();
+                                // loadTabs();
+                            }
+
+
+                        }
+                    },9000);
+                }
                 else
                 {
+                    done1[0] =true;
                     fullData.clear();
-                    loadTabs();
+                    //  loadTabs();
 
                 }
 
-                GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
-                if(isNetworkAvailable())
+                final GetMessInfo Infoobj = new GetMessInfo(MessInfoActivity.this,urlname);
+                if(isNetworkAvailable()) {
+
+
                     Infoobj.execute();
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+
+                            if(Infoobj.getStatus() == AsyncTask.Status.RUNNING) {
+                                Infoobj.cancel(true);
+                                //Toast.makeText(MessInfoActivity.this, "Slow Internet :/", Toast.LENGTH_SHORT).show();
+
+                                Log.e("Slow internet","Info obj cancelled");
+                                if(Hashmessinfo!=null)
+                                    Hashmessinfo.clear();
+
+                                if(pDialog2.isShowing())
+                                    pDialog2.dismiss();
+
+                                done2[0] =true;
+                                DatabaseHandler databaseHandler=new DatabaseHandler(getApplicationContext());
+
+                                if(Hashmessinfo!=null)
+                                    Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+
+                                if(Hashmessinfo!=null)
+                                    SetDetails(Hashmessinfo);
+
+                                //get from sqite
+                            }
+
+
+                        }
+                    },9000);
+                }
                 else
                 {
 
-                    Hashmessinfo.clear();
+                    if(Hashmessinfo!=null) {
+                        Hashmessinfo.clear();
 
 
-                    DatabaseHandler databaseHandler=new DatabaseHandler(this);
+                        done2[0] = true;
+                        DatabaseHandler databaseHandler = new DatabaseHandler(this);
 
-                    Hashmessinfo=databaseHandler.getMessInfo(MessObj.getMessID());
+                        if(Hashmessinfo!=null)
+                            Hashmessinfo = databaseHandler.getMessInfo(MessObj.getMessID());
 
-                    SetDetails(Hashmessinfo);
+                        if(Hashmessinfo!=null)
+                            SetDetails(Hashmessinfo);
+                    }
 
                     //get from sqite
                 }
@@ -269,7 +415,6 @@ public class MessInfoActivity extends AppCompatActivity {
     class GetMenu extends AsyncTask<Void, Void, Void> {
 
         private String TAG = MainActivity.class.getSimpleName();
-        private ProgressDialog pDialog;
         private Context mcontext;
         private String urlMess;
 //    public ArrayList<ArrayList> fullData = new ArrayList<>();
@@ -283,10 +428,20 @@ public class MessInfoActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 //         Showing progress dialog
-            pDialog = new ProgressDialog(mcontext);
+           /* pDialog = new ProgressDialog(mcontext);
             pDialog.setMessage("Getting Menu...");
             pDialog.setCancelable(false);
             pDialog.show();
+
+
+*/
+
+            pDialog1.setMessage("Getting Menu...");
+            pDialog1.setCancelable(false);
+            pDialog1.show();
+
+
+
 
         }
 
@@ -367,8 +522,8 @@ public class MessInfoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pDialog.isShowing()) {
-                pDialog.dismiss();
+            if (pDialog1.isShowing()) {
+                pDialog1.dismiss();
             }
             Toast.makeText(mcontext, "Menu Updated", Toast.LENGTH_SHORT).show();
 
@@ -380,7 +535,6 @@ public class MessInfoActivity extends AppCompatActivity {
     class GetMessInfo extends AsyncTask<Void, Void, Void>{
 
         private String TAG = MainActivity.class.getSimpleName();
-        private ProgressDialog pDialog;
         private Context mcontext;
         private String urlMess;
 
@@ -392,10 +546,9 @@ public class MessInfoActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 //         Showing progress dialog
-            pDialog = new ProgressDialog(mcontext);
-            pDialog.setMessage("Getting the Mess Info...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog2.setMessage("Getting the Mess Info...");
+            pDialog2.setCancelable(false);
+            pDialog2.show();
 
         }
 
@@ -451,8 +604,8 @@ public class MessInfoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pDialog.isShowing()) {
-                pDialog.dismiss();
+            if (pDialog2.isShowing()) {
+                pDialog2.dismiss();
             }
 //            loadmessinfo();
 
@@ -464,12 +617,14 @@ public class MessInfoActivity extends AppCompatActivity {
 
     private void SetDetails(HashMap<String, String> hashmessinfo) {
 
-
-        loadBottomNavigationView(hashmessinfo.get("Contact"),hashmessinfo.get("Location"),hashmessinfo);
-        setMessTimeDetails(hashmessinfo.get("LunchOpen"),hashmessinfo.get("LunchClose"),
-                hashmessinfo.get("DinnerOpen"),hashmessinfo.get("DinnerClose"));
-        setPrices(hashmessinfo.get("GuestCharge"),hashmessinfo.get("MonthlyCharge"));
-        setAddress(hashmessinfo.get("Address"));
+        if (hashmessinfo != null)
+        {
+            loadBottomNavigationView(hashmessinfo.get("Contact"), hashmessinfo.get("Location"), hashmessinfo);
+            setMessTimeDetails(hashmessinfo.get("LunchOpen"), hashmessinfo.get("LunchClose"),
+                    hashmessinfo.get("DinnerOpen"), hashmessinfo.get("DinnerClose"));
+            setPrices(hashmessinfo.get("GuestCharge"), hashmessinfo.get("MonthlyCharge"));
+            setAddress(hashmessinfo.get("Address"));
+        }
 
 
     }
