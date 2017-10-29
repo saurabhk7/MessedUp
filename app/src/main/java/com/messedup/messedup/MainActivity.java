@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         //initializing the toolbar view
         initToolBar();
-        loadAddinBack();
+      //  loadAddinBack();
         addHitCount();
 
 
@@ -469,8 +469,8 @@ public class MainActivity extends AppCompatActivity {
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
         if(isNetworkAvailable()) {
-            LoadAd mLoadAd=new LoadAd(this);
-            mLoadAd.execute();
+           // LoadAd mLoadAd=new LoadAd(this);
+           // mLoadAd.execute();
 
         }
 
@@ -485,8 +485,11 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
             Intent adIntent=new Intent(this, AdMobsActivity.class);
 
-            if(isNetworkAvailable())
-                showInterstitial();
+            if(isNetworkAvailable()) {
+               // showInterstitial();
+
+                appExit();
+            }
             else
                 appExit();
 
@@ -919,7 +922,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
             adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                     // Check the LogCat to get your test device ID
                     .addTestDevice("5C57F9C1972E25B91E244E6898A7A78B")
                     .build();
