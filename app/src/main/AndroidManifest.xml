@@ -63,6 +63,10 @@
             android:name=".AboutUsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SelectBreakfastActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".firebase_messaging.MyFirebaseMessagingService">
             <intent-filter>
@@ -86,6 +90,9 @@
             android:name=".IntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Intro" />
+        <activity android:name=".TokenSelectionActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

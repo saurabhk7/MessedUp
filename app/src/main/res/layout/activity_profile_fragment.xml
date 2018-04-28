@@ -82,6 +82,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:text="EMAIL"
+                        android:visibility="gone"
                         android:textSize="15sp"
                         android:textColor="@color/common_google_signin_btn_text_light_focused"
                         android:layout_marginBottom="3dp"
@@ -93,8 +94,69 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:visibility="gone"
                         android:text="CONTACT DETAILS"
                         android:textSize="15sp"
+                        android:textColor="@color/common_google_signin_btn_text_light_focused"
+                        android:layout_marginBottom="3dp"
+                        android:textAlignment="center" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/ref_code_layout"
+                        android:layout_below="@id/ContactTxtView"
+                        android:layout_height="wrap_content">
+                    <TextView
+
+                        android:id="@+id/ReferralTxtView"
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SAURABHK734"
+                        android:textSize="15sp"
+                        android:textColor="@color/app_green"
+                        android:layout_marginBottom="3dp"
+                        android:textAlignment="center" />
+
+                    <View
+                        android:id="@+id/below_ref"
+                        android:layout_width="match_parent"
+                        android:layout_alignEnd="@+id/shareRefBtn"
+                        android:layout_alignStart="@+id/ReferralTxtView"
+                        android:layout_below="@+id/ReferralTxtView"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="#87cccccc"
+                        android:visibility="visible"
+                        />
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:layout_alignTop="@+id/ReferralTxtView"
+                        android:layout_toRightOf="@+id/ReferralTxtView"
+                        app:srcCompat="@drawable/ic_share_white_24dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_alignParentTop="false"
+                        android:layout_marginBottom="3dp"
+                        android:layout_alignParentStart="false"
+                        android:id="@+id/shareRefBtn"
+                        android:background="@color/transparent" />
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_below="@id/ref_code_layout"
+                        android:id="@+id/ReferralInfoTxtView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="3dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="Refer your friend and you and your friend each get Rs. 51 Paytm Cashback after your friend buys his first 15 tokens"
+                        android:textSize="12sp"
                         android:textColor="@color/common_google_signin_btn_text_light_focused"
                         android:layout_marginBottom="3dp"
                         android:textAlignment="center" />
@@ -118,13 +180,14 @@
                         app:srcCompat="@drawable/ic_share_white_24dp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentStart="true"
+                        android:visibility="gone"
                         android:id="@+id/shareAppBtn"
                         android:background="@color/transparent" />
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="5dp"
                         app:srcCompat="@drawable/ic_star_border_white_24dp"
                         android:layout_alignParentTop="true"
                         android:layout_toEndOf="@id/shareAppBtn"
@@ -180,10 +243,10 @@
                     app:cpb_colorProgress="#00ffffff"
                     app:cpb_colorIndicator="#59c614"
                     app:cpb_cornerRadius="4dp"
-                    app:cpb_textComplete="Thank You!"
+                    app:cpb_textComplete="BUY TOKENS"
                     app:cpb_selectorComplete="@drawable/complete_state_selector"
                     app:cpb_textError="Oops, Something went wrong!"
-                    app:cpb_textIdle="I'm In" />
+                    app:cpb_textIdle="Select Tokens" />
 
                 <ImageButton
                     android:id="@+id/thumb_button_1"

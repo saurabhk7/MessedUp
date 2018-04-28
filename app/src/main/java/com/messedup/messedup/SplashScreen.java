@@ -147,7 +147,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
         if(connectionManager.isNetworkAvailable()) {
 
-            SPLASH_TIME_OUT=7000;
+            SPLASH_TIME_OUT=10000;
 
         }
         else

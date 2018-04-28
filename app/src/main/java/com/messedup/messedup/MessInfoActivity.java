@@ -28,6 +28,7 @@ import android.transition.Explode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,7 +70,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
     public ProgressDialog pDialog2;
 
-
+    private Button selectBrkfstBtn;
 
 
     private String lunchtxt,dinnertxt;
@@ -91,7 +92,7 @@ public class MessInfoActivity extends AppCompatActivity {
         MonthyTxt=(TextView)findViewById(R.id.MonthlyCostTxtView);
         AddressTxt=(TextView)findViewById(R.id.AddTxtView);
 
-
+        selectBrkfstBtn=(Button)findViewById(R.id.selectBreakfastBtn);
 
         pDialog1 = new ProgressDialog(this);
         pDialog2 = new ProgressDialog(this);
@@ -104,6 +105,15 @@ public class MessInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        selectBrkfstBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MessInfoActivity.this,SelectBreakfastActivity.class);
+                i.putExtra("messid", MessID);
+                startActivity(i);
             }
         });
 

@@ -51,7 +51,7 @@ import java.net.URL;
 public class ProfileFragment extends Fragment {
 
     Button ImInBtn;
-    String email;
+    String email,refcode = "SAURABHK734";
     DetailsSharedPref mDetailsSharedPref;
 
     // Hold a reference to the current animator,
@@ -107,29 +107,29 @@ public class ProfileFragment extends Fragment {
 
 
 
-        if(mDetailsSharedPref.getImInStatus().equals("notdone")) //TODO: finalise this after testing
+        /*if(mDetailsSharedPref.getImInStatus().equals("notdone")) //TODO: finalise this after testing
         {
             circularProgressButton.setIndeterminateProgressMode(true); // turn on indeterminate progress
 
             circularProgressButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-/*
+*//*
                 Toast.makeText(ProfileView.getContext(),"Thank You!",Toast.LENGTH_SHORT).show();
-*/
+*//*
                     circularProgressButton.setProgress(50);
-                   /* new Handler().postDelayed(new Runnable() {
+                   *//* new Handler().postDelayed(new Runnable() {
                         public void run() {
 
-*/
+*//*
                             addImIn(ProfileView);
 
 
-/*
+*//*
 
                         }
                     }, 3000);
-*/
+*//*
 
                 }
             });
@@ -143,6 +143,20 @@ public class ProfileFragment extends Fragment {
           //  Toast.makeText(ProfileView.getContext(),"Thank You, Already Noted!",Toast.LENGTH_SHORT).show();
 
         }
+*/
+
+
+        circularProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent toSelectTokenAct = new Intent(getActivity(),TokenSelectionActivity.class);
+                startActivity(toSelectTokenAct);
+
+        }
+    });
+
+
 
         /*ImInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,6 +328,26 @@ public class ProfileFragment extends Fragment {
                     sAux = sAux + "https://goo.gl/rseyyY \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "Share Messed Up App to"));
+                } catch(Exception e) {
+                    //e.toString();
+                }
+            }
+        });
+
+
+        ImageButton shareRefBtn=(ImageButton)ProfileView.findViewById(R.id.shareRefBtn);
+        shareRefBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
+                    String sAux = "\nHey!\nCheckout Messed Up on Google Play and " +
+                            "use '"+refcode+"' as your referral code during payment to get *FLAT ₹51 Paytm Cashback* on your first transaction! \n\n";
+                    sAux = sAux + "https://goo.gl/rseyyY \n\n";
+                    i.putExtra(Intent.EXTRA_TEXT, sAux);
+                    startActivity(Intent.createChooser(i, "Share your referral code with"));
                 } catch(Exception e) {
                     //e.toString();
                 }

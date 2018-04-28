@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#f2f4f4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        android:elevation="30dp"
+        android:id="@+id/cv_notif"
+        app:cardCornerRadius="0dp"
+        android:backgroundTint="@color/transparent"
+        android:layout_marginBottom="0dp"
+        app:cardUseCompatPadding="false"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/transparent"
+            android:layout_marginBottom="0dp">
+
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/transparent"
+                android:id="@+id/ProfileLayout">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:src="@drawable/red_profile_background"
+                    android:scaleType="centerCrop"
+                    android:layout_height="40dp" />
+
+                <View
+                    android:id="@+id/header_cover_image"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_height="1dp"
+                    android:background="#87cccccc"
+                    android:visibility="visible"
+                    />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    app:srcCompat="@drawable/token_stack"
+                    android:layout_below="@+id/header_cover_image"
+                    android:background="@drawable/profile_circular_border_imageview"
+                    android:id="@+id/MenuHeaderIcon"
+                    android:layout_marginTop="-35dp"
+                    android:elevation="8dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="70dp" />
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_below="@+id/header_cover_image"
+                    android:layout_marginTop="6dp"
+                    android:elevation="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/MealTypeTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textSize="13.5sp"
+                        android:visibility="visible"
+                        android:textStyle="normal"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"
+                        android:textAllCaps="true" />
+                    <TextView
+                        android:id="@+id/DayDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:text="Tue, Sept 5"
+                        android:textSize="15sp"
+                        android:gravity="center_horizontal"
+                        android:visibility="gone"
+                        android:textStyle="normal"
+                        android:textColor="@color/common_google_signin_btn_text_light_focused"
+                        android:layout_weight="1"
+                         />
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

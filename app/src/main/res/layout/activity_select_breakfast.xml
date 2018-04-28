@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_select_breakfast"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.messedup.messedup.SelectBreakfastActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/navigationbar">
+
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_alignParentTop="true"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            android:id="@+id/toolbar3"
+            android:elevation="24dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mess Name"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="23sp"
+                android:id="@+id/toolbar_title" />
+        </android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            android:layout_height="100dp"
+            android:id="@+id/toolbarImg"
+            app:srcCompat="@drawable/red_profile_background" />
+
+
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/toolbarImg"-->
+            <!--app:cardBackgroundColor="@color/transparent"-->
+            <!--android:background="?android:attr/selectableItemBackground"-->
+            <!--android:id="@+id/cv_user"-->
+            <!--app:cardCornerRadius="6dp"-->
+            <!--android:layout_marginTop="-40dp"-->
+            <!--android:layout_marginBottom="0dp"-->
+            <!--app:cardUseCompatPadding="false"-->
+            <!--&gt;-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbarImg"
+                android:layout_marginTop="-40dp"
+                android:layout_marginBottom="10dp">
+
+                <RelativeLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:background="@color/transparent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ProfileLayout">
+
+                    <View
+                        android:id="@+id/header_cover_image"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="40dp"
+                        android:layout_height="1dp"
+                        android:background="#87cccccc"
+                        android:visibility="invisible"
+                        />
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        app:srcCompat="@drawable/user_default_pic"
+                        android:layout_below="@+id/header_cover_image"
+                        android:background="@drawable/messinfo_circular_border_imageview"
+                        android:id="@+id/ProfilePicImg"
+                        android:layout_marginTop="-35dp"
+                        android:elevation="8dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_height="70dp" />
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/AddTxtView"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_centerHorizontal="true"-->
+                        <!--android:layout_below="@id/ProfilePicImg"-->
+                        <!--android:text="Mess Address"-->
+                        <!--android:textSize="15sp"-->
+                        <!--android:textColor="@color/common_google_signin_btn_text_light_focused"-->
+                        <!--android:layout_marginBottom="3dp"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:layout_marginTop="3dp"-->
+                        <!--android:padding="5dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_centerInParent="true"-->
+                        <!--android:layout_below="@id/AddTxtView"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/LunchTimingTxtView"-->
+                        <!--android:text="Lunch:"-->
+                        <!--android:visibility="visible"-->
+                        <!--android:layout_marginTop="2dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:text="Dinner:"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_centerInParent="true"-->
+                        <!--android:layout_below="@id/LunchTimingTxtView"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/DinnerTimingTxtView"-->
+                        <!--android:visibility="visible" />-->
+
+                    <!--<LinearLayout-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:layout_marginTop="7dp"-->
+                        <!--android:layout_below="@id/DinnerTimingTxtView"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/CostLayout">-->
+
+                        <!--<TextView-->
+                            <!--android:text="Daily Cost "-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:textSize="16sp"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textColor="@color/common_google_signin_btn_text_light_focused"-->
+                            <!--android:id="@+id/OneTimeCostText"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:textStyle="normal|bold"-->
+                            <!--android:padding="2dp" />-->
+
+                        <!--<TextView-->
+                            <!--android:id="@+id/MonthlyCostTxtView"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="Monthly Cost "-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:textSize="16sp"-->
+                            <!--android:textColor="@color/common_google_signin_btn_text_light_focused"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textStyle="normal|bold"-->
+                            <!--android:padding="2dp" />-->
+                    <!--</LinearLayout>-->
+
+                    <com.dd.CircularProgressButton
+                        android:id="@+id/AnimImInBtn1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ProfilePicImg"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_margin="10dp"
+                        app:cpb_selectorIdle="@drawable/idle_state_selector"
+                        app:cpb_colorProgress="#00ffffff"
+                        app:cpb_colorIndicator="#59c614"
+                        app:cpb_cornerRadius="4dp"
+                        app:cpb_textComplete="Thank You!"
+                        app:cpb_selectorComplete="@drawable/complete_state_selector"
+                        app:cpb_textError="Oops, Something went wrong!"
+                        app:cpb_textIdle="Breakfast Option 1" />
+                    <com.dd.CircularProgressButton
+                        android:id="@+id/AnimImInBtn2"
+                        android:layout_width="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/AnimImInBtn1"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:cpb_selectorIdle="@drawable/idle_state_selector"
+                        app:cpb_colorProgress="#00ffffff"
+                        app:cpb_colorIndicator="#59c614"
+                        app:cpb_cornerRadius="4dp"
+                        app:cpb_textComplete="Thank You!"
+                        app:cpb_selectorComplete="@drawable/complete_state_selector"
+                        app:cpb_textError="Oops, Something went wrong!"
+                        app:cpb_textIdle="Breakfast Option 2" />
+                    <com.dd.CircularProgressButton
+                        android:id="@+id/AnimImInBtn3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/AnimImInBtn2"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_margin="10dp"
+                        app:cpb_selectorIdle="@drawable/idle_state_selector"
+                        app:cpb_colorProgress="#00ffffff"
+                        app:cpb_colorIndicator="#59c614"
+                        app:cpb_cornerRadius="4dp"
+                        app:cpb_textComplete="Thank You!"
+                        app:cpb_selectorComplete="@drawable/complete_state_selector"
+                        app:cpb_textError="Oops, Something went wrong!"
+                        app:cpb_textIdle="Breakfast Option 3" />
+                    <com.dd.CircularProgressButton
+                        android:id="@+id/AnimImInBtn4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_below="@id/AnimImInBtn3"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:cpb_selectorIdle="@drawable/idle_state_selector"
+                        app:cpb_colorProgress="#00ffffff"
+                        app:cpb_colorIndicator="#59c614"
+                        app:cpb_cornerRadius="4dp"
+                        app:cpb_textComplete="Thank You!"
+                        app:cpb_selectorComplete="@drawable/complete_state_selector"
+                        app:cpb_textError="Oops, Something went wrong!"
+                        app:cpb_textIdle="Breakfast Option 4" />
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
