@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.messedup.messedup.adapters.CustomListAdapter;
+import com.messedup.messedup.adapters.OfferPageAdapter;
 import com.messedup.messedup.connection_handlers.HttpHandler;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 
@@ -31,7 +33,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import android.os.Handler;
 
+import me.relex.circleindicator.CircleIndicator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +61,10 @@ public class NotifFragment extends Fragment  {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ArrayList<Integer> OfferImageArray = new ArrayList<Integer>();
+    private static ViewPager mPager;
+    private static int currentPage = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -101,6 +111,8 @@ public class NotifFragment extends Fragment  {
         final View NotifView= inflater.inflate(R.layout.fragment_notif, container, false);
 
 
+
+        initOffers(NotifView);
 
 
         HashMap<String,String> NotifMap=new HashMap<>();
@@ -202,7 +214,42 @@ public class NotifFragment extends Fragment  {
         return NotifView;
     }
 
+    private void initOffers(View notifView) {
 
+        for(int i=0;i<4;i++)
+            OfferImageArray.add(R.drawable.logo_144);
+
+        mPager = (ViewPager) notifView.findViewById(R.id.pager);
+        mPager.setAdapter(new OfferPageAdapter(getContext(),OfferImageArray));
+        final CircleIndicator indicator = (CircleIndicator) notifView.findViewById(R.id.indicator);
+        indicator.setViewPager(mPager);
+
+        // Auto start of viewpager
+        final Handler handler = new Handler();
+        final Runnable Update = new Runnable() {
+            public void run() {
+
+                Log.e("curpage: ",currentPage+"");
+                if (currentPage == 4) {
+
+                    currentPage = 0;
+                }
+                mPager.setCurrentItem(currentPage, true);
+                currentPage++;
+            }
+        };
+
+//        handler.post(Update);
+
+        Timer swipeTimer = new Timer();
+        swipeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(Update);
+            }
+        }, 3000, 2500);
+
+    }
 
 
     /**

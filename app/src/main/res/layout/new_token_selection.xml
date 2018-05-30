@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/activity_token_selection"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f4f4"
+    tools:context="com.messedup.messedup.TokenSelectionActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:gravity="center_vertical|start"
+        android:elevation="6dp"
+
+        app:titleTextColor="#ffffff"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:titleTextColor="#ffffff">
+
+
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="30dp"
+        android:id="@+id/cv_token_static"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="0dp"
+        android:layout_below="@+id/toolbar"
+        android:backgroundTint="@color/transparent"
+        android:layout_marginBottom="0dp"
+        app:cardUseCompatPadding="false"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:layout_marginBottom="0dp">
+
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/transparent"
+                android:id="@+id/ProfileLayout">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:src="@drawable/red_profile_background"
+                    android:scaleType="centerCrop"
+                    android:layout_height="40dp" />
+
+                <View
+                    android:id="@+id/header_cover_image"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_height="1dp"
+                    android:background="#87cccccc"
+                    android:visibility="invisible"
+                    />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    app:srcCompat="@drawable/token_stack"
+                    android:layout_below="@+id/header_cover_image"
+                    android:background="@drawable/profile_circular_border_imageview"
+                    android:id="@+id/MenuHeaderIcon"
+                    android:layout_marginTop="-35dp"
+                    android:elevation="8dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="70dp" />
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <com.mindorks.placeholderview.ExpandablePlaceHolderView
+        android:id="@+id/expandableView"
+        android:layout_below="@+id/cv_token_static"
+        android:layout_above="@+id/ContToPayBtn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
+
+    <com.dd.CircularProgressButton
+        android:id="@+id/ContToPayBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:cpb_selectorIdle="@drawable/idle_state_selector"
+        app:cpb_colorProgress="#00ffffff"
+        app:cpb_colorIndicator="#59c614"
+        app:cpb_cornerRadius="0dp"
+        app:cpb_textComplete="COMPLETE PAYEMENT"
+        app:cpb_selectorComplete="@drawable/complete_state_selector"
+        app:cpb_textError="Oops, Something went wrong!"
+        app:cpb_textIdle="COMPLETE PAYEMENT" />
+
+
+</RelativeLayout>

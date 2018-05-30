@@ -62,12 +62,29 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/ProfilePicImg"
                     android:layout_marginTop="10dp"
-                    android:text="NOTIFICATIONS"
+                    android:text="OFFERS"
+                    android:visibility="gone"
                     android:textSize="17sp"
                     android:textStyle="normal|bold"
                     android:textColor="@color/cardview_dark_background"
                     android:layout_marginBottom="3dp"
                     android:textAlignment="center" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_below="@id/NameTxtView"
+                    android:layout_height="155dp">
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true" />
+                    <me.relex.circleindicator.CircleIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_alignParentBottom="true"/>
+                </RelativeLayout>
 
 
 
@@ -124,6 +141,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="match_parent">
 
             <RelativeLayout
