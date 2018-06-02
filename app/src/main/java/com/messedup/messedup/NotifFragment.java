@@ -17,8 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.ybq.android.spinkit.style.DoubleBounce;
+import com.github.ybq.android.spinkit.style.FoldingCube;
 import com.messedup.messedup.adapters.CustomListAdapter;
 import com.messedup.messedup.adapters.OfferPageAdapter;
 import com.messedup.messedup.connection_handlers.HttpHandler;
@@ -58,7 +61,7 @@ public class NotifFragment extends Fragment  {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+        // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -66,7 +69,17 @@ public class NotifFragment extends Fragment  {
     private static ViewPager mPager;
     private static int currentPage = 0;
 
+    private static boolean  OFFER_ARRAY_LOADED = false;
+
+    private static int tot_off = 0;
+
     private OnFragmentInteractionListener mListener;
+
+
+    ProgressBar progressBar;
+    DoubleBounce doubleBounce ;
+    FoldingCube foldingCube;
+
 
     public NotifFragment() {
         // Required empty public constructor
@@ -112,7 +125,13 @@ public class NotifFragment extends Fragment  {
 
 
 
-        initOffers(NotifView);
+        progressBar = (ProgressBar)NotifView.findViewById(R.id.spin_kit_progress);
+        doubleBounce = new DoubleBounce();
+        foldingCube = new FoldingCube();
+
+
+//       if(tot_off==0)
+            initOffers(NotifView);
 
 
         HashMap<String,String> NotifMap=new HashMap<>();
@@ -173,6 +192,8 @@ public class NotifFragment extends Fragment  {
             listView0dinner.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
+            progressBar.setVisibility(View.INVISIBLE);
+
         }
 
        /* list.add(0,"Gujrati Mess");
@@ -216,26 +237,39 @@ public class NotifFragment extends Fragment  {
 
     private void initOffers(View notifView) {
 
-        for(int i=0;i<4;i++)
-            OfferImageArray.add(R.drawable.logo_144);
+        ArrayList<Integer> OfferImageArray = new ArrayList<Integer>();
 
-        mPager = (ViewPager) notifView.findViewById(R.id.pager);
+        final int[] currentPage = {0};
+
+        for(int i=0;i<4;i++) {
+            if (i % 2 == 0)
+                OfferImageArray.add(R.drawable.offer_p4);
+            else
+                OfferImageArray.add(R.drawable.offer_p3);
+
+        }
+        final ViewPager mPager = (ViewPager) notifView.findViewById(R.id.pager);
         mPager.setAdapter(new OfferPageAdapter(getContext(),OfferImageArray));
         final CircleIndicator indicator = (CircleIndicator) notifView.findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
+
+        OFFER_ARRAY_LOADED=true;
+        tot_off++;
+
+        Log.e("totoff : ",""+tot_off);
 
         // Auto start of viewpager
         final Handler handler = new Handler();
         final Runnable Update = new Runnable() {
             public void run() {
 
-                Log.e("curpage: ",currentPage+"");
-                if (currentPage == 4) {
+                Log.e("curpage: ", currentPage[0] +"");
+                if (currentPage[0] == 4) {
 
-                    currentPage = 0;
+                    currentPage[0] = 0;
                 }
-                mPager.setCurrentItem(currentPage, true);
-                currentPage++;
+                mPager.setCurrentItem(currentPage[0], true);
+                currentPage[0]++;
             }
         };
 
@@ -297,6 +331,10 @@ public class NotifFragment extends Fragment  {
             Name.clear();
             Offerdate.clear();
             Description.clear();
+
+            progressBar.setIndeterminateDrawable(doubleBounce);
+            progressBar.setVisibility(View.VISIBLE);
+
 //         Showing progress dialog
 //            pDialog = new ProgressDialog(mcontext);
 //            pDialog.setMessage("Getting the Mess Info...");
@@ -369,6 +407,11 @@ public class NotifFragment extends Fragment  {
             db.updateOffer(nbcoll,jsonStr);
 
             Log.e(nbcoll,jsonStr);
+
+
+            if(progressBar.isIndeterminate())
+                progressBar.setVisibility(View.INVISIBLE);
+
 
 //            if (pDialog.isShowing()) {
 //                pDialog.dismiss();

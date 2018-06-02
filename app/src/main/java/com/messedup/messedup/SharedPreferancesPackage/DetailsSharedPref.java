@@ -127,6 +127,19 @@ public class DetailsSharedPref {
 
 
     }
+
+    public void updatePhoneSharedPrefs(String phone) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("userphone", phone);
+        editor.apply();
+        editor.commit();
+        Log.e("SHRDPRF Phone : ",phone);
+
+
+    }
+
     public void updatePhotURLSharedPrefs(String url) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -156,6 +169,16 @@ public class DetailsSharedPref {
         String PreStoredArea = preferences.getString("useremail", "EMAIL");
        // Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
         Log.e("SHRDPRF emailreturned: ",PreStoredArea);
+
+        return PreStoredArea;
+
+    }
+
+    public String getPhoneSharedPrefs() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String PreStoredArea = preferences.getString("userphone", "PHONE");
+        // Log.d("IN SHARED PREFs", "GOT STRING " + PreStoredArea);
+        Log.e("SHRDPRF phonereturned: ",PreStoredArea);
 
         return PreStoredArea;
 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/parent_lin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true">
+
+                <TextView
+                    android:id="@+id/token_label"
+                    android:text="20"
+                    android:textColor="@color/white"
+                    android:elevation="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:lines="1" />
+
+                <ImageView
+                    android:id="@+id/token_icon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/poker_chip_red_shadow" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Mess Name"
+                    android:layout_width="match_parent"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mess_name"
+                    android:textColor="@color/bb_darkBackgroundColor" />
+
+                <TextView
+                    android:text="10 Tokens Expire on 08/06/2018"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/common_google_signin_btn_text_light_focused"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/token_expiry" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/below_ref"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/parent_lin_layout"
+        android:layout_height="1dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#87cccccc"
+        android:visibility="visible"
+        />
+</RelativeLayout>

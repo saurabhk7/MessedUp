@@ -1,5 +1,11 @@
 package com.messedup.messedup;
 
+import android.content.Context;
+import android.app.Activity;
+import instamojo.library.InstapayListener;
+import instamojo.library.InstamojoPay;
+import instamojo.library.Config;
+import android.content.IntentFilter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -9,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,6 +24,10 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
+import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,15 +40,75 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class PaymentGatewayActivity extends AppCompatActivity {
 
     TextView jsontxtview;
     Button CompletePayBtn;
+
+    String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens";
+    DetailsSharedPref mDetailsSharedPref;
+
     LinkedHashMap<String, String> FinalMapToDisplay = new LinkedHashMap<>();
+    
+    private void callInstamojoPay(String email, String phone, String amount, String purpose, String buyername) {
+        final Activity activity = this;
+        InstamojoPay instamojoPay = new InstamojoPay();
+        IntentFilter filter = new IntentFilter("ai.devsupport.instamojo");
+        registerReceiver(instamojoPay, filter);
+        JSONObject pay = new JSONObject();
+        try {
+            pay.put("email", email);
+            pay.put("phone", phone);
+            pay.put("purpose", purpose);
+            pay.put("amount", amount);
+            pay.put("name", buyername);
+       pay.put("send_sms", true);
+      pay.put("send_email", true);
+ } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        initListener();
+        instamojoPay.start(activity, pay, listener);
+    }
+    
+    InstapayListener listener;
+
+    
+    private void initListener() {
+        listener = new InstapayListener() {
+            @Override
+            public void onSuccess(String response) {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(int code, String reason) {
+                Toast.makeText(getApplicationContext(), "Failed: " + reason, Toast.LENGTH_LONG)
+                        .show();
+            }
+        };
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_gateway);
+        // Call the function callInstamojo to start payment here
+
+
+
+        mDetailsSharedPref =new DetailsSharedPref(this);
+
+        email = mDetailsSharedPref.getEmailSharedPrefs().trim();
+        buyername = mDetailsSharedPref.getNameSharedPrefs().trim();
+        phone = mDetailsSharedPref.getPhoneSharedPrefs().trim().substring(3,13);
+
+        Log.e("DETAILS:",email+ " " + buyername + " " + phone);
+
+
 
         Intent getIntent = getIntent();
 
@@ -256,6 +327,16 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         CompletePayBtn = (Button) findViewById(R.id.complete_payment_btn);
         CompletePayBtn.setText("COMPLETE PAYMENT ₹"+disccost);
 
+
+        final String finalDisccost = disccost+"";
+        CompletePayBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                callInstamojoPay(email,phone, finalDisccost,purpose,buyername);
+            }
+        });
+
         System.out.println("TABLE:");
 
         for (int j = 0; j <3; j++) {
@@ -373,7 +454,30 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
+
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Want to go back?")
+                .setContentText("Your current order will be lost")
+                .setCancelText("No")
+                .setConfirmText("Yes, go back")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(final SweetAlertDialog sDialog) {
+
+                        sDialog.cancel();
+                        startActivity(new Intent(PaymentGatewayActivity.this, TokenSelectionActivity.class));
+
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+                    }
+                })
+                .show();
+
+        /*new AlertDialog.Builder(this)
                 .setTitle("Really want to go back?")
                 .setMessage("Your current order will be lost")
                 .setNegativeButton(android.R.string.no, null)
@@ -384,10 +488,13 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                         startActivity(new Intent(PaymentGatewayActivity.this, TokenSelectionActivity.class));
 
                     }
-                }).create().show();
+                }).create().show();*/
     }
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 }
 
 

@@ -64,7 +64,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             ="CREATE TABLE IF NOT EXISTS "+MESS_INFO_TABLE_NAME+" ("+MESS_INFO_Column_ID+" VARCHAR, "
             +MESS_INFO_Column_1_mess_details+" VARCHAR, "+MESS_INFO_Column_2_week_menu+" VARCHAR) ";
 
-
+    public static final String USER_INFO_TABLE_NAME="MessInfo";
+    public static final String USER_INFO_Column_ID="User_ID" ;
+    public static final String USER_INFO_Column_1_token_details="TokenDetails";
+    public static final String CREATE_TABLE_USER_INFO
+            ="CREATE TABLE IF NOT EXISTS "+USER_INFO_TABLE_NAME+" ("+USER_INFO_Column_ID+" VARCHAR, "
+            +USER_INFO_Column_1_token_details+" VARCHAR) ";
     /**
      * @param database
      * @use Creating Offline (SQLite Tables) to save APP state for Offline Use
@@ -73,6 +78,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_ALL_MENU);
         database.execSQL(CREATE_TABLE_MESS_INFO);
+        database.execSQL(CREATE_TABLE_USER_INFO);
+
     }
 
     /**
@@ -85,6 +92,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+MENU_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS "+MESS_INFO_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS "+USER_INFO_TABLE_NAME);
+
         onCreate(db);
     }
 
@@ -118,6 +127,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     *  /**
+     * Update card status against each Mess ID
+     * @param cardjsonlist
+     */
+    public void updateUserCard(String userid, String cardjsonlist){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        /*String qq = "REPLACE INTO "+MENU_TABLE_NAME+" ("+MENU_TABLE_Column_ID+","+MENU_TABLE_Column_1_card_details+
+                ") VALUES ('"+nbcoll+"','"+cardjsonlist+"');";
+        *//*ContentValues values = new ContentValues();
+        values.put(MENU_TABLE_Column_ID, nbcoll); // Contact Name
+        values.put(MENU_TABLE_Column_1_card_details, cardjsonlist);
+        database.insert(MENU_TABLE_NAME, null, values);*//*
+
+        database.execSQL(qq);*/
+
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(USER_INFO_Column_ID, userid); // the execution is different if _id is 2
+        initialValues.put(USER_INFO_Column_1_token_details, cardjsonlist);
+
+        int id = (int) database.insertWithOnConflict(USER_INFO_TABLE_NAME, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
+        if (id == -1) {
+            database.update(USER_INFO_TABLE_NAME, initialValues, USER_INFO_Column_ID+"=?", new String[] {userid});  // number 1 is the _id here, update to variable for your code
+        }
+        database.close();
+    }
+    /*
      * @param nbcoll
      * @param offer
      * @use To Update the Offer Database

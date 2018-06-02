@@ -4,9 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -14,7 +17,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,18 +27,29 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
+import com.messedup.messedup.adapters.TokenDisplayListAdapter;
+import com.messedup.messedup.firebase_messaging.MyFirebaseMessagingService;
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
+import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 import com.messedup.messedup.ui_package.CircleTransform;
 import com.messedup.messedup.ui_package.SampleDialogFragment;
 
@@ -43,16 +59,38 @@ import com.squareup.picasso.Picasso;
 
 import com.messedup.messedup.signin_package.GoogleSignIn;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class ProfileFragment extends Fragment {
 
     Button ImInBtn;
-    String email,refcode = "SAURABHK734";
+    String contactnum, username, email,refcode = "SAURABHK734";
     DetailsSharedPref mDetailsSharedPref;
+    String Uid;
+
+    private FirebaseAuth mAuth;
+
+    ProgressBar progressBar;
+    DoubleBounce doubleBounce ;
+
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -63,6 +101,8 @@ public class ProfileFragment extends Fragment {
     // very frequently.
     private int mShortAnimationDuration;
     public CircularProgressButton circularProgressButton;
+
+    private TextView refTxtView;
 
 
     public static ProfileFragment newInstance() {
@@ -97,7 +137,8 @@ public class ProfileFragment extends Fragment {
 
        circularProgressButton=(CircularProgressButton)ProfileView.findViewById(R.id.AnimImInBtn);
 
-
+        progressBar = (ProgressBar)ProfileView.findViewById(R.id.spin_kit_progress);
+        doubleBounce = new DoubleBounce();
 
 
         TapToExpandTxt = (TextView) ProfileView.findViewById(R.id.tap_to_expand_badge);
@@ -105,6 +146,11 @@ public class ProfileFragment extends Fragment {
 
         mDetailsSharedPref = new DetailsSharedPref(ProfileView.getContext());
 
+        refTxtView = (TextView)ProfileView.findViewById(R.id.ReferralTxtView);
+
+
+        Uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        new UserTokenInfo(ProfileView).execute();
 
 
         /*if(mDetailsSharedPref.getImInStatus().equals("notdone")) //TODO: finalise this after testing
@@ -220,6 +266,7 @@ public class ProfileFragment extends Fragment {
                     Log.e("EMAIL: ","Name got from "+providerId+" :"+nm);
                     mDetailsSharedPref.updateNameSharedPrefs(nm);
                     mNameTxtView.setText(nm);
+                    username = nm;
                 }
 
 
@@ -264,6 +311,14 @@ public class ProfileFragment extends Fragment {
 
             mContactTxtView.setText(CurrentUser.getPhoneNumber());
 
+            contactnum=CurrentUser.getPhoneNumber();
+
+            mDetailsSharedPref.updatePhoneSharedPrefs(CurrentUser.getPhoneNumber());
+
+            refcode = username.substring(0,3)+contactnum.substring(contactnum.length()-3,contactnum.length());
+
+            refTxtView.setText(refcode);
+
 
         }
 
@@ -301,13 +356,42 @@ public class ProfileFragment extends Fragment {
             //  setProfileImage(ProfileView);
 
         }
+
+        mAuth = FirebaseAuth.getInstance();
         //SignOut Dialog will open
         SignOutImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SampleDialogFragment fragment
-                        = SampleDialogFragment.newInstance(5,10.0f,true,false);
-                fragment.show(getActivity().getFragmentManager(), "blur_sample");
+//                SampleDialogFragment fragment
+//                        = SampleDialogFragment.newInstance(5,10.0f,true,false);
+//                fragment.show(getActivity().getFragmentManager(), "blur_sample");
+
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Logout?")
+                        .setContentText("Are you sure?")
+                        .setCancelText("No")
+                        .setConfirmText("Yes, logout!")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(final SweetAlertDialog sDialog) {
+
+                                sDialog.cancel();
+                                Toast.makeText(getContext(),"User Signed Out",Toast.LENGTH_SHORT).show();
+
+                                mAuth.signOut();
+
+                                startActivity(new Intent(getActivity(), PhoneNumberAuthentication.class) );
+
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .show();
+
             }
         });
 
@@ -385,7 +469,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //  Toast.makeText(ProfileView.getContext(),"Clicked!",Toast.LENGTH_SHORT).show();
-                zoomImageFromThumb(thumb1View, R.drawable.info_latest_2,ProfileView);
+                //zoomImageFromThumb(thumb1View, R.drawable.info_latest_2,ProfileView);
             }
         });
 
@@ -395,12 +479,121 @@ public class ProfileFragment extends Fragment {
 
 
 
+       /* final String[] messname = {"Kwality Mess", "PICT College", "Navruchi", "Gujrati Mess"};
 
+        int[] tokentoexpire = {5,10,12,7};
+
+        final int[] totaltokens = {10, 23, 12, 7};
+
+        String[] expirydates = {"10/5/2018","13/5/2018","13/5/2018","10/5/2018"};
+
+
+        ListView lView = (ListView) ProfileView.findViewById(R.id.tokenDisplayListView);
+
+        TokenDisplayListAdapter lAdapter = new TokenDisplayListAdapter(getContext(), messname, tokentoexpire, expirydates, totaltokens);
+
+        lView.setAdapter(lAdapter);
+
+        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                //Toast.makeText(getContext(), messname[i]+" "+totaltokens[i], Toast.LENGTH_SHORT).show();
+
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Are you sure?")
+                        .setContentText("Use "+messname[i]+" token!")
+                        .setCancelText("No")
+                        .setConfirmText("Yes,use it!")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(final SweetAlertDialog sDialog) {
+
+                                               sendNotification("Enjoy Your Meal at "+messname[i],"At 12:30 p.m. " +
+                                                "on May 31 2018 | "+(totaltokens[i]-1)+" tokens left");
+
+
+                                String s = "\n" +
+                                        "Time Used: 12:30 p.m.\n\n" +
+                                        "Date Used: May 31 2018\n\n"+(totaltokens[i]-1)+" tokens left of "+messname[i]+"\n";
+
+
+                                sDialog
+
+                                        .setTitleText("Enjoy your meal")
+                                        .setContentText("\n" +
+                                                "Time Used: 12:30 p.m.\n\n" +
+                                                "Date Used: May 31 2018\n\n"+(totaltokens[i]-1)+" tokens left of "+messname[i]+"\n")
+                                        .setConfirmText("OK")
+                                        .setConfirmClickListener(null)
+                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+
+
+
+                                final Handler handler = new Handler();
+                                final Runnable Update = new Runnable() {
+                                    public void run() {
+
+                                       sDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                    }
+                                };
+
+
+                                Timer swipeTimer = new Timer();
+                                swipeTimer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        handler.post(Update);
+                                    }
+                                }, 1500, 1500);
+
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .show();
+
+
+            }
+        });
+*/
 
         return ProfileView;
 
 
     }
+
+
+    private void sendNotification(String title, String message) {
+
+            NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new
+                NotificationCompat.Builder(getContext())
+                .setSmallIcon(R.drawable.ic_spoonfork_notif)
+                .setColor(Color.parseColor("#FFcb202d"))
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager =
+                (NotificationManager)getActivity().
+                        getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(getRequestCode(), notificationBuilder.build());
+
+
+
+    }
+
+    private static int getRequestCode() {
+        Random rnd = new Random();
+        return 100 + rnd.nextInt(900000);
+    }
+
 
     private void addImIn(View view) {
 
@@ -411,9 +604,529 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    class UserTokenInfo extends AsyncTask<String , Void ,String> {
 
 
-    public class HitCount extends AsyncTask<String , Void ,String> {
+        private View mPassedView;
+        private Context contextFinal;
+        private String MessArea;
+        JSONArray jsonResponseArray = null;
+        String json = "";
+        public DatabaseHandler db;
+
+        public UserTokenInfo(View profileView) {
+
+            mPassedView = profileView;
+        }
+
+
+        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
+
+
+        /**
+         * @use clear the initial Hashmap
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressBar.setIndeterminateDrawable(doubleBounce);
+            progressBar.setVisibility(View.VISIBLE);
+
+           /* pDialog = new ProgressDialog(getActivity().getApplicationContext());
+            pDialog.setMessage("Loading products. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();*/
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL("https://wanidipak56.000webhostapp.com/getUserTokenInfo.php?userid="+Uid);
+
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    try {
+                        Log.e("ProfDebug",json);
+
+                        jsonResponseArray = new JSONArray(json);
+
+                        Log.e("ProfDebugafter",jsonResponseArray.toString());
+
+                        db.updateUserCard(Uid, json);
+
+
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+//                try {
+//                    jObj = new JSONObject(json);
+//                } catch (JSONException e) {
+//                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+//                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }  finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         *
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+
+            try {
+
+                if (jsonResponseArray!=null) {
+
+
+                    JSONArray userinfo = jsonResponseArray;
+
+                    final String[] messname = new String[userinfo.length()];// = {"Kwality Mess", "PICT College", "Navruchi", "Gujrati Mess"};
+
+                    int[] tokentoexpire = new int[userinfo.length()];// = {5,10,12,7};
+
+                    final int[] totaltokens = new int[userinfo.length()];// = {10, 23, 12, 7};
+
+                    String[] expirydates = new String[userinfo.length()];// = {"10/5/2018","13/5/2018","13/5/2018","10/5/2018"};
+
+                    for (int i = 0; i < userinfo.length(); i++) {
+                        JSONObject c = userinfo.getJSONObject(i);
+
+                        // Storing each json item in variable
+                        String count = c.getString("Count").trim();
+                        String validity = c.getString("Validity").trim();
+                        String name = c.getString("Name").trim();
+                        String plateName = c.getString("PlateName").trim();
+
+
+                        // creating new HashMap
+                        HashMap<String, String> map = new HashMap<>();
+
+                        // adding each child node to HashMap key => value
+                        map.put("Count", count);
+                        map.put("Validty", validity);
+                        map.put("Name", name);
+                        map.put("PlateName", plateName);
+
+                        messname[i] = name+"-"+plateName;
+                        tokentoexpire[i] = Integer.parseInt(count);
+                        totaltokens[i] = Integer.parseInt(count);
+                        expirydates[i] = validity.split(" ")[0];
+
+                        Log.d("ProfFragUserToken: ID", "``````````````````````" + map.toString());
+
+
+                        // adding HashList to ArrayList
+                    }
+
+
+                    ListView lView = (ListView) mPassedView.findViewById(R.id.tokenDisplayListView);
+
+                    TokenDisplayListAdapter lAdapter = new TokenDisplayListAdapter(getContext(), messname, tokentoexpire, expirydates, totaltokens);
+
+                    lView.setAdapter(lAdapter);
+
+                    progressBar.setVisibility(View.INVISIBLE);
+
+                    lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                            //Toast.makeText(getContext(), messname[i]+" "+totaltokens[i], Toast.LENGTH_SHORT).show();
+
+                           final SweetAlertDialog sweetAlertDialog= new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
+                            sweetAlertDialog
+                                    .setTitleText("Are you sure?")
+                                    .setContentText("Use "+messname[i]+" token!")
+                                    .setCancelText("No")
+                                    .setConfirmText("Yes,use it!")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(final SweetAlertDialog sDialog) {
+
+
+                                            //call asynch task
+
+                                            new UseToken(messname[i],totaltokens[i],sDialog,sweetAlertDialog,mPassedView).execute();
+
+                                            /*sendNotification("Enjoy Your Meal at "+messname[i],"At 12:30 p.m. " +
+                                                    "on May 31 2018 | "+(totaltokens[i]-1)+" tokens left");
+
+
+                                            String s = "\n" +
+                                                    "Time Used: 12:30 p.m.\n\n" +
+                                                    "Date Used: May 31 2018\n\n"+(totaltokens[i]-1)+" tokens left of "+messname[i]+"\n";
+
+
+                                            sDialog
+
+                                                    .setTitleText("Enjoy your meal")
+                                                    .setContentText("\n" +
+                                                            "Time Used: 12:30 p.m.\n\n" +
+                                                            "Date Used: May 31 2018\n\n"+(totaltokens[i]-1)+" tokens left of "+messname[i]+"\n")
+                                                    .setConfirmText("OK")
+                                                    .setConfirmClickListener(null)
+                                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+
+
+
+                                            final Handler handler = new Handler();
+                                            final Runnable Update = new Runnable() {
+                                                public void run() {
+
+                                                    sDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                                }
+                                            };
+
+
+                                            Timer swipeTimer = new Timer();
+                                            swipeTimer.schedule(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    handler.post(Update);
+                                                }
+                                            }, 1500, 1500);
+*/
+                                        }
+                                    })
+                                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.cancel();
+                                        }
+                                    })
+                                    .show();
+
+
+                        }
+                    });
+
+
+
+                    // close this activity
+                    //contextFinal..finish();
+
+                } else {
+
+                        /////////If response is null : No tokens bought by user
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //   View v=intializeList(mPassedView);
+            // dismiss the dialog after getting all products
+//            pDialog.dismiss();
+            // updating UI from Background Thread
+
+        }
+    }
+
+
+    class UseToken extends AsyncTask<String , Void ,String> {
+
+
+        private View mPassedView;
+        private Context contextFinal;
+        private SweetAlertDialog sweetAlertDialog;
+        private SweetAlertDialog currDialog;
+        private int totaltokensleft;
+        private String MessName;
+        private String PlateType;
+        JSONObject jObj = null;
+        String json = "";
+
+        public UseToken(String s, int totaltoken, SweetAlertDialog sDialog, SweetAlertDialog cursweetAlertDialog, View mPassedView) {
+
+            MessName = s.split("-")[0];
+            PlateType = s.split("-")[1];
+            this.sweetAlertDialog =sDialog;
+            totaltokensleft=totaltoken-1;
+            currDialog = cursweetAlertDialog;
+            this.mPassedView=mPassedView;
+
+        }
+
+
+        /**
+         * @use clear the initial Hashmap
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            currDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+            currDialog.setTitleText("Just a sec...");
+            currDialog.setContentText("Getting your plate ready...");
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL("http://wanidipak56.000webhostapp.com/useToken.php");
+                JSONObject jsonObject = new JSONObject();
+
+
+                jsonObject.put("messname", MessName);
+                jsonObject.put("platename", PlateType);
+                jsonObject.put("userid", Uid);
+
+
+                String message = jsonObject.toString();
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    try {
+                        jObj = new JSONObject(json);
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                } catch (JSONException e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+            try {
+
+                Log.e("errorr: ", json);
+
+                String success = jObj.getString("success");
+                if (success.equals("true")) {
+                    String date = jObj.getString("date");
+                    String time = jObj.getString("time");
+
+
+                    sendNotification("Enjoy Your Meal at "+MessName,"At "+time+
+                            "on "+date+"| "+(totaltokensleft)+" tokens left");
+
+
+                    String s = "\n" +
+                            "Time Used: "+time+"\n\n" +
+                            "Date Used: "+date+"\n\n"+(totaltokensleft)+" tokens left of "+MessName+"\n";
+
+
+                    currDialog
+
+                            .setTitleText("Enjoy your meal")
+                            .setContentText(s)
+                            .setConfirmText("OK")
+                            .setConfirmClickListener(null)
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+                    new UserTokenInfo(mPassedView).execute();
+
+
+                    final Handler handler = new Handler();
+                    final Runnable Update = new Runnable() {
+                        public void run() {
+
+                            currDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        }
+                    };
+
+
+                    Timer swipeTimer = new Timer();
+                    swipeTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            handler.post(Update);
+                        }
+                    }, 1500, 1500);
+
+
+                }
+                else
+                {
+                    currDialog
+
+                            .setTitleText("Oops!")
+                            .setContentText("Insufficient tokens!")
+                            .setConfirmText("Buy more!")
+
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    startActivity(new Intent(getContext(),TokenSelectionActivity.class));
+                                }
+                            })
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+
+
+
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //   View v=intializeList(mPassedView);
+            // dismiss the dialog after getting all products
+//            pDialog.dismiss();
+            // updating UI from Background Thread
+
+        }
+
+
+
+    }
+
+
+
+
+        public class HitCount extends AsyncTask<String , Void ,String> {
 
 
         private View mView;
@@ -486,7 +1199,7 @@ public class ProfileFragment extends Fragment {
         // Load the high-resolution "zoomed-in" image.
         final ImageView expandedImageView = (ImageView)profileview.findViewById(
                 R.id.expanded_image);
-        expandedImageView.setImageResource(imageResId);
+       // expandedImageView.setImageResource(imageResId);
 
         // Calculate the starting and ending bounds for the zoomed-in image.
         // This step involves lots of math. Yay, math.

@@ -113,6 +113,17 @@
             android:clickable="false"
             tools:clickable="false">
 
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/spin_kit_progress"
+                style="@style/SpinKitView.Large.DoubleBounce"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:SpinKit_Color="@color/colorAccent" />
+
 
             <ListView
                 android:padding="10dp"

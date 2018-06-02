@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class TokenSelectionActivity extends AppCompatActivity {
 
 
@@ -331,7 +334,31 @@ public class TokenSelectionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
+
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Want to go back?")
+                .setContentText("Your current order will be lost")
+                .setCancelText("No")
+                .setConfirmText("Yes, go back")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(final SweetAlertDialog sDialog) {
+
+                        sDialog.cancel();
+                        startActivity(new Intent(TokenSelectionActivity.this, MainActivity.class));
+
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+                    }
+                })
+                .show();
+
+
+        /*new AlertDialog.Builder(this)
                 .setTitle("Really want to go back?")
                 .setMessage("Your current order will be lost")
                 .setNegativeButton(android.R.string.no, null)
@@ -342,8 +369,15 @@ public class TokenSelectionActivity extends AppCompatActivity {
                         startActivity(new Intent(TokenSelectionActivity.this, MainActivity.class));
 
                     }
-                }).create().show();
+                }).create().show();*/
     }
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
 
 }
 
@@ -362,5 +396,7 @@ class MyJavaScriptInterface {
         Log.d("&*&*&*&*&",html);
 
     }
+
+
 
 }

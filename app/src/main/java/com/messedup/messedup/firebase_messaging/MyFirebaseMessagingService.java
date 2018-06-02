@@ -63,7 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }*/
     }
 
-    private void sendNotification(String title,String message) {
+    public void sendNotification(String title,String message) {
 
         // Create Notification
         Intent intent = new Intent(this, MainActivity.class);
