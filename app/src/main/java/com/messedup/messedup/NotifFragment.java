@@ -31,6 +31,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -419,7 +426,120 @@ public class NotifFragment extends Fragment  {
         }
     }
 
-    private String getSharedPrefs() {
+
+    public class GetOfferCarousel extends AsyncTask<String , Void ,String> {
+
+
+        private Context mContext;
+
+        JSONObject jObj = null;
+        String json = "";
+
+
+        public GetOfferCarousel(Context applicationContext) {
+
+            mContext = applicationContext;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL("https://wanidipak56.000webhostapp.com/getOfferCarousel.php");
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("GET");
+
+                //do something with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    Log.e("MyTry: ", json);
+
+
+                    try {
+                        jObj = new JSONObject(json);
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                } catch (JSONException e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         *
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+
+
+        }
+
+
+    }
+
+            private String getSharedPrefs() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String PreStoredArea=preferences.getString("selectedarea", "Select your Area");
         Log.d("IN SHARED PREFs","GOT STRING "+PreStoredArea);

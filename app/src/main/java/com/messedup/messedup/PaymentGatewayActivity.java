@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -21,18 +22,31 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.CircularProgressButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
+import com.messedup.messedup.adapters.TokenConfirmListAdapter;
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,11 +59,24 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class PaymentGatewayActivity extends AppCompatActivity {
 
-    TextView jsontxtview;
-    Button CompletePayBtn;
+    TextView jsontxtview,promoInfoTxt;
+    EditText refCodeTxtView;
+    Button CompletePayBtn,applyPromoBtn;
 
-    String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens";
+    CircularProgressButton mCircularProgressButton;
+
+    String totaltokens;
+
+    String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
+
+
+    ArrayList<String> leftdata = new ArrayList<>();
+    ArrayList<String> rightdata = new ArrayList<>();
+
+
+//    ArrayList<String> playtetypeStr = new ArrayList<>();
+//    ArrayList<String> qtyStr = new ArrayList<>();
 
     LinkedHashMap<String, String> FinalMapToDisplay = new LinkedHashMap<>();
     
@@ -95,10 +122,18 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payment_gateway);
+        setContentView(R.layout.activity_confirm_payement);
         // Call the function callInstamojo to start payment here
 
 
+        userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        mCircularProgressButton = (CircularProgressButton)findViewById(R.id.AnimApplyPromoBtn);
+
+        applyPromoBtn =(Button)findViewById(R.id.promocode_btn);
+        refCodeTxtView =(EditText)findViewById(R.id.refCodeEditText) ;
+        promoInfoTxt = (TextView)findViewById(R.id.promoinfotxt);
 
         mDetailsSharedPref =new DetailsSharedPref(this);
 
@@ -193,48 +228,49 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     }
 
 
-    public void initTable(LinkedHashMap<String, String> hm){
-        TableLayout ll = (TableLayout) findViewById(R.id.confirmTable);
-        ll.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
+    public void initTable(LinkedHashMap<String, String> hm) {
+//        TableLayout ll = (TableLayout) findViewById(R.id.confirmTable);
+//        ll.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
+//
+//        ll.setBackgroundColor(200);
 
-        ll.setBackgroundColor(200);
+
 
         float disccost = 0;
         float origcost = 0;
         float discount = 0;
         int discpercent = 0;
-        int w=0;
+        int w = 0;
         String Offer = "";
 
-        int i=0;
+        int i = 0;
 
-        for (String finalkey: FinalMapToDisplay.keySet()) {
+        for (String finalkey : FinalMapToDisplay.keySet()) {
 
             String key = finalkey;
             String value = FinalMapToDisplay.get(finalkey);
-            System.out.println("FINALMAP:   "+key+"   :   "+value);
+            System.out.println("FINALMAP:   " + key + "   :   " + value);
 
 
+            if (key.equals("Offer_Details")) {
 
-            if(key.equals("Offer_Details"))
-            {
-
-            }
-            else if(key.equals("Discounted_Cost"))
-            {
+            } else if (key.equals("Discounted_Cost")) {
                 disccost = Float.parseFloat(value);
-            }
-            else if(key.equals("Original_Cost"))
-            {
-                origcost = Float.parseFloat(value);;
-            }
-            else if(key.equals("Offer"))
-            {
+            } else if (key.equals("Original_Cost")) {
+                origcost = Float.parseFloat(value);
+                ;
+            } else if (key.equals("Offer")) {
 
-            }
-            else if(key.equals("Total_Tokens"))
-            {
-                TableRow row= new TableRow(this);
+            } else if (key.equals("Total_Tokens")) {
+
+
+                TextView totalTokensDynTxt = (TextView) findViewById(R.id.totaltokensdynamic);
+
+                totalTokensDynTxt.setText(value);
+
+                totaltokens = value;
+
+               /* TableRow row= new TableRow(this);
                 TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT);
                 row.setLayoutParams(lp);
                 TextView platetype = new TextView(this);
@@ -252,17 +288,15 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 row.addView(qty);
                 ll.addView(row,i);
                 i++;
-
+*/
 //                addSpace(ll,this,i);
 //                i++;addSpace(ll,this,i);
 //                i++;addSpace(ll,this,i);
 //                i++;addSpace(ll,this,i);
 //                i++;
-            }
+            } else if (value.equals("MESSNAME")) {
 
-            else if(value.equals("MESSNAME"))
-            {
-                TableRow row= new TableRow(this);
+ /*               TableRow row= new TableRow(this);
                 row.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
                 TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT);
                 row.setLayoutParams(lp);
@@ -271,21 +305,23 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 messname.setTextSize(20);
 //                messname.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
 
-                messname.setTextColor(getResources().getColor(R.color.colorPrimary));
-                key=key.replaceAll("_"," ");
-                messname.setText(key);
-                row.addView(messname);
+                messname.setTextColor(getResources().getColor(R.color.colorPrimary));*/
+                key = key.replaceAll("_", " ");
+//                messname.setText(key);
+
+                leftdata.add(key);
+                rightdata.add("messname");
+
+/*                row.addView(messname);
 //                System.out.println("ROW: "+ll.getMeasuredWidth());
                 w=row.getWidth();
                 ll.addView(row,i);
                 System.out.println("ROW: "+ll.getMeasuredWidth());
-                i++;
-            }
-            else
-            {
+                i++;*/
+            } else {
 
-                if(!value.equals("0")) {
-                    TableRow row = new TableRow(this);
+                if (!value.equals("0")) {
+/*                    TableRow row = new TableRow(this);
                     row.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
                     TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT);
                     row.setLayoutParams(lp);
@@ -302,42 +338,98 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     platetype.setTextSize(15);
                     platetype.setText(key.split(":")[1]+" tokens");
 
-                    qty.setText(value);
-                    System.out.println("row: "+w+"platetype: "+platetype.getWidth());
+                    qty.setText(value);*/
+
+                    leftdata.add(key.split(":")[1] + " tokens");
+                    rightdata.add(value);
+
+                    /*System.out.println("row: "+w+"platetype: "+platetype.getWidth());
                     row.addView(platetype);
                     row.addView(qty);
                     ll.addView(row, i);
-                    i++;
+                    i++;*/
                 }
             }
-
 
 
         }
 
 
-
         System.out.println("TABLE:");
-        discount = origcost-disccost;
-        discpercent = (int) ((discount/origcost)*100);
-        System.out.println("TABLE:"+disccost+" "+origcost+" "+discount+" ");
-        String[] keyarr = {"ORIGINAL PRICE","OFFER PRICE","YOU SAVE"};
-        String[] valarr = {"₹"+origcost+"","₹"+disccost+"","₹"+discount+" ("+discpercent+"%)"};
+        discount = origcost - disccost;
+        discpercent = (int) ((discount / origcost) * 100);
+        System.out.println("TABLE:" + disccost + " " + origcost + " " + discount + " ");
+        String[] keyarr = {"ORIGINAL PRICE", "OFFER PRICE", "YOU SAVE"};
+        String[] valarr = {"₹" + origcost + "", "₹" + disccost + "", "₹" + discount + " (" + discpercent + "%)"};
+
+        TextView oricostxtxview = (TextView) findViewById(R.id.oripricetxtdyanamic);
+        oricostxtxview.setText("₹" + origcost);
+
+        oricostxtxview.setPaintFlags(oricostxtxview.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+
+        TextView discostxtview = (TextView) findViewById(R.id.offerpricetxtdyanamic);
+        discostxtview.setText("₹" + disccost);
+
+        TextView yousavetxtview = (TextView) findViewById(R.id.yousavetxtdyanamic);
+        yousavetxtview.setText("₹" + discount + " (" + discpercent + "%)");
+
 
         CompletePayBtn = (Button) findViewById(R.id.complete_payment_btn);
-        CompletePayBtn.setText("COMPLETE PAYMENT ₹"+disccost);
+        CompletePayBtn.setText("COMPLETE PAYMENT ₹" + disccost);
 
 
-        final String finalDisccost = disccost+"";
+        final String finalDisccost = disccost + "";
         CompletePayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                callInstamojoPay(email,phone, finalDisccost,purpose,buyername);
+                callInstamojoPay(email, phone, finalDisccost, purpose, buyername);
             }
         });
 
-        System.out.println("TABLE:");
+
+        initListView(leftdata,rightdata);
+
+
+
+        applyPromoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String refcode = refCodeTxtView.getText().toString();
+                new ApplyPromo(getApplicationContext(),refcode).execute();
+
+            }
+        });
+
+        mCircularProgressButton.setIndeterminateProgressMode(true);
+
+        mCircularProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String refcode = refCodeTxtView.getText().toString();
+                new ApplyPromo(getApplicationContext(),refcode).execute();
+
+
+            }
+        });
+
+
+    }
+
+    private void initListView(ArrayList<String> leftdata, ArrayList<String> rightdata) {
+
+        ListView lView = (ListView)findViewById(R.id.plateTypeListView);
+
+        TokenConfirmListAdapter lAdapter = new TokenConfirmListAdapter(this, leftdata, rightdata);
+
+        lView.setAdapter(lAdapter);
+
+
+    }
+
+        /*System.out.println("TABLE:");
 
         for (int j = 0; j <3; j++) {
 
@@ -450,7 +542,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         ll.addView(row1,i);
 
     }
-
+*/
 
     @Override
     public void onBackPressed() {
@@ -495,6 +587,160 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
+
+    public class ApplyPromo extends AsyncTask<String , Void ,String> {
+
+
+        private Context mContext;
+        private String referalcode;
+
+        JSONObject jObj = null;
+        String json = "";
+
+
+        public ApplyPromo(Context applicationContext, String refcode) {
+
+            referalcode = refcode;
+            mContext = applicationContext;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            mCircularProgressButton.setProgress(50);
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+                URL url = new URL("https://wanidipak56.000webhostapp.com/checkReferal.php?userid=" + userid +
+                        "&referalcode=" + referalcode + "&tokens=" + totaltokens);
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("GET");
+
+                //do something with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    Log.e("MyTry: ", json);
+
+
+                    try {
+                        jObj = new JSONObject(json);
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                } catch (JSONException e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         *
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+//            mCircularProgressButton.setProgress(100);
+
+            String success = null;
+            try {
+                success = jObj.getString("success");
+
+                if (success.equals("true")) {
+
+                    refCodeTxtView.setBackground(getResources().getDrawable(R.drawable.border_green));
+
+                    mCircularProgressButton.setProgress(100);
+
+                    String info = jObj.getString("information");
+                    promoInfoTxt.setTextColor(getResources().getColor(R.color.app_green));
+                    promoInfoTxt.setText("Sucessfully applied "+info);
+
+                    String frienduid = jObj.getString("userid");
+
+                    Toast.makeText(mContext,"Sucessfully applied "+frienduid+"'s referal code",Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    refCodeTxtView.setBackground(getResources().getDrawable(R.drawable.border_red));
+
+                    mCircularProgressButton.setProgress(0);
+//                    refCodeTxtView.setError("",getResources().getDrawable(R.drawable.ic_error_outline_red_24dp));
+                    String info = jObj.getString("information");
+                    promoInfoTxt.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    promoInfoTxt.setText(info);
+
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 }
+
+
+
+
+
 
 

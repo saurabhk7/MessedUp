@@ -265,7 +265,7 @@
                     app:cpb_textComplete="BUY TOKENS"
                     app:cpb_selectorComplete="@drawable/complete_state_selector"
                     app:cpb_textError="Oops, Something went wrong!"
-                    app:cpb_textIdle="Select Tokens" />
+                    app:cpb_textIdle="BUY TOKENS" />
 
                 <ImageButton
                     android:id="@+id/thumb_button_1"

@@ -1049,7 +1049,7 @@ public class ProfileFragment extends Fragment {
 
 
                     sendNotification("Enjoy Your Meal at "+MessName,"At "+time+
-                            "on "+date+"| "+(totaltokensleft)+" tokens left");
+                            " on "+date+" | "+(totaltokensleft)+" tokens left");
 
 
                     String s = "\n" +

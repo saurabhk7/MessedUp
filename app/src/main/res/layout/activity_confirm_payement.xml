@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_payment_gateway"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.messedup.messedup.PaymentGatewayActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cv_token_static"
+        app:cardCornerRadius="0dp"
+        android:layout_below="@+id/pb"
+        android:backgroundTint="@color/transparent"
+        android:layout_marginBottom="0dp"
+        app:cardUseCompatPadding="false"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:layout_marginBottom="0dp">
+
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/transparent"
+                android:id="@+id/ProfileLayout">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:src="@drawable/red_profile_background"
+                    android:scaleType="centerCrop"
+                    android:layout_height="40dp" />
+
+
+                <View
+                    android:id="@+id/header_cover_image"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_height="1dp"
+                    android:background="#87cccccc"
+                    android:visibility="invisible"
+                    />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    app:srcCompat="@drawable/token_stack"
+                    android:layout_below="@+id/header_cover_image"
+                    android:background="@drawable/profile_circular_border_imageview"
+                    android:id="@+id/MenuHeaderIcon"
+                    android:layout_marginTop="-35dp"
+                    android:elevation="8dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="70dp" />
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:elevation="30dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/cv_botton"
+        app:cardCornerRadius="6dp"
+        app:cardUseCompatPadding="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/tokenListLayout"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:focusableInTouchMode="true"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/totaltoklayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="TOTAL TOKENS"
+                        android:layout_width="0dp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/totaltokensstatic"
+                        android:layout_weight="0.7" />
+
+                    <TextView
+                        android:text="qty"
+                        android:gravity="end"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_width="0dp"
+                        android:textSize="18sp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/totaltokensdynamic"
+                        android:layout_weight="0.3" />
+                </LinearLayout>
+
+
+                <View
+                    android:id="@+id/horizontal_line_view"
+                    android:layout_width="match_parent"
+                    android:layout_below="@+id/totaltoklayout"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:visibility="visible"
+                    android:layout_height="1dp"
+                    android:background="#87cccccc"
+                    />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/horizontal_line_view"
+                    android:id="@+id/oripricelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="ORIGINAL PRICE"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/oripricetxtstatic"
+                        android:layout_weight="0.7" />
+
+                    <TextView
+                        android:text="price"
+                        android:layout_width="0dp"
+                        android:gravity="end"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/oripricetxtdyanamic"
+                        android:layout_weight="0.3" />
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/oripricelayout"
+                    android:id="@+id/offerpricelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="OFFER PRICE"
+                        android:layout_width="0dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/app_green"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/offerpricetxtstatic"
+                        android:layout_weight="0.7" />
+
+                    <TextView
+                        android:text="price"
+                        android:layout_width="0dp"
+                        android:gravity="end"
+                        android:textSize="18sp"
+                        android:textColor="@color/app_green"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/offerpricetxtdyanamic"
+                        android:layout_weight="0.3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/yousavelayout"
+                    android:layout_below="@+id/offerpricelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:text="YOU SAVE"
+                        android:layout_width="0dp"
+                        android:textColor="@color/app_green"
+                        android:textSize="15sp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/yousavetxtstatic"
+                        android:layout_weight="0.7" />
+
+                    <TextView
+                        android:text="price"
+                        android:layout_width="0dp"
+                        android:gravity="end"
+                        android:textSize="15sp"
+                        android:textColor="@color/app_green"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/yousavetxtdyanamic"
+                        android:layout_weight="0.3" />
+
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/yousavelayout"
+                    android:layout_above="@+id/complete_payment_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:textSize="15sp"
+                        android:elevation="2dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/border"
+                        android:layout_weight="0.5"
+                        android:id="@+id/refCodeEditText" />
+
+
+                    <Button
+                        android:text="APPLY PROMO"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:id="@+id/promocode_btn"
+                        android:backgroundTint="@color/app_green"
+                        android:textColor="@color/white" />
+
+                    <com.dd.CircularProgressButton
+                        android:id="@+id/AnimApplyPromoBtn"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:elevation="0dp"
+                        android:padding="-5dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentBottom="true"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:cpb_selectorIdle="@drawable/idle_state_selector"
+                        app:cpb_colorProgress="#00ffffff"
+                        app:cpb_colorIndicator="#59c614"
+                        app:cpb_cornerRadius="0dp"
+                        app:cpb_textComplete="APPLIED PROMO"
+                        app:cpb_selectorComplete="@drawable/complete_state_selector"
+                        app:cpb_textError="TRY AGAIN"
+                        app:cpb_textIdle="APPLY PROMO" />
+
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:text="apply promos to avail exciting offers"
+                    android:layout_width="match_parent"
+                    android:textAlignment="center"
+                    android:gravity="end"
+                    android:textSize="10sp"
+                    android:textColor="@color/app_green"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/complete_payment_btn"
+                    android:id="@+id/promoinfotxt"
+                     />
+
+                <Button
+                    android:text="COMPLETE PAYMENT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/complete_payment_btn"
+                    android:backgroundTint="@color/app_green"
+                    android:textColor="@color/white" />
+
+
+                <!--<View-->
+                            <!--android:id="@+id/totalline"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_marginTop="10dp"-->
+                            <!--android:layout_above="@+id/yousavelayout"-->
+                            <!--android:layout_height="1dp"-->
+                            <!--android:background="#87cccccc"-->
+                            <!--android:visibility="visible"-->
+                            <!--/>-->
+
+
+
+
+
+
+
+
+
+
+
+            </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:elevation="30dp"
+        android:id="@+id/cv_user"
+        app:cardCornerRadius="6dp"
+        android:layout_above="@+id/cv_botton"
+        android:layout_below="@+id/cv_token_static"
+        app:cardUseCompatPadding="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ConfirmLayout">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:src="@drawable/red_profile_background"
+            android:scaleType="centerCrop"
+            android:layout_height="40dp"
+            android:id="@+id/imageView2" />
+
+        <TextView
+            android:text="YOUR TOKEN ORDER"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="visible"
+            android:id="@+id/headingText"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/imageView2"
+            android:textColorLink="@android:color/white" />
+
+
+        <View
+            android:id="@+id/confirm_header_view"
+            android:layout_width="match_parent"
+            android:layout_marginTop="40dp"
+            android:layout_height="1dp"
+            android:background="#87cccccc"
+            android:visibility="visible"
+            />
+
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:layout_marginTop="5dp"
+            android:dividerHeight="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/confirm_header_view"
+            android:id="@+id/plateTypeListView" />
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+    </android.support.v7.widget.CardView>
+
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/jsontxt"
+        android:textSize="18sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>
