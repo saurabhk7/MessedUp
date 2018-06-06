@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.NotificationCompat;
+import android.text.Html;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +88,13 @@ public class ProfileFragment extends Fragment {
     DetailsSharedPref mDetailsSharedPref;
     String Uid;
 
+    String explainString1, explainString2, explainString3, explainString4;
+
+    TextView explainTextView1, explainTextView2, explainTextView3, explainTextView4;
+    View explainLayout;
+
+    ListView lView;
+
     private FirebaseAuth mAuth;
 
     ProgressBar progressBar;
@@ -132,6 +141,28 @@ public class ProfileFragment extends Fragment {
 /*
         ImInBtn = (Button) ProfileView.findViewById(R.id.ImInButton);
 */
+
+
+        lView = (ListView) ProfileView.findViewById(R.id.tokenDisplayListView);
+
+        explainLayout = ProfileView.findViewById(R.id.TokenExplainLayout);
+
+        explainTextView1 = (TextView)ProfileView.findViewById(R.id.explaintxt1);
+        explainTextView2 = (TextView)ProfileView.findViewById(R.id.explaintxt2);
+        explainTextView3 = (TextView)ProfileView.findViewById(R.id.explaintxt3);
+        explainTextView4 = (TextView)ProfileView.findViewById(R.id.explaintxt4);
+
+        explainString1 = "1. Click <b><font color=#59c614>\"BUY TOKENS\"</font></b> to buy  <font color=#59c614>any number of tokens</font> of the Messes you wish <br><b>(with No minimum tokens)</b>";
+        explainString2 = "2. <b><font color=#59c614>Pay</font></b> according to your selected tokens with our <b><font color=#59c614>secured payment gateway</font></b> and <b><font color=#59c614>avail our exciting offers</font></b>";
+        explainString3 = "3. <b><font color=#59c614>Decide your mess</font></b> by comparing the daily updated and weekly predicted menu";
+        explainString4 = "4. <b><font color=#59c614>Enjoy your meal</font></b> at your favourite mess everyday";
+
+        explainTextView1.setText(Html.fromHtml(explainString1));
+        explainTextView2.setText(Html.fromHtml(explainString2));
+        explainTextView3.setText(Html.fromHtml(explainString3));
+        explainTextView4.setText(Html.fromHtml(explainString4));
+
+
         ImageButton SignOutImgBtn = (ImageButton) ProfileView.findViewById(R.id.LogOUtImgBtn);
         ImageButton RateAppBtn = (ImageButton) ProfileView.findViewById(R.id.rateAppBtn);
 
@@ -750,73 +781,92 @@ public class ProfileFragment extends Fragment {
 
                     JSONArray userinfo = jsonResponseArray;
 
-                    final String[] messname = new String[userinfo.length()];// = {"Kwality Mess", "PICT College", "Navruchi", "Gujrati Mess"};
-
-                    int[] tokentoexpire = new int[userinfo.length()];// = {5,10,12,7};
-
-                    final int[] totaltokens = new int[userinfo.length()];// = {10, 23, 12, 7};
-
-                    String[] expirydates = new String[userinfo.length()];// = {"10/5/2018","13/5/2018","13/5/2018","10/5/2018"};
-
-                    for (int i = 0; i < userinfo.length(); i++) {
-                        JSONObject c = userinfo.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String count = c.getString("Count").trim();
-                        String validity = c.getString("Validity").trim();
-                        String name = c.getString("Name").trim();
-                        String plateName = c.getString("PlateName").trim();
 
 
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                        map.put("Count", count);
-                        map.put("Validty", validity);
-                        map.put("Name", name);
-                        map.put("PlateName", plateName);
-
-                        messname[i] = name+"-"+plateName;
-                        tokentoexpire[i] = Integer.parseInt(count);
-                        totaltokens[i] = Integer.parseInt(count);
-                        expirydates[i] = validity.split(" ")[0];
-
-                        Log.d("ProfFragUserToken: ID", "``````````````````````" + map.toString());
 
 
-                        // adding HashList to ArrayList
+
+//                    if(userinfo.length()<1)
+                    if(true)
+                    {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Log.e("Length:", "ZERO");
+                        explainLayout.setVisibility(View.VISIBLE);
+                        lView.setVisibility(View.GONE);
+
                     }
+                    else {
+
+                        explainLayout.setVisibility(View.GONE);
+                        lView.setVisibility(View.VISIBLE);
+
+                        final String[] messname = new String[userinfo.length()];// = {"Kwality Mess", "PICT College", "Navruchi", "Gujrati Mess"};
+
+                        int[] tokentoexpire = new int[userinfo.length()];// = {5,10,12,7};
+
+                        final int[] totaltokens = new int[userinfo.length()];// = {10, 23, 12, 7};
+
+                        String[] expirydates = new String[userinfo.length()];// = {"10/5/2018","13/5/2018","13/5/2018","10/5/2018"};
+
+                        for (int i = 0; i < userinfo.length(); i++) {
+                            JSONObject c = userinfo.getJSONObject(i);
+
+                            // Storing each json item in variable
+                            String count = c.getString("Count").trim();
+                            String validity = c.getString("Validity").trim();
+                            String name = c.getString("Name").trim();
+                            String plateName = c.getString("PlateName").trim();
 
 
-                    ListView lView = (ListView) mPassedView.findViewById(R.id.tokenDisplayListView);
+                            // creating new HashMap
+                            HashMap<String, String> map = new HashMap<>();
 
-                    TokenDisplayListAdapter lAdapter = new TokenDisplayListAdapter(getContext(), messname, tokentoexpire, expirydates, totaltokens);
+                            // adding each child node to HashMap key => value
+                            map.put("Count", count);
+                            map.put("Validty", validity);
+                            map.put("Name", name);
+                            map.put("PlateName", plateName);
 
-                    lView.setAdapter(lAdapter);
+                            messname[i] = name + "-" + plateName;
+                            tokentoexpire[i] = Integer.parseInt(count);
+                            totaltokens[i] = Integer.parseInt(count);
+                            expirydates[i] = validity.split(" ")[0];
 
-                    progressBar.setVisibility(View.INVISIBLE);
-
-                    lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-
-                            //Toast.makeText(getContext(), messname[i]+" "+totaltokens[i], Toast.LENGTH_SHORT).show();
-
-                           final SweetAlertDialog sweetAlertDialog= new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
-                            sweetAlertDialog
-                                    .setTitleText("Are you sure?")
-                                    .setContentText("Use "+messname[i]+" token!")
-                                    .setCancelText("No")
-                                    .setConfirmText("Yes,use it!")
-                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(final SweetAlertDialog sDialog) {
+                            Log.d("ProfFragUserToken: ID", "``````````````````````" + map.toString());
 
 
-                                            //call asynch task
+                            // adding HashList to ArrayList
+                        }
 
-                                            new UseToken(messname[i],totaltokens[i],sDialog,sweetAlertDialog,mPassedView).execute();
+
+
+
+                        TokenDisplayListAdapter lAdapter = new TokenDisplayListAdapter(getContext(), messname, tokentoexpire, expirydates, totaltokens);
+
+                        lView.setAdapter(lAdapter);
+
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                                //Toast.makeText(getContext(), messname[i]+" "+totaltokens[i], Toast.LENGTH_SHORT).show();
+
+                                final SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
+                                sweetAlertDialog
+                                        .setTitleText("Are you sure?")
+                                        .setContentText("Use " + messname[i] + " token!")
+                                        .setCancelText("No")
+                                        .setConfirmText("Yes,use it!")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(final SweetAlertDialog sDialog) {
+
+
+                                                //call asynch task
+
+                                                new UseToken(messname[i], totaltokens[i], sDialog, sweetAlertDialog, mPassedView).execute();
 
                                             /*sendNotification("Enjoy Your Meal at "+messname[i],"At 12:30 p.m. " +
                                                     "on May 31 2018 | "+(totaltokens[i]-1)+" tokens left");
@@ -857,22 +907,22 @@ public class ProfileFragment extends Fragment {
                                                 }
                                             }, 1500, 1500);
 */
-                                        }
-                                    })
-                                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(SweetAlertDialog sDialog) {
-                                            sDialog.cancel();
-                                        }
-                                    })
-                                    .show();
+                                            }
+                                        })
+                                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.cancel();
+                                            }
+                                        })
+                                        .show();
 
 
-                        }
-                    });
+                            }
+                        });
 
 
-
+                    }
                     // close this activity
                     //contextFinal..finish();
 

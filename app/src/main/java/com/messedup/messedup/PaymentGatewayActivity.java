@@ -53,6 +53,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -66,6 +67,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     CircularProgressButton mCircularProgressButton;
 
     String totaltokens;
+    String finalDisccost="";
+
+    Boolean PROMOCODE_APPLIED = false;
 
     String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
@@ -79,7 +83,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 //    ArrayList<String> qtyStr = new ArrayList<>();
 
     LinkedHashMap<String, String> FinalMapToDisplay = new LinkedHashMap<>();
-    
+
+
+
     private void callInstamojoPay(String email, String phone, String amount, String purpose, String buyername) {
         final Activity activity = this;
         InstamojoPay instamojoPay = new InstamojoPay();
@@ -108,6 +114,12 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         listener = new InstapayListener() {
             @Override
             public void onSuccess(String response) {
+
+
+                new PostTxnData(response,amount,purpose).execute();
+
+
+
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG)
                         .show();
             }
@@ -143,7 +155,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         Log.e("DETAILS:",email+ " " + buyername + " " + phone);
 
-
+        setTitle("Review your order");
 
         Intent getIntent = getIntent();
 
@@ -379,12 +391,12 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         CompletePayBtn.setText("COMPLETE PAYMENT ₹" + disccost);
 
 
-        final String finalDisccost = disccost + "";
+        finalDisccost = disccost + "";
         CompletePayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                callInstamojoPay(email, phone, finalDisccost, purpose, buyername);
+                callInstamojoPay(email, phone, finalDisccost,totaltokens+" "+purpose, buyername);
             }
         });
 
@@ -408,8 +420,16 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String refcode = refCodeTxtView.getText().toString();
-                new ApplyPromo(getApplicationContext(),refcode).execute();
+
+                Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
+
+                succesIntent.putExtra("totaltokens",totaltokens+"");
+                succesIntent.putExtra("amount",finalDisccost+"");
+
+                startActivity(succesIntent); //TODO: cut paste it to instamojo activity
+
+//                String refcode = refCodeTxtView.getText().toString(); //TODO: uncomment this
+//                new ApplyPromo(getApplicationContext(),refcode).execute();
 
 
             }
@@ -733,6 +753,160 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+        }
+    }
+
+    class PostTxnData extends AsyncTask<String , Void ,String> {
+
+
+        JSONObject jObj = null;
+        String json = "";
+        String response;
+        String amount;
+        String purpose;
+        LinkedHashMap<String,String> detailsMap = new LinkedHashMap<>();
+
+        // products JSONArray
+
+        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
+        private String url_mess_menu = "https://wanidipak56.000webhostapp.com/postTxn.php";
+        //ArrayList<HashMap<String, String>> messList;
+
+        PostTxnData(String response, String amount, String purpose) {
+            this.response = response;
+            this.amount = amount;
+            this.purpose = purpose;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(url_mess_menu);
+                JSONObject jsonObject = new JSONObject();
+
+                //Get Response in JSON
+                StringTokenizer st = new StringTokenizer(response, ":=");
+                while (st.hasMoreTokens()) {
+
+                   String keyStr = st.nextToken().toLowerCase();
+                    String valueStr = st.nextToken();
+                    jsonObject.put(keyStr,valueStr);
+
+                    detailsMap.put(keyStr,valueStr);
+                }
+
+                jsonObject.put("userid", userid);//change the variables accordingly
+                jsonObject.put("amount", amount);//Every variable in string format
+                jsonObject.put("purpose", purpose);
+
+
+                String message = jsonObject.toString();
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    try {
+                        jObj = new JSONObject(json);
+                        int success = jObj.getInt("success");
+                        if (success == 1) {
+
+                            Log.e("PostTxnData", "Succesful");
+                        } else {
+                            Log.e("PostTxnData", "Error");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        protected void onPostExecute(String file_url) {
+
+
+            Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
+
+            succesIntent.putExtra("totaltokens",totaltokens+"");
+            succesIntent.putExtra("amount",finalDisccost+"");
+
+            startActivity(succesIntent);
+
+            //NExt Intent to "Transaction Succesful Activity"
+            //Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
+            //  startActivity(i);
+            // finish();
 
         }
     }
