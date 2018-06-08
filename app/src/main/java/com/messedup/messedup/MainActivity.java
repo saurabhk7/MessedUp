@@ -340,7 +340,9 @@ public class MainActivity extends AppCompatActivity {
 
         HitCount hitCount=new HitCount();
 
-        hitCount.execute("http://wanidipak56.000webhostapp.com/updateHitCount.php");
+        String BASEURL = Constants.getBaseUrl();
+
+        hitCount.execute(BASEURL+"/updateHitCount.php");
 
     }
 
@@ -832,7 +834,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             HttpHandler sh = new HttpHandler();
-            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getNBCollege.php");
+
+            String BASEURL = Constants.getBaseUrl();
+
+            String jsonStr = sh.makeServiceCall(BASEURL+"/getNBCollege.php");
 
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
@@ -1123,7 +1128,10 @@ public class MainActivity extends AppCompatActivity {
         // products JSONArray
 
         //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
-        private String url_mess_menu = "https://wanidipak56.000webhostapp.com/postUserInfo.php";
+
+        String BASEURL = Constants.getBaseUrl();
+
+        private String url_mess_menu = BASEURL+"/postUserInfo.php";
         //ArrayList<HashMap<String, String>> messList;
 
 

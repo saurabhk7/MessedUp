@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.github.ybq.android.spinkit.style.FoldingCube;
+import com.messedup.messedup.adapters.CarouselViewPagerAdapter;
 import com.messedup.messedup.adapters.CustomListAdapter;
 import com.messedup.messedup.adapters.OfferPageAdapter;
 import com.messedup.messedup.connection_handlers.HttpHandler;
@@ -76,11 +77,19 @@ public class NotifFragment extends Fragment  {
     private static ViewPager mPager;
     private static int currentPage = 0;
 
+    private ArrayList<String> OfferImageUrlArray = new ArrayList<>();
+    private String[] imageUrls;
+
     private static boolean  OFFER_ARRAY_LOADED = false;
 
     private static int tot_off = 0;
 
     private OnFragmentInteractionListener mListener;
+
+//    int currentPage = 0;
+    Timer timer;
+    final long DELAY_MS = 3000;//delay in milliseconds before task is to be executed
+    final long PERIOD_MS = 2500; // time in milliseconds between successive task executions.
 
 
     ProgressBar progressBar;
@@ -137,8 +146,15 @@ public class NotifFragment extends Fragment  {
         foldingCube = new FoldingCube();
 
 
+
+
+
 //       if(tot_off==0)
-            initOffers(NotifView);
+//        initOffers(NotifView);
+        new GetOfferCarousel(getContext(),NotifView).execute();
+
+
+
 
 
         HashMap<String,String> NotifMap=new HashMap<>();
@@ -241,6 +257,8 @@ public class NotifFragment extends Fragment  {
 
         return NotifView;
     }
+
+
 
     private void initOffers(View notifView) {
 
@@ -361,7 +379,10 @@ public class NotifFragment extends Fragment  {
 
 
 //            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getOffers.php?NBCollege=" + NBCollege);
-            jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getOffers.php?NBCollege="+urlnbcoll);
+
+            String BASEURL = Constants.getBaseUrl();
+
+            jsonStr = sh.makeServiceCall(BASEURL+"/getOffers.php?NBCollege="+urlnbcoll);
 
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
@@ -431,14 +452,18 @@ public class NotifFragment extends Fragment  {
 
 
         private Context mContext;
+        JSONArray jsonResponseArray = null;
+        private View mView;
+        private int arrlength = 0;
 
         JSONObject jObj = null;
         String json = "";
 
 
-        public GetOfferCarousel(Context applicationContext) {
+        public GetOfferCarousel(Context applicationContext, View view) {
 
             mContext = applicationContext;
+            mView =view;
         }
 
         @Override
@@ -458,7 +483,10 @@ public class NotifFragment extends Fragment  {
             HttpURLConnection conn = null;
             try {
                 //constants
-                URL url = new URL("https://wanidipak56.000webhostapp.com/getOfferCarousel.php");
+
+                String BASEURL = Constants.getBaseUrl();
+
+                URL url = new URL(BASEURL+"/getOfferCarousel.php");
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -477,9 +505,11 @@ public class NotifFragment extends Fragment  {
                         sb.append(line + "\n");
                     }
                     is.close();
-                    json = sb.toString();
+                    json = sb.toString().replace("\\","");
 
-                    Log.e("MyTry: ", json);
+//                    Log.e("CarouselMyTry: ", json);
+
+                    jsonResponseArray = new JSONArray(json);
 
 
                     try {
@@ -532,7 +562,76 @@ public class NotifFragment extends Fragment  {
          **/
         protected void onPostExecute(String file_url) {
 
+            if (jsonResponseArray!=null) {
 
+
+                JSONArray userinfo = jsonResponseArray;
+                Log.e("CarouselMyTry1: ", userinfo.toString());
+
+                arrlength =userinfo.length();
+
+                imageUrls = new String[arrlength];
+
+                for (int i = 0; i < arrlength; i++) {
+
+                    try {
+                        Object c = userinfo.get(i);
+
+                        Log.e("CarouselMyTry2: ", c.toString());
+
+                        OfferImageUrlArray.add(c.toString());
+                        imageUrls[i] = c.toString();
+
+
+                    } catch (JSONException e) {
+
+                        Log.e("CarouselMyTry3: ", "Caught");
+                        e.printStackTrace();
+                    }
+
+                }
+
+                final ViewPager mPager = (ViewPager) mView.findViewById(R.id.pager);
+                CarouselViewPagerAdapter carouselViewPagerAdapter = new CarouselViewPagerAdapter(mContext,imageUrls);
+                mPager.setAdapter(carouselViewPagerAdapter);
+                final CircleIndicator indicator = (CircleIndicator) mView.findViewById(R.id.indicator);
+                indicator.setViewPager(mPager);
+
+
+                final Handler handler = new Handler();
+                final Runnable Update = new Runnable() {
+                    public void run() {
+                        if (currentPage == arrlength) {
+                            currentPage = 0;
+                        }
+                        mPager.setCurrentItem(currentPage, true);
+                        currentPage++;
+                    }
+
+//                    public void run() {
+//
+//                        Log.e("curpage: ", currentPage[0] +"");
+//                        if (currentPage[0] == 4) {
+//
+//                            currentPage[0] = 0;
+//                        }
+//                        mPager.setCurrentItem(currentPage[0], true);
+//                        currentPage[0]++;
+//                    }
+                };
+
+                handler.post(Update);
+
+                timer = new Timer(); // This will create a new Thread
+                timer .schedule(new TimerTask() { // task to be scheduled
+
+                    @Override
+                    public void run() {
+                        handler.post(Update);
+                    }
+                }, DELAY_MS, PERIOD_MS);
+
+            }
 
         }
 

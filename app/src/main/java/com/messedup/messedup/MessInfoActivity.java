@@ -459,7 +459,9 @@ public class MessInfoActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
             HttpHandler sh = new HttpHandler();
-            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=" + urlMess);
+            String BASEURL = Constants.getBaseUrl();
+
+            String jsonStr = sh.makeServiceCall(BASEURL+"/getMenu.php?messname=" + urlMess);
             // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
 
             Log.e(TAG, "Response from url: " + jsonStr);
@@ -567,7 +569,10 @@ public class MessInfoActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             Log.e("url mess: ",urlMess);
-            String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=" + urlMess);
+
+            String BASEURL = Constants.getBaseUrl();
+
+            String jsonStr = sh.makeServiceCall(BASEURL+"/getMessInfo.php?messname=" + urlMess);
             // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMessInfo.php?messname=Anand Food Xprs");
 
             DatabaseHandler databaseHandler =new DatabaseHandler(mcontext);

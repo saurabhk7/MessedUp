@@ -64,6 +64,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     EditText refCodeTxtView;
     Button CompletePayBtn,applyPromoBtn;
 
+    Context mContext;
+
     CircularProgressButton mCircularProgressButton;
 
     String totaltokens;
@@ -140,6 +142,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        mContext=this;
 
         mCircularProgressButton = (CircularProgressButton)findViewById(R.id.AnimApplyPromoBtn);
 
@@ -421,15 +424,18 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
+//                Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
+//
+//                succesIntent.putExtra("totaltokens",totaltokens+"");
+//                succesIntent.putExtra("amount",finalDisccost+"");
+//
+//                startActivity(succesIntent); //TODO: cut paste it to instamojo activity
 
-                succesIntent.putExtra("totaltokens",totaltokens+"");
-                succesIntent.putExtra("amount",finalDisccost+"");
-
-                startActivity(succesIntent); //TODO: cut paste it to instamojo activity
-
-//                String refcode = refCodeTxtView.getText().toString(); //TODO: uncomment this
-//                new ApplyPromo(getApplicationContext(),refcode).execute();
+                String refcode = refCodeTxtView.getText().toString(); //TODO: uncomment this
+                if(refcode.length()==0)
+                    Toast.makeText(mContext,"Enter the Referal code",Toast.LENGTH_SHORT).show();
+                else
+                    new ApplyPromo(getApplicationContext(),refcode).execute();
 
 
             }
@@ -643,7 +649,11 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             HttpURLConnection conn = null;
             try {
                 //constants
-                URL url = new URL("https://wanidipak56.000webhostapp.com/checkReferal.php?userid=" + userid +
+
+
+                String BASEURL = Constants.getBaseUrl();
+
+                URL url = new URL(BASEURL+"/checkReferal.php?userid=" + userid +
                         "&referalcode=" + referalcode + "&tokens=" + totaltokens);
 
                 conn = (HttpURLConnection) url.openConnection();
@@ -770,7 +780,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         // products JSONArray
 
         //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
-        private String url_mess_menu = "https://wanidipak56.000webhostapp.com/postTxn.php";
+
+        String BASEURL = Constants.getBaseUrl();
+
+        private String url_mess_menu = BASEURL+"/postTxn.php";
         //ArrayList<HashMap<String, String>> messList;
 
         PostTxnData(String response, String amount, String purpose) {
@@ -899,6 +912,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
             succesIntent.putExtra("totaltokens",totaltokens+"");
             succesIntent.putExtra("amount",finalDisccost+"");
+            succesIntent.putExtra("orderid",detailsMap.get("orderId")+"");
+            succesIntent.putExtra("paymentid",detailsMap.get("paymentId")+"");
+
 
             startActivity(succesIntent);
 
@@ -906,7 +922,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             //Intent i = new Intent(SplashScreen.this, IntroActivity.class);
 
             //  startActivity(i);
-            // finish();
+             finish();
 
         }
     }

@@ -19,7 +19,7 @@ public class SuccessPayementActivity extends AppCompatActivity {
     String explainString1, explainString2, explainString3, explainString4,infotxtStr;
     TextView explainTextView1, explainTextView2, explainTextView3, explainTextView4,InfoTxtView;
 
-    String totaltokens, amount;
+    String totaltokens, amount,orderid,paymentid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,8 @@ public class SuccessPayementActivity extends AppCompatActivity {
         if (extras != null) {
             totaltokens = extras.getString("totaltokens");
             amount = extras.getString("amount");
+            orderid = extras.getString("orderid");
+            paymentid = extras.getString("paymentid");
 
             //The key argument here must match that used in the other activity
         }
@@ -50,8 +52,8 @@ public class SuccessPayementActivity extends AppCompatActivity {
 
         InfoTxtView = (TextView)findViewById(R.id.infotxt);
 
-        explainString1 = "<b><font color=#424242>Payment ID:</font></b> MOJO7918005A76494611";
-        explainString2 = "<b><font color=#424242>Order ID:</font></b> a089f02724ed4a8db6c069f6d30b3245";
+        explainString1 = "<b><font color=#424242>Payment ID:</font></b> "+paymentid;
+        explainString2 = "<b><font color=#424242>Order ID:</font></b> "+orderid;
         explainString3 = "<b><font color=#424242>Total Tokens:</font></b> "+totaltokens;
         explainString4 = "<b><font color=#424242>Amount Paid:</font></b> ₹"+amount;
         infotxtStr = "your invoice will be mailed to you<br>on your registered email address";

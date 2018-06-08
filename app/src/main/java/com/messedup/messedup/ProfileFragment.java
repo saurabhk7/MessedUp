@@ -630,7 +630,9 @@ public class ProfileFragment extends Fragment {
 
         HitCount hitCount=new HitCount(view);
 
-        hitCount.execute("http://wanidipak56.000webhostapp.com/imincount.php");
+        String BASEURL = Constants.getBaseUrl();
+
+        hitCount.execute(BASEURL+"/imincount.php");
 
     }
 
@@ -682,7 +684,13 @@ public class ProfileFragment extends Fragment {
             HttpURLConnection conn = null;
             try {
                 //constants
-                URL url = new URL("https://wanidipak56.000webhostapp.com/getUserTokenInfo.php?userid="+Uid);
+
+
+                String BASEURL = Constants.getBaseUrl();
+
+                Log.e("BASEURL: ", BASEURL);
+
+                URL url = new URL(BASEURL+"/getUserTokenInfo.php?userid="+Uid);
 
 
                 conn = (HttpURLConnection) url.openConnection();
@@ -781,13 +789,8 @@ public class ProfileFragment extends Fragment {
 
                     JSONArray userinfo = jsonResponseArray;
 
-
-
-
-
-
-//                    if(userinfo.length()<1)
-                    if(true)
+                    if(userinfo.length()<1)
+//                    if(true)
                     {
                         progressBar.setVisibility(View.INVISIBLE);
                         Log.e("Length:", "ZERO");
@@ -991,7 +994,10 @@ public class ProfileFragment extends Fragment {
             HttpURLConnection conn = null;
             try {
                 //constants
-                URL url = new URL("http://wanidipak56.000webhostapp.com/useToken.php");
+
+                String BASEURL = Constants.getBaseUrl();
+
+                URL url = new URL(BASEURL+"/useToken.php");
                 JSONObject jsonObject = new JSONObject();
 
 

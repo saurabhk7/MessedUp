@@ -258,7 +258,9 @@ public class TokenSelectionActivity extends AppCompatActivity {
         try {
             mProgressBar = (ProgressBar) findViewById(R.id.pb);
 
-            String urltemp = "http://wanidipak56.000webhostapp.com/offerlogic.php";
+            String BASEURL = Constants.getBaseUrl();
+
+            String urltemp = BASEURL+"/offerlogic.php";
             WebView webView = (WebView) findViewById(R.id.TokenSelectWebview);
             ImageView errimg = (ImageView) findViewById(R.id.ErrorImgView);
             TextView errtext = (TextView) findViewById(R.id.ErrorTxtView);

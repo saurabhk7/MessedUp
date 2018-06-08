@@ -53,10 +53,11 @@ public class AboutUsActivity extends AppCompatActivity {
 
 
 
-        SetDetails1(this,"Dipak Wani","wanidipak56@gmail.com","https://wanidipak56.000webhostapp.com/Photos/Dipak.png");
-        SetDetails2(this,"Saurabh Kshirsagar","saurabhkshirsagar35@gmail.com","https://wanidipak56.000webhostapp.com/Photos/Saurabh.png");
-        SetDetails3(this,"Tanmay Singhal","tanmaysinghal98@gmail.com","https://wanidipak56.000webhostapp.com/Photos/Tanmay.jpg");
-        SetDetails4(this,"Yash Karwa","ypkarwa@gmail.com","https://wanidipak56.000webhostapp.com/Photos/Yash.png");
+        String BASEURL = Constants.getBaseUrl();
+        SetDetails1(this,"Dipak Wani","wanidipak56@gmail.com",BASEURL+"/Photos/Dipak.png");
+        SetDetails2(this,"Saurabh Kshirsagar","saurabhkshirsagar35@gmail.com",BASEURL+"/Photos/Saurabh.png");
+        SetDetails3(this,"Tanmay Singhal","tanmaysinghal98@gmail.com",BASEURL+"/Photos/Tanmay.jpg");
+        SetDetails4(this,"Yash Karwa","ypkarwa@gmail.com",BASEURL+"/Photos/Yash.png");
 
 
     }
