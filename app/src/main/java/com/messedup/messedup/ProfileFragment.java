@@ -180,8 +180,19 @@ public class ProfileFragment extends Fragment {
         refTxtView = (TextView)ProfileView.findViewById(R.id.ReferralTxtView);
 
 
+        DetailsSharedPref dspobj2=new DetailsSharedPref(ProfileView.getContext());
+        String status = dspobj2.getMealStatusSharedPrefs();
+
         Uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         new UserTokenInfo(ProfileView).execute();
+
+
+        if(status.equals("OFFLINE")) {
+            circularProgressButton.setProgress(-1);
+            circularProgressButton.setClickable(false);
+        }
+
+
 
 
         /*if(mDetailsSharedPref.getImInStatus().equals("notdone")) //TODO: finalise this after testing
@@ -871,6 +882,8 @@ public class ProfileFragment extends Fragment {
 
                                                 new UseToken(messname[i], totaltokens[i], sDialog, sweetAlertDialog, mPassedView).execute();
 
+                                                sDialog.cancel();
+
                                             /*sendNotification("Enjoy Your Meal at "+messname[i],"At 12:30 p.m. " +
                                                     "on May 31 2018 | "+(totaltokens[i]-1)+" tokens left");
 
@@ -1113,7 +1126,17 @@ public class ProfileFragment extends Fragment {
                             "Date Used: "+date+"\n\n"+(totaltokensleft)+" tokens left of "+MessName+"\n";
 
 
-                    currDialog
+                    Intent succesIntent=new Intent(mPassedView.getContext(), TokenUseSuccess.class);
+
+                    succesIntent.putExtra("totaltokensleft",totaltokensleft+"");
+                    succesIntent.putExtra("messname",MessName+"");
+                    succesIntent.putExtra("timeused",time+"");
+                    succesIntent.putExtra("dateused",date+"");
+
+
+                    startActivity(succesIntent);
+
+                   /* currDialog
 
                             .setTitleText("Enjoy your meal")
                             .setContentText(s)
@@ -1141,10 +1164,12 @@ public class ProfileFragment extends Fragment {
                         }
                     }, 1500, 1500);
 
-
+*/
                 }
                 else
                 {
+
+                    /*
                     currDialog
 
                             .setTitleText("Oops!")
@@ -1158,6 +1183,10 @@ public class ProfileFragment extends Fragment {
                                 }
                             })
                             .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+
+
+*/
+
 
 
 

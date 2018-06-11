@@ -7,8 +7,8 @@ android {
         applicationId "com.messedup.messedup"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -114,6 +114,8 @@ dependencies {
 
     //CIRCLE INDICATORS
     compile 'me.relex:circleindicator:1.2.2@aar'
+
+    compile 'com.github.cdflynn:checkview:v1.0'//TICK MARK ANIMATION
 
     //TOKEN SELECTION UI
     compile 'com.mindorks:placeholderview:0.7.1'

@@ -234,6 +234,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/selectBreakfastBtn"
+            android:visibility="gone"
             android:background="?attr/colorAccent"
             android:textColor="@color/cardview_light_background"
             android:layout_marginLeft="10dp"

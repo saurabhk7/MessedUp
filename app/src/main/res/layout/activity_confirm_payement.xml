@@ -75,6 +75,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:elevation="30dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
         android:id="@+id/cv_botton"
         app:cardCornerRadius="6dp"
         app:cardUseCompatPadding="true"
@@ -104,20 +105,30 @@
                         android:text="TOTAL TOKENS"
                         android:layout_width="0dp"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="18sp"
+                        android:textSize="17sp"
                         android:layout_height="wrap_content"
                         android:id="@+id/totaltokensstatic"
-                        android:layout_weight="0.7" />
+                        android:layout_weight="0.5" />
 
                     <TextView
                         android:text="qty"
                         android:gravity="end"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="0dp"
-                        android:textSize="18sp"
+                        android:textSize="17sp"
                         android:layout_height="wrap_content"
                         android:id="@+id/totaltokensdynamic"
-                        android:layout_weight="0.3" />
+                        android:layout_weight="0.5" />
+
+                    <!--<TextView-->
+                        <!--android:text="percost"-->
+                        <!--android:gravity="end"-->
+                        <!--android:textColor="@color/colorPrimary"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:textSize="15sp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/percosttokensdynamic"-->
+                        <!--android:layout_weight="0.3" />-->
                 </LinearLayout>
 
 
@@ -159,6 +170,7 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
+                    android:layout_marginTop="2dp"
                     android:layout_below="@+id/oripricelayout"
                     android:id="@+id/offerpricelayout"
                     android:layout_width="match_parent"
@@ -187,6 +199,7 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:id="@+id/yousavelayout"
+                    android:layout_marginTop="2dp"
                     android:layout_below="@+id/offerpricelayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -220,6 +233,7 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_below="@+id/yousavelayout"
+                    android:layout_marginTop="2dp"
                     android:layout_above="@+id/complete_payment_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">

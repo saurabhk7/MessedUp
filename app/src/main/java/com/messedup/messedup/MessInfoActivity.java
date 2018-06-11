@@ -139,7 +139,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
                     String urlname =getURLString( MessID );
 
-                    // Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
+                     Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
 
                     final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
@@ -147,6 +147,7 @@ public class MessInfoActivity extends AppCompatActivity {
                     if(isNetworkAvailable()) {
 
 
+                        fullData.clear();
 
                         obj.execute();
                         new Handler().postDelayed(new Runnable() {
@@ -173,6 +174,7 @@ public class MessInfoActivity extends AppCompatActivity {
                     {
                         done1[0] =true;
                         fullData.clear();
+                        Log.e("Fulldata nonet: ",fullData.size()+"");
                         // loadTabs();
 
                     }
@@ -246,14 +248,14 @@ public class MessInfoActivity extends AppCompatActivity {
 
                 String urlname =getURLString( MessID );
 
-                // Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
+                 Toast.makeText(this, "Show Info of3 : " + urlname, Toast.LENGTH_SHORT).show();
                 toolbarTextView.setText(MessID);
 
                 final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
 
                 if(isNetworkAvailable()) {
 
-
+                    fullData.clear();
 
                     obj.execute();
                     new Handler().postDelayed(new Runnable() {
@@ -446,6 +448,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
 */
 
+
             pDialog1.setMessage("Getting Menu...");
             pDialog1.setCancelable(false);
             pDialog1.show();
@@ -461,10 +464,11 @@ public class MessInfoActivity extends AppCompatActivity {
             HttpHandler sh = new HttpHandler();
             String BASEURL = Constants.getBaseUrl();
 
+            Log.e("getmenu of: ",urlMess);
             String jsonStr = sh.makeServiceCall(BASEURL+"/getMenu.php?messname=" + urlMess);
             // String jsonStr = sh.makeServiceCall("http://wanidipak56.000webhostapp.com/getMenu.php?messname=Anand%20Food%20Xprs");
 
-            Log.e(TAG, "Response from url: " + jsonStr);
+            Log.e(TAG, "Response from url 2: " + jsonStr);
 
             try {
                 if (jsonStr != null) {
@@ -539,6 +543,9 @@ public class MessInfoActivity extends AppCompatActivity {
             }
             Toast.makeText(mcontext, "Menu Updated", Toast.LENGTH_SHORT).show();
 
+            for(int i=0;i<fullData.size();i++)
+                Log.e("fulldatais: ",i+" "+fullData.get(i));
+            Log.e("fulldatais: ","++++++++++++++++++++++++++++++++++++");
             loadTabs();
         }
     }

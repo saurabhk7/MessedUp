@@ -394,14 +394,24 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         CompletePayBtn.setText("COMPLETE PAYMENT ₹" + disccost);
 
 
+
+
         finalDisccost = disccost + "";
+
+        int pertokencost= (int) (Float.parseFloat(finalDisccost)/Integer.parseInt(totaltokens));
+
         CompletePayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                callInstamojoPay(email, phone, finalDisccost,totaltokens+" "+purpose, buyername);
+                callInstamojoPay(email, phone, 10+"",totaltokens+" "+purpose, buyername);
             }
         });
+
+
+//        TextView totalTokensDynTxt = (TextView) findViewById(R.id.totaltokensdynamic);
+//
+//        totalTokensDynTxt.setText(totaltokens+" (₹"+pertokencost+"/token)");
 
 
         initListView(leftdata,rightdata);
