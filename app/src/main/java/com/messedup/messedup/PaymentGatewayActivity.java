@@ -593,8 +593,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     public void onClick(final SweetAlertDialog sDialog) {
 
                         sDialog.cancel();
-                        startActivity(new Intent(PaymentGatewayActivity.this, TokenSelectionActivity.class));
-
+//                        startActivity(new Intent(PaymentGatewayActivity.this, TokenSelectionActivity.class));
+                        finish();
                     }
                 })
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {

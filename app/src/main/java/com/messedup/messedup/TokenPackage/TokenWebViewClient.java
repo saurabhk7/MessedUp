@@ -40,7 +40,7 @@ public class TokenWebViewClient extends WebViewClient {
         //Your code to do
         webView.setVisibility(View.INVISIBLE);
 
-        Toast.makeText(view.getContext(), "Your Internet Connection May not be active Or " + error , Toast.LENGTH_LONG).show();
+        Toast.makeText(view.getContext(), "Oops, Please check your Internet Connection!", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -95,7 +95,9 @@ public class TokenWebViewClient extends WebViewClient {
             errtext.setVisibility(View.INVISIBLE);
 
             progressDialog.setMessage("Loading your order...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
+
 
 //            Toast.makeText(view.getContext(), "Final " + url, Toast.LENGTH_SHORT).show();
 
@@ -111,6 +113,11 @@ public class TokenWebViewClient extends WebViewClient {
         if(url.contains("tokenJson.php")) {
             webView.loadUrl("javascript:HtmlViewer.showHTML" +
                     "(document.getElementsByTagName('body')[0].innerHTML);");
+
+            if (webView.canGoBack()) {
+                progressDialog.dismiss();
+                webView.goBack();
+            }
 //            Intent intent = new Intent(view.getContext(), PaymentGatewayActivity.class);
 
 //            view.getContext().startActivity(intent);

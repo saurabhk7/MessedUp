@@ -434,7 +434,7 @@ public class NotifFragment extends Fragment  {
 
             db.updateOffer(nbcoll,jsonStr);
 
-            Log.e(nbcoll,jsonStr);
+//            Log.e(nbcoll,jsonStr);
 
 
             if(progressBar.isIndeterminate())

@@ -5,10 +5,6 @@
     android:id="@+id/activity_token_use_success"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.messedup.messedup.TokenUseSuccess">
 
     <nl.dionsegijn.konfetti.KonfettiView
@@ -22,10 +18,11 @@
         android:background="?android:attr/selectableItemBackground"
         android:elevation="30dp"
         android:id="@+id/cv_user"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         app:cardCornerRadius="6dp"
         app:cardUseCompatPadding="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
         android:layout_above="@+id/complete_token_btn"
         android:layout_alignParentTop="true">
 
@@ -244,9 +241,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginBottom="25dp"
         android:id="@+id/complete_token_btn"
         android:backgroundTint="@color/app_green"
         android:textColor="@color/white" />

@@ -245,6 +245,8 @@ public class TokenSelectionActivity extends AppCompatActivity {
     ExpandableListAdapter listAdapter;
     private ProgressBar mProgressBar;
 
+    WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,15 +260,18 @@ public class TokenSelectionActivity extends AppCompatActivity {
         try {
             mProgressBar = (ProgressBar) findViewById(R.id.pb);
 
+
+
             String BASEURL = Constants.getBaseUrl();
 
             String urltemp = BASEURL+"/offerlogic.php";
-            WebView webView = (WebView) findViewById(R.id.TokenSelectWebview);
+            webView = (WebView) findViewById(R.id.TokenSelectWebview);
             ImageView errimg = (ImageView) findViewById(R.id.ErrorImgView);
             TextView errtext = (TextView) findViewById(R.id.ErrorTxtView);
             //Specify the URL you want to display//
             TokenWebViewClient tokenWebViewClient = new TokenWebViewClient(webView,errimg,errtext);
 
+            webView.setVisibility(View.VISIBLE);
             webView.setWebViewClient(tokenWebViewClient);
 
 
@@ -347,8 +352,8 @@ public class TokenSelectionActivity extends AppCompatActivity {
                     public void onClick(final SweetAlertDialog sDialog) {
 
                         sDialog.cancel();
-                        startActivity(new Intent(TokenSelectionActivity.this, MainActivity.class));
-
+//                        startActivity(new Intent(TokenSelectionActivity.this, MainActivity.class));
+                        finish();
                     }
                 })
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -380,7 +385,12 @@ public class TokenSelectionActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+    @Override
+    protected void onResume() {
 
+        webView.setVisibility(View.VISIBLE);
+        super.onResume();
+    }
 }
 
 class MyJavaScriptInterface {
