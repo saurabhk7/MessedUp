@@ -6,7 +6,7 @@ package com.messedup.messedup;
 
 public class Constants {
 
-//    private static String BASE_URL = "https://wanidipak56.000webhostapp.com"; 
+//    private static String BASE_URL = "https://wanidipak56.000webhostapp.com";
     private static String BASE_URL = "http://messedup.in/ftrzibvapv/api/";
 
 
