@@ -71,7 +71,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     String totaltokens;
     String finalDisccost="";
 
-    Boolean PROMOCODE_APPLIED = false;
+    boolean PROMOCODE_APPLIED = false;
+    String PROMOCODE_CODE = "NOPROMO";
 
     String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
@@ -81,12 +82,14 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     ArrayList<String> rightdata = new ArrayList<>();
 
 
+
 //    ArrayList<String> playtetypeStr = new ArrayList<>();
 //    ArrayList<String> qtyStr = new ArrayList<>();
 
     LinkedHashMap<String, String> FinalMapToDisplay = new LinkedHashMap<>();
 
-
+    LinkedHashMap<String, String> FinalMapToPass = new LinkedHashMap<>();
+    String stringToAdd="";
 
     private void callInstamojoPay(String email, String phone, String amount, String purpose, String buyername) {
         final Activity activity = this;
@@ -120,7 +123,11 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                 new PostTxnData(response,amount,purpose).execute();
 
+                Log.e("PROMOCODEPASS: ",PROMOCODE_CODE);
 
+                FinalMapToPass.put("promocodeused",PROMOCODE_CODE);
+
+                //TODO: write async task to send the hashmap details to server
 
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG)
                         .show();
@@ -324,6 +331,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 key = key.replaceAll("_", " ");
 //                messname.setText(key);
 
+                stringToAdd=key;
+
                 leftdata.add(key);
                 rightdata.add("messname");
 
@@ -355,8 +364,12 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                     qty.setText(value);*/
 
-                    leftdata.add(key.split(":")[1] + " tokens");
+                    String keySplit = key.split(":")[1];
+
+                    leftdata.add(keySplit + " tokens");
                     rightdata.add(value);
+
+                    FinalMapToPass.put(stringToAdd+"#"+keySplit,value);
 
                     /*System.out.println("row: "+w+"platetype: "+platetype.getWidth());
                     row.addView(platetype);
@@ -369,6 +382,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         }
 
+        for (String finalkey : FinalMapToPass.keySet()) {
+            String value = FinalMapToPass.get(finalkey);
+            System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
+        }
 
         System.out.println("TABLE:");
         discount = origcost - disccost;
@@ -746,6 +763,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                 if (success.equals("true")) {
 
+                    PROMOCODE_APPLIED=true;
+                    PROMOCODE_CODE = referalcode;
+
                     refCodeTxtView.setBackground(getResources().getDrawable(R.drawable.border_green));
 
                     mCircularProgressButton.setProgress(100);
@@ -759,6 +779,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     Toast.makeText(mContext,"Sucessfully applied "+frienduid+"'s referal code",Toast.LENGTH_SHORT).show();
 
                 } else {
+
+                    PROMOCODE_APPLIED=false;
+                    PROMOCODE_CODE = "NOPROMO";
+
 
                     refCodeTxtView.setBackground(getResources().getDrawable(R.drawable.border_red));
 

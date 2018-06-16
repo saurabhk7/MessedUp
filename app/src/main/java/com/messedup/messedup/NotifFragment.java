@@ -151,7 +151,8 @@ public class NotifFragment extends Fragment  {
 
 //       if(tot_off==0)
 //        initOffers(NotifView);
-        new GetOfferCarousel(getContext(),NotifView).execute();
+        if(isNetworkAvailable())
+            new GetOfferCarousel(getContext(),NotifView).execute();
 
 
 
