@@ -110,7 +110,8 @@
             android:value="https://wanidipak56.000webhostapp.com/access_token.php" />
 
         <activity android:name=".SuccessPayementActivity" />
-        <activity android:name=".TokenUseSuccess"></activity>
+        <activity android:name=".TokenUseSuccess" />
+        <activity android:name=".TokenUseHistoryActivity"></activity>
     </application>
 
 </manifest>

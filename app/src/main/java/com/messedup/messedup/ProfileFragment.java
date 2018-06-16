@@ -166,7 +166,10 @@ public class ProfileFragment extends Fragment {
         ImageButton SignOutImgBtn = (ImageButton) ProfileView.findViewById(R.id.LogOUtImgBtn);
         ImageButton RateAppBtn = (ImageButton) ProfileView.findViewById(R.id.rateAppBtn);
 
-       circularProgressButton=(CircularProgressButton)ProfileView.findViewById(R.id.AnimImInBtn);
+        ImageButton viewHistoryBtn = (ImageButton) ProfileView.findViewById(R.id.viewHistoryBtn);
+
+
+        circularProgressButton=(CircularProgressButton)ProfileView.findViewById(R.id.AnimImInBtn);
 
         progressBar = (ProgressBar)ProfileView.findViewById(R.id.spin_kit_progress);
         doubleBounce = new DoubleBounce();
@@ -501,6 +504,13 @@ public class ProfileFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())));
                 }
+            }
+        });
+
+        viewHistoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(),TokenUseHistoryActivity.class));
             }
         });
 
