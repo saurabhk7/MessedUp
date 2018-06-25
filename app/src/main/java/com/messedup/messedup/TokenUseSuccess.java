@@ -25,7 +25,7 @@ public class TokenUseSuccess extends AppCompatActivity {
     String explainString1, explainString2, explainString3, headingTxtexplainString4,infotxtStr;
     TextView explainTextView1, explainTextView2, explainTextView3, headingTxtexplainTextView4,headingTxtTextView4,InfoTxtView;
 
-    String totaltokens, messname,timeuse,dateuse,suid;
+    String totaltokens, messname,timeuse,dateuse,suid,transactid;
 
     CheckView mCheckView;
 
@@ -53,6 +53,7 @@ public class TokenUseSuccess extends AppCompatActivity {
             timeuse = extras.getString("timeused");
             dateuse = extras.getString("dateused");
             suid = extras.getString("shortuid");
+            transactid = extras.getString("transacid");
 
 
             //The key argument here must match that used in the other activity
@@ -69,9 +70,10 @@ public class TokenUseSuccess extends AppCompatActivity {
 
         explainString1 = "<b><font color=#424242>Time Used:</font></b> "+timeuse;
         explainString2 = "<b><font color=#424242>Date Used:</font></b> "+dateuse;
-        explainString3 = "<b><font color=#424242>Total Tokens Left:</font></b> "+totaltokens;
+        explainString3 = "<b><font color=#424242>Transaction ID:</font></b> "+transactid;
         headingTxtexplainString4 = messname;
         infotxtStr = "Show this to the mess owner and<br><b>Get Confirmation</b>";
+        String head = "<b>"+suid+"</b>";
 
         explainTextView1.setText(Html.fromHtml(explainString1));
         explainTextView2.setText(Html.fromHtml(explainString2));
@@ -79,7 +81,7 @@ public class TokenUseSuccess extends AppCompatActivity {
         headingTxtexplainTextView4.setText(Html.fromHtml(headingTxtexplainString4));
 
 
-        headingTxtTextView4.setText("TOKEN USED - "+suid);
+        headingTxtTextView4.setText(Html.fromHtml(head));
         InfoTxtView.setText(Html.fromHtml(infotxtStr));
 
         konfettiView.build()
@@ -110,6 +112,34 @@ public class TokenUseSuccess extends AppCompatActivity {
                 handler.post(Update);
             }
         }, 1500, 1500);
+
+
+        final Handler handler2 = new Handler();
+        final Runnable Update2 = new Runnable() {
+            public void run() {
+
+                konfettiView.build()
+                        .addColors(Color.RED, Color.GREEN, Color.CYAN, Color.BLUE, Color.YELLOW)
+                        .setDirection(359.0,270.0)
+                        .setSpeed(1f, 15f)
+                        .setFadeOutEnabled(true)
+                        .setTimeToLive(2500L)
+                        .addShapes(Shape.RECT, Shape.CIRCLE)
+                        .addSizes(new Size(10, 4))
+                        .setPosition(-50f, konfettiView.getWidth() + 50f, -50f, -50f)
+                        .stream(300, 5000L);
+
+            }
+        };
+
+
+        Timer swipeTimer2 = new Timer();
+        swipeTimer2.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler2.post(Update2);
+            }
+        }, 1500, 2500);
 
         doneGoBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override

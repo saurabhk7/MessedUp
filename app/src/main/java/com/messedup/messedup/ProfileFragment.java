@@ -1135,10 +1135,11 @@ public class ProfileFragment extends Fragment {
                 if (success.equals("true")) {
                     String date = jObj.getString("date");
                     String time = jObj.getString("time");
+                    String transid = jObj.getString("transid");
 
 
                     sendNotification("Enjoy Your Meal at "+MessName,"At "+time+
-                            " on "+date+" | "+(totaltokensleft)+" tokens left");
+                            " on "+date+" | TransID: "+transid);
 
 
                     String s = "\n" +
@@ -1153,6 +1154,7 @@ public class ProfileFragment extends Fragment {
                     succesIntent.putExtra("timeused",time+"");
                     succesIntent.putExtra("dateused",date+"");
                     succesIntent.putExtra("shortuid",refcode+"");
+                    succesIntent.putExtra("transacid",transid+"");
 
                    Log.e("AFTRTOK", "totaltokensleft "+totaltokensleft+"");
                     Log.e("AFTRTOK", "messname "+MessName+"");

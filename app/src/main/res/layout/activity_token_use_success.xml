@@ -56,7 +56,7 @@
                         android:visibility="visible"
                         android:id="@+id/headingText"
                         android:layout_centerHorizontal="true"
-                        android:textSize="18sp"
+                        android:textSize="24sp"
                         android:textColor="@color/white"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
