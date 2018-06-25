@@ -109,7 +109,7 @@ public class TokenUseSuccess extends AppCompatActivity {
         doneGoBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                startActivity(new Intent(TokenUseSuccess.this, MainActivity.class));
             }
         });
 

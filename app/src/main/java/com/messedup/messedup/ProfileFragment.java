@@ -184,7 +184,7 @@ public class ProfileFragment extends Fragment {
 
 
         DetailsSharedPref dspobj2=new DetailsSharedPref(ProfileView.getContext());
-        String status = dspobj2.getMealStatusSharedPrefs();
+        final String status = dspobj2.getMealStatusSharedPrefs();
 
         Uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         new UserTokenInfo(ProfileView).execute();
@@ -510,7 +510,14 @@ public class ProfileFragment extends Fragment {
         viewHistoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(),TokenUseHistoryActivity.class));
+
+                if(!status.equals("OFFLINE")) {
+                    startActivity(new Intent(getActivity(), TokenUseHistoryActivity.class));
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Oops, you are currently offline", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -1020,7 +1027,7 @@ public class ProfileFragment extends Fragment {
 
                 String BASEURL = Constants.getBaseUrl();
 
-                URL url = new URL(BASEURL+"/useToken.php");
+                URL url = new URL(BASEURL+"useToken.php");
                 JSONObject jsonObject = new JSONObject();
 
 
@@ -1030,6 +1037,9 @@ public class ProfileFragment extends Fragment {
 
 
                 String message = jsonObject.toString();
+
+
+                Log.e("AFTRTOK","mssg: "+message);
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -1066,7 +1076,7 @@ public class ProfileFragment extends Fragment {
                     }
                     is.close();
                     json = sb.toString();
-
+                    Log.e("AFTRTOK","json: "+json);
                     try {
                         jObj = new JSONObject(json);
                     } catch (JSONException e) {
@@ -1119,7 +1129,7 @@ public class ProfileFragment extends Fragment {
 
             try {
 
-                Log.e("errorr: ", json);
+                Log.e("AFTRTOK errorr: ", json);
 
                 String success = jObj.getString("success");
                 if (success.equals("true")) {
@@ -1143,6 +1153,10 @@ public class ProfileFragment extends Fragment {
                     succesIntent.putExtra("timeused",time+"");
                     succesIntent.putExtra("dateused",date+"");
 
+                   Log.e("AFTRTOK", "totaltokensleft "+totaltokensleft+"");
+                    Log.e("AFTRTOK", "messname "+MessName+"");
+                    Log.e("AFTRTOK", "timeused "+time+"");
+                    Log.e("AFTRTOK", "dateused "+date+"");
 
                     startActivity(succesIntent);
 

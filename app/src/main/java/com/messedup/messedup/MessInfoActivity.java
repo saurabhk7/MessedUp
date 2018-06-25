@@ -139,7 +139,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
                     String urlname =getURLString( MessID );
 
-                     Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
+//                     Toast.makeText(this, "Show Info of2 : " + urlname, Toast.LENGTH_SHORT).show();
                     toolbarTextView.setText(MessID);
 
                     final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);
@@ -248,7 +248,7 @@ public class MessInfoActivity extends AppCompatActivity {
 
                 String urlname =getURLString( MessID );
 
-                 Toast.makeText(this, "Show Info of3 : " + urlname, Toast.LENGTH_SHORT).show();
+//                 Toast.makeText(this, "Show Info of3 : " + urlname, Toast.LENGTH_SHORT).show();
                 toolbarTextView.setText(MessID);
 
                 final GetMenu obj = new GetMenu(MessInfoActivity.this,urlname);

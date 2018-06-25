@@ -150,7 +150,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                 //TODO: write async task to send the hashmap details to server
 
-                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG)
+                Toast.makeText(getApplicationContext(), "Congratulations! Payment Successful", Toast.LENGTH_LONG)
                         .show();
             }
 
@@ -872,8 +872,23 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 URL url = new URL(url_mess_menu);
                 JSONObject jsonObject = new JSONObject();
 
+                JSONArray tokendata = new JSONArray();
+                JSONObject promo = new JSONObject();
 
-                JSONObject tokendata = new JSONObject(finalMapToPass);
+                for(LinkedHashMap.Entry<String,String> entry : finalMapToPass.entrySet())
+                {
+                    if(entry.getKey().contains("#")) {
+                        JSONObject jo = new JSONObject();
+                        jo.put("name", entry.getKey());
+                        jo.put("count", entry.getValue());
+                        tokendata.put(jo);
+                    }
+                    else{
+                        promo.put(entry.getKey(),entry.getValue());
+                    }
+                }
+
+                //JSONObject tokendata = new JSONObject(finalMapToPass);
 
 
                 //Get Response in JSON
@@ -897,6 +912,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 jsonObject.put("amount", amount);//Every variable in string format
                 jsonObject.put("purpose", purpose);
                 jsonObject.put("tokendata", tokendata);
+                jsonObject.put("promo",promo);
 
 
                 String message = jsonObject.toString();
