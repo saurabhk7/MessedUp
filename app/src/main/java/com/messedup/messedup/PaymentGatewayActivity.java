@@ -130,17 +130,21 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                 Log.e("PROMOCODEPASS: ",PROMOCODE_CODE);
 
-                FinalMapToPass.put("promocodeused",PROMOCODE_CODE);
 
-                FinalMapToPass.put("frienduid",PROMOCODE_FUID);
+                if(FinalMapToPass.size()!=0) {
 
-                FinalMapToPass.put("uid",userid);
+                    FinalMapToPass.put("promocodeused", PROMOCODE_CODE);
 
-                FinalMapToPass.put("totaltokens",totaltokens);
+                    FinalMapToPass.put("frienduid", PROMOCODE_FUID);
+
+                    FinalMapToPass.put("uid", userid);
+
+                    FinalMapToPass.put("totaltokens", totaltokens);
+                }
 
                 for (String finalkey : FinalMapToPass.keySet()) {
                     String value = FinalMapToPass.get(finalkey);
-                    System.out.println("FinalMapToPass2:   " + finalkey + "   :   " + value);
+                    System.out.println("FinalMapToPass2**:   " + finalkey + "   :   " + value);
                 }
 
 
@@ -167,6 +171,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_confirm_payement);
         // Call the function callInstamojo to start payment here
 
+        FinalMapToDisplay = new LinkedHashMap<>();
+        FinalMapToPass = new LinkedHashMap<>();
 
         userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -439,10 +445,13 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         int pertokencost= (int) (Float.parseFloat(finalDisccost)/Integer.parseInt(totaltokens));
 
         final float finalDisccost1 = disccost;
+
+
         CompletePayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+//                finish();
 
 
                 callInstamojoPay(email, phone, finalDisccost1 +"",totaltokens+" "+purpose, buyername);
@@ -875,108 +884,107 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 JSONArray tokendata = new JSONArray();
                 JSONObject promo = new JSONObject();
 
-                for(LinkedHashMap.Entry<String,String> entry : finalMapToPass.entrySet())
-                {
-                    if(entry.getKey().contains("#")) {
-                        JSONObject jo = new JSONObject();
-                        jo.put("name", entry.getKey());
-                        jo.put("count", entry.getValue());
-                        tokendata.put(jo);
+                if(finalMapToPass.size()>0) {
+                    for (LinkedHashMap.Entry<String, String> entry : finalMapToPass.entrySet()) {
+                        if (entry.getKey().contains("#")) {
+                            JSONObject jo = new JSONObject();
+                            jo.put("name", entry.getKey());
+                            jo.put("count", entry.getValue());
+                            tokendata.put(jo);
+                        } else {
+                            promo.put(entry.getKey(), entry.getValue());
+                        }
                     }
-                    else{
-                        promo.put(entry.getKey(),entry.getValue());
+
+                    //JSONObject tokendata = new JSONObject(finalMapToPass);
+
+
+                    //Get Response in JSON
+                    StringTokenizer st = new StringTokenizer(response, ":=");
+                    while (st.hasMoreTokens()) {
+
+                        String keyStr = st.nextToken().toLowerCase();
+                        String valueStr = st.nextToken();
+                        jsonObject.put(keyStr, valueStr);
+
+                        detailsMap.put(keyStr, valueStr);
+
+                        Log.e("PTXN", "++" + detailsMap);
                     }
-                }
 
-                //JSONObject tokendata = new JSONObject(finalMapToPass);
+                    Log.e("PTXN", "***" + userid);
+                    Log.e("PTXN", "***" + amount);
+                    Log.e("PTXN", "***" + purpose);
 
-
-                //Get Response in JSON
-                StringTokenizer st = new StringTokenizer(response, ":=");
-                while (st.hasMoreTokens()) {
-
-                   String keyStr = st.nextToken().toLowerCase();
-                    String valueStr = st.nextToken();
-                    jsonObject.put(keyStr,valueStr);
-
-                    detailsMap.put(keyStr,valueStr);
-
-                    Log.e("PTXN","++"+detailsMap);
-                }
-
-                Log.e("PTXN","***"+userid);
-                Log.e("PTXN","***"+amount);
-                Log.e("PTXN","***"+purpose);
-
-                jsonObject.put("userid", userid);//change the variables accordingly
-                jsonObject.put("amount", amount);//Every variable in string format
-                jsonObject.put("purpose", purpose);
-                jsonObject.put("tokendata", tokendata);
-                jsonObject.put("promo",promo);
+                    jsonObject.put("userid", userid);//change the variables accordingly
+                    jsonObject.put("amount", amount);//Every variable in string format
+                    jsonObject.put("purpose", purpose);
+                    jsonObject.put("tokendata", tokendata);
+                    jsonObject.put("promo", promo);
 
 
-                String message = jsonObject.toString();
+                    String message = jsonObject.toString();
+
+                    Log.e("FinalMapToPass2**", "sending.. " + message);
+
+                    Log.e("PTXN", "***" + message);
+
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /*milliseconds*/);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                    //make some HTTP header nicety
+                    conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                    conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                    //open
+                    conn.connect();
+
+                    //setup send
+                    os = new BufferedOutputStream(conn.getOutputStream());
+                    os.write(message.getBytes());
+                    //clean up
+                    os.flush();
 
 
-                Log.e("PTXN","***"+message);
-
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000 /*milliseconds*/);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                conn.setFixedLengthStreamingMode(message.getBytes().length);
-
-                //make some HTTP header nicety
-                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-
-                //open
-                conn.connect();
-
-                //setup send
-                os = new BufferedOutputStream(conn.getOutputStream());
-                os.write(message.getBytes());
-                //clean up
-                os.flush();
-
-
-                //do somehting with response
-                is = conn.getInputStream();
-
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(
-                            is, "iso-8859-1"), 8);
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    is.close();
-                    json = sb.toString();
-
-                    Log.e("PTXN","json: "+json);
+                    //do somehting with response
+                    is = conn.getInputStream();
 
                     try {
-                        jObj = new JSONObject(json);
-                        int success = jObj.getInt("success");
-                        if (success == 1) {
-
-                            Log.e("PostTxnData", "Succesful");
-                        } else {
-                            Log.e("PostTxnData", "Error");
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                is, "iso-8859-1"), 8);
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line + "\n");
                         }
-                    } catch (JSONException e) {
-                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                        is.close();
+                        json = sb.toString();
+
+                        Log.e("PTXN", "json: " + json);
+
+                        try {
+                            jObj = new JSONObject(json);
+                            int success = jObj.getInt("success");
+                            if (success == 1) {
+
+                                Log.e("PostTxnData", "Succesful");
+                            } else {
+                                Log.e("PostTxnData", "Error");
+                            }
+                        } catch (JSONException e) {
+                            Log.e("JSON Parser", "Error parsing data " + e.toString());
+                        }
+
+
+                    } catch (Exception e) {
+                        Log.e("Buffer Error", "Error converting result " + e.toString());
                     }
-
-
-                } catch (Exception e) {
-                    Log.e("Buffer Error", "Error converting result " + e.toString());
                 }
-
-
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             } finally {
@@ -1009,32 +1017,39 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 //                System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
 //            }
 
+            if (finalMapToPass.size() > 0) {
 
-            new sendData(FinalMapToPass).execute();
+                Log.e("DONE", "DONE");
 
 
-            Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
+                Intent succesIntent = new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
 
-            succesIntent.putExtra("totaltokens",totaltokens+"");
-            succesIntent.putExtra("amount",finalDisccost+"");
-            succesIntent.putExtra("orderid",detailsMap.get("orderid")+"");
-            succesIntent.putExtra("paymentid",detailsMap.get("paymentid")+"");
+                succesIntent.putExtra("totaltokens", totaltokens + "");
+                succesIntent.putExtra("amount", finalDisccost + "");
+                succesIntent.putExtra("orderid", detailsMap.get("orderid") + "");
+                succesIntent.putExtra("paymentid", detailsMap.get("paymentid") + "");
 
-            Log.e("PTXN","totaltokens "+totaltokens+"");
-            Log.e("PTXN","amount "+finalDisccost+"");
-            Log.e("PTXN","orderid "+detailsMap.get("orderid")+"");
-            Log.e("PTXN","paymentid "+detailsMap.get("paymentid")+"");
+                Log.e("PTXN", "totaltokens " + totaltokens + "");
+                Log.e("PTXN", "amount " + finalDisccost + "");
+                Log.e("PTXN", "orderid " + detailsMap.get("orderid") + "");
+                Log.e("PTXN", "paymentid " + detailsMap.get("paymentid") + "");
 
-            startActivity(succesIntent);
 
-            //NExt Intent to "Transaction Succesful Activity"
-            //Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+                FinalMapToDisplay = new LinkedHashMap<>();
+                FinalMapToPass = new LinkedHashMap<>();
+                detailsMap = new LinkedHashMap<>();
 
-            //  startActivity(i);
-             finish();
+                startActivity(succesIntent);
+
+                //NExt Intent to "Transaction Succesful Activity"
+                //Intent i = new Intent(SplashScreen.this, IntroActivity.class);
+
+                //  startActivity(i);
+                finish();
+
+            }
 
         }
-
 
     }
 

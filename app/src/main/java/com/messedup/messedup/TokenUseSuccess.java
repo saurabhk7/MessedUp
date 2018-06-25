@@ -23,9 +23,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class TokenUseSuccess extends AppCompatActivity {
 
     String explainString1, explainString2, explainString3, headingTxtexplainString4,infotxtStr;
-    TextView explainTextView1, explainTextView2, explainTextView3, headingTxtexplainTextView4,InfoTxtView;
+    TextView explainTextView1, explainTextView2, explainTextView3, headingTxtexplainTextView4,headingTxtTextView4,InfoTxtView;
 
-    String totaltokens, messname,timeuse,dateuse;
+    String totaltokens, messname,timeuse,dateuse,suid;
 
     CheckView mCheckView;
 
@@ -52,6 +52,8 @@ public class TokenUseSuccess extends AppCompatActivity {
             messname = extras.getString("messname");
             timeuse = extras.getString("timeused");
             dateuse = extras.getString("dateused");
+            suid = extras.getString("shortuid");
+
 
             //The key argument here must match that used in the other activity
         }
@@ -61,6 +63,7 @@ public class TokenUseSuccess extends AppCompatActivity {
         explainTextView2 = (TextView)findViewById(R.id.explaintxt2);
         explainTextView3 = (TextView)findViewById(R.id.explaintxt3);
         headingTxtexplainTextView4 = (TextView)findViewById(R.id.headingTxt);
+        headingTxtTextView4 = (TextView)findViewById(R.id.headingText);
 
         InfoTxtView = (TextView)findViewById(R.id.infotxt);
 
@@ -75,6 +78,8 @@ public class TokenUseSuccess extends AppCompatActivity {
         explainTextView3.setText(Html.fromHtml(explainString3));
         headingTxtexplainTextView4.setText(Html.fromHtml(headingTxtexplainString4));
 
+
+        headingTxtTextView4.setText("TOKEN USED - "+suid);
         InfoTxtView.setText(Html.fromHtml(infotxtStr));
 
         konfettiView.build()

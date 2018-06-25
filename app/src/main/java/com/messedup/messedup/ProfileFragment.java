@@ -716,9 +716,9 @@ public class ProfileFragment extends Fragment {
 
                 String BASEURL = Constants.getBaseUrl();
 
-                Log.e("BASEURL: ", BASEURL);
+                Log.e("BASEURL: ", BASEURL+" : "+Uid);
 
-                URL url = new URL(BASEURL+"/getUserTokenInfo.php?userid="+Uid);
+                URL url = new URL(BASEURL+"getUserTokenInfo.php?userid="+Uid);
 
 
                 conn = (HttpURLConnection) url.openConnection();
@@ -1152,11 +1152,13 @@ public class ProfileFragment extends Fragment {
                     succesIntent.putExtra("messname",MessName+"");
                     succesIntent.putExtra("timeused",time+"");
                     succesIntent.putExtra("dateused",date+"");
+                    succesIntent.putExtra("shortuid",refcode+"");
 
                    Log.e("AFTRTOK", "totaltokensleft "+totaltokensleft+"");
                     Log.e("AFTRTOK", "messname "+MessName+"");
                     Log.e("AFTRTOK", "timeused "+time+"");
                     Log.e("AFTRTOK", "dateused "+date+"");
+                    Log.e("AFTRTOK", "shortuid "+refcode+"");
 
                     startActivity(succesIntent);
 

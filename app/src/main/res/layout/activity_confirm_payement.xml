@@ -48,7 +48,7 @@
                     />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="60dp"
                     app:srcCompat="@drawable/token_stack"
                     android:layout_below="@+id/header_cover_image"
                     android:background="@drawable/profile_circular_border_imageview"
@@ -56,7 +56,7 @@
                     android:layout_marginTop="-35dp"
                     android:elevation="8dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_height="70dp" />
+                    android:layout_height="60dp" />
 
 
 
@@ -71,7 +71,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="235dp"
         android:background="?android:attr/selectableItemBackground"
         android:elevation="30dp"
         android:layout_alignParentBottom="true"
@@ -97,7 +97,47 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
+                    android:id="@+id/conditionsLayout"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Validity: "
+                        android:layout_width="0dp"
+                        android:textColor="@color/common_google_signin_btn_text_light_focused"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/validityStatic"
+                        android:layout_weight="0.5" />
+
+                    <TextView
+                        android:text="*tokens valid after 24 hrs"
+                        android:gravity="end"
+                        android:textColor="@color/common_google_signin_btn_text_light_focused"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/conditionStatic"
+                        android:layout_weight="0.5" />
+
+                    <!--<TextView-->
+                    <!--android:text="percost"-->
+                    <!--android:gravity="end"-->
+                    <!--android:textColor="@color/colorPrimary"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:textSize="15sp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/percosttokensdynamic"-->
+                    <!--android:layout_weight="0.3" />-->
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:id="@+id/totaltoklayout"
+                    android:layout_below="@+id/conditionsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
