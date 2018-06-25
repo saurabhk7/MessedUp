@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import nl.dionsegijn.konfetti.KonfettiView;
@@ -76,10 +78,25 @@ public class SuccessPayementActivity extends AppCompatActivity {
                 .setPosition(-50f, konfettiView.getWidth() + 50f, -50f, -50f)
                 .stream(300, 5000L);
 
+
+        Button completeBtn = (Button)findViewById(R.id.complete_payment_btn);
+
+        completeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SuccessPayementActivity.this,MainActivity.class));
+            }
+        });
+
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(SuccessPayementActivity.this,MainActivity.class));
     }
 }

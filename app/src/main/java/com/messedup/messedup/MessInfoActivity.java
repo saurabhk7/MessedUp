@@ -111,8 +111,8 @@ public class MessInfoActivity extends AppCompatActivity {
         selectBrkfstBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MessInfoActivity.this,SelectBreakfastActivity.class);
-                i.putExtra("messid", MessID);
+                Intent i = new Intent(MessInfoActivity.this,TokenSelectionActivity.class);
+                //i.putExtra("messid", MessID);
                 startActivity(i);
             }
         });

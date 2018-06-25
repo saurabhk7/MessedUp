@@ -47,7 +47,7 @@ public class TokenHistoryCustomListAdapter extends ArrayAdapter<String> {
 
         TextView txtTitle = (TextView) rowView.findViewById(R.id.messDetailsTxt);
         ImageView imageView2 = (ImageView) rowView.findViewById(R.id.new_notif_icon_2);
-        TextView extratxt = (TextView) rowView.findViewById(R.id.platetypetxt);
+        TextView extratxt = (TextView) rowView.findViewById(R.id.platetype_details);
         TextView timeTxt = (TextView) rowView.findViewById(R.id.time_txt_view);
         TextView TransTxt = (TextView) rowView.findViewById(R.id.transid_txt_view);
 

@@ -73,6 +73,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
     boolean PROMOCODE_APPLIED = false;
     String PROMOCODE_CODE = "NOPROMO";
+    String PROMOCODE_FUID = "NOPROMO";
 
     String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
@@ -93,6 +94,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
     private void callInstamojoPay(String email, String phone, String amount, String purpose, String buyername) {
         final Activity activity = this;
+
+        this.amount=amount;
+        this.purpose=purpose;
+
         InstamojoPay instamojoPay = new InstamojoPay();
         IntentFilter filter = new IntentFilter("ai.devsupport.instamojo");
         registerReceiver(instamojoPay, filter);
@@ -121,11 +126,27 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             public void onSuccess(String response) {
 
 
-                new PostTxnData(response,amount,purpose).execute();
+
 
                 Log.e("PROMOCODEPASS: ",PROMOCODE_CODE);
 
                 FinalMapToPass.put("promocodeused",PROMOCODE_CODE);
+
+                FinalMapToPass.put("frienduid",PROMOCODE_FUID);
+
+                FinalMapToPass.put("uid",userid);
+
+                FinalMapToPass.put("totaltokens",totaltokens);
+
+                for (String finalkey : FinalMapToPass.keySet()) {
+                    String value = FinalMapToPass.get(finalkey);
+                    System.out.println("FinalMapToPass2:   " + finalkey + "   :   " + value);
+                }
+
+
+                new PostTxnData(response,amount,purpose, FinalMapToPass).execute();
+
+
 
                 //TODO: write async task to send the hashmap details to server
 
@@ -382,10 +403,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         }
 
-        for (String finalkey : FinalMapToPass.keySet()) {
-            String value = FinalMapToPass.get(finalkey);
-            System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
-        }
+//        for (String finalkey : FinalMapToPass.keySet()) {
+//            String value = FinalMapToPass.get(finalkey);
+//            System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
+//        }
 
         System.out.println("TABLE:");
         discount = origcost - disccost;
@@ -417,11 +438,14 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         int pertokencost= (int) (Float.parseFloat(finalDisccost)/Integer.parseInt(totaltokens));
 
+        final float finalDisccost1 = disccost;
         CompletePayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                callInstamojoPay(email, phone, 10+"",totaltokens+" "+purpose, buyername);
+
+
+                callInstamojoPay(email, phone, finalDisccost1 +"",totaltokens+" "+purpose, buyername);
             }
         });
 
@@ -776,13 +800,15 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                     String frienduid = jObj.getString("userid");
 
-                    Toast.makeText(mContext,"Sucessfully applied "+frienduid+"'s referal code",Toast.LENGTH_SHORT).show();
+                    PROMOCODE_FUID = frienduid;
+
+                    Toast.makeText(mContext,"Referral Code successfully applied!",Toast.LENGTH_SHORT).show();
 
                 } else {
 
                     PROMOCODE_APPLIED=false;
                     PROMOCODE_CODE = "NOPROMO";
-
+                    PROMOCODE_FUID = "NOPROMO";
 
                     refCodeTxtView.setBackground(getResources().getDrawable(R.drawable.border_red));
 
@@ -811,6 +837,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         String purpose;
         LinkedHashMap<String,String> detailsMap = new LinkedHashMap<>();
 
+        LinkedHashMap<String, String> finalMapToPass = new LinkedHashMap<>();
+
         // products JSONArray
 
         //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
@@ -820,10 +848,11 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         private String url_mess_menu = BASEURL+"/postTxn.php";
         //ArrayList<HashMap<String, String>> messList;
 
-        PostTxnData(String response, String amount, String purpose) {
+        PostTxnData(String response, String amount, String purpose, LinkedHashMap<String, String> finalMapToPass) {
             this.response = response;
             this.amount = amount;
             this.purpose = purpose;
+            this.finalMapToPass = finalMapToPass;
         }
 
         @Override
@@ -834,12 +863,18 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         protected String doInBackground(String... args) {
 
+
+
             OutputStream os = null;
             InputStream is = null;
             HttpURLConnection conn = null;
             try {
                 URL url = new URL(url_mess_menu);
                 JSONObject jsonObject = new JSONObject();
+
+
+                JSONObject tokendata = new JSONObject(finalMapToPass);
+
 
                 //Get Response in JSON
                 StringTokenizer st = new StringTokenizer(response, ":=");
@@ -850,14 +885,24 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     jsonObject.put(keyStr,valueStr);
 
                     detailsMap.put(keyStr,valueStr);
+
+                    Log.e("PTXN","++"+detailsMap);
                 }
+
+                Log.e("PTXN","***"+userid);
+                Log.e("PTXN","***"+amount);
+                Log.e("PTXN","***"+purpose);
 
                 jsonObject.put("userid", userid);//change the variables accordingly
                 jsonObject.put("amount", amount);//Every variable in string format
                 jsonObject.put("purpose", purpose);
+                jsonObject.put("tokendata", tokendata);
 
 
                 String message = jsonObject.toString();
+
+
+                Log.e("PTXN","***"+message);
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -894,6 +939,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     }
                     is.close();
                     json = sb.toString();
+
+                    Log.e("PTXN","json: "+json);
 
                     try {
                         jObj = new JSONObject(json);
@@ -941,14 +988,26 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         protected void onPostExecute(String file_url) {
 
+//            for (String finalkey : FinalMapToPass.keySet()) {
+//                String value = FinalMapToPass.get(finalkey);
+//                System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
+//            }
+
+
+            new sendData(FinalMapToPass).execute();
+
 
             Intent succesIntent=new Intent(PaymentGatewayActivity.this, SuccessPayementActivity.class);
 
             succesIntent.putExtra("totaltokens",totaltokens+"");
             succesIntent.putExtra("amount",finalDisccost+"");
-            succesIntent.putExtra("orderid",detailsMap.get("orderId")+"");
-            succesIntent.putExtra("paymentid",detailsMap.get("paymentId")+"");
+            succesIntent.putExtra("orderid",detailsMap.get("orderid")+"");
+            succesIntent.putExtra("paymentid",detailsMap.get("paymentid")+"");
 
+            Log.e("PTXN","totaltokens "+totaltokens+"");
+            Log.e("PTXN","amount "+finalDisccost+"");
+            Log.e("PTXN","orderid "+detailsMap.get("orderid")+"");
+            Log.e("PTXN","paymentid "+detailsMap.get("paymentid")+"");
 
             startActivity(succesIntent);
 
@@ -959,6 +1018,145 @@ public class PaymentGatewayActivity extends AppCompatActivity {
              finish();
 
         }
+
+
+    }
+
+    class sendData extends AsyncTask<String , Void ,String> {
+
+
+        JSONObject jObj = null;
+        String json = "";
+
+        LinkedHashMap<String,String> detailsMap = new LinkedHashMap<>();
+
+        String BASEURL = Constants.getBaseUrl();
+
+        private String url_mess_menu = BASEURL+"/postTxn.php";
+        //ArrayList<HashMap<String, String>> messList;
+
+        sendData(LinkedHashMap<String, String> dm) {
+
+            this.detailsMap = dm;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(url_mess_menu);
+                JSONObject jsonObject = new JSONObject();
+
+                //Get Response in JSON
+
+
+                String message = jsonObject.toString();
+
+
+                Log.e("PTXN","***"+message);
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+                    Log.e("PTXN","json: "+json);
+
+                    try {
+                        jObj = new JSONObject(json);
+                        int success = jObj.getInt("success");
+                        if (success == 1) {
+
+                            Log.e("PostTxnData", "Succesful");
+                        } else {
+                            Log.e("PostTxnData", "Error");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        protected void onPostExecute(String file_url) {
+
+//            for (String finalkey : detailsMap.keySet()) {
+//                String value = detailsMap.get(finalkey);
+//                System.out.println("detailsMap:   " + finalkey + "   :   " + value);
+//            }
+
+
+        }
+
+
     }
 }
 

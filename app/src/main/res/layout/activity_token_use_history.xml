@@ -5,10 +5,6 @@
     android:id="@+id/activity_token_use_history"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.messedup.messedup.TokenUseHistoryActivity">
 
 
@@ -51,15 +47,15 @@
                     />
 
                 <ImageView
-                    android:layout_width="70dp"
-                    app:srcCompat="@drawable/announcement_notif"
+                    android:layout_width="60dp"
+                    app:srcCompat="@drawable/rewind_time_red"
                     android:layout_below="@+id/header_cover_image"
                     android:background="@drawable/profile_circular_border_imageview"
                     android:id="@+id/ProfilePicImg"
                     android:layout_marginTop="-35dp"
                     android:elevation="8dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_height="70dp" />
+                    android:layout_height="60dp" />
 
                 <TextView
                     android:id="@+id/NameTxtView"
@@ -106,7 +102,7 @@
 
             <com.github.ybq.android.spinkit.SpinKitView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/spin_kit_progress"
+                android:id="@+id/history_spin_kit_progress"
                 style="@style/SpinKitView.Large.DoubleBounce"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"

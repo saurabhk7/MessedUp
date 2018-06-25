@@ -1,6 +1,9 @@
 package com.messedup.messedup;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +36,10 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
     ArrayList<String> plateType = new ArrayList<>();
     ArrayList<String> useDate = new ArrayList<>();
     ArrayList<String> TransID = new ArrayList<>();
+    ArrayList<String> Offerdate = new ArrayList<>();
+
+
+    View RootView;
 
 
     ProgressBar progressBar;
@@ -43,15 +50,29 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_token_use_history);
 
+        RootView=findViewById(R.id.activity_token_use_history);
+
+
+
         setTitle("Token Usage History");
 
 
         progressBar = (ProgressBar)findViewById(R.id.history_spin_kit_progress);
         doubleBounce = new DoubleBounce();
 
-
+        if(isNetworkAvailable())
+            new GetHistory(RootView).execute();
 
     }
+
+    private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -110,7 +131,7 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
 
             String BASEURL = Constants.getBaseUrl();
 
-            jsonStr = sh.makeServiceCall(BASEURL+"/getOffers.php?userid="+userid);
+            jsonStr = sh.makeServiceCall(BASEURL+"/getTokenUseHistory.php?userid="+userid);
 
             Log.e(TAG, "Response from url: " + jsonStr);
             try {
@@ -120,21 +141,12 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
                     for(int i = 0; i < data.length(); i++){
                         JSONObject offer = data.getJSONObject(i);
                         messName.add(offer.getString("Name"));
-                        plateType.add(offer.getString("Description"));
-                        TransID.add(offer.getString("TransID"));
-                        //Offerdate.add(offer.getString("Offerdate"));
+                        plateType.add(offer.getString("PlateName"));
+                        TransID.add("TransID: "+offer.getString("TransactionId"));
+                        useDate.add(offer.getString("Date"));
 
 
-                        try {
-                            Date d =simpleDateFormat.parse(offer.getString("Offerdate"));
-                            String req=reqdFormat.format(d);
-                            Log.e(req,"--- "+req);
-                            useDate.add(req);
 
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
                     }
 
                     Log.e("qwrt", plateType.toString());
@@ -154,7 +166,7 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
-            ListView listView0dinner = (ListView)view.findViewById(R.id.notif_list_view);
+            ListView listView0dinner = (ListView)view.findViewById(R.id.order_list_view);
             TokenHistoryCustomListAdapter adapter = new TokenHistoryCustomListAdapter(TokenUseHistoryActivity.this,messName,plateType,useDate,TransID);
             listView0dinner.setAdapter(adapter);
             adapter.notifyDataSetChanged();
@@ -174,6 +186,10 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
 //            }
         }
     }
+
+
+
+
 
 }
 

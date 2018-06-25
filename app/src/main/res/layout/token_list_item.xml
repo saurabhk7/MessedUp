@@ -23,6 +23,7 @@
                 android:layout_height = "wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="10dp"
+                android:id="@+id/frame_layout"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true">
 
@@ -42,6 +43,10 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/poker_chip_red_shadow" />
+
+
+
+
             </FrameLayout>
 
             <LinearLayout
@@ -67,6 +72,19 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/token_expiry" />
             </LinearLayout>
+
+            <TextView
+                android:text="Tap to use"
+                android:layout_width="wrap_content"
+                android:textColor="@color/common_google_signin_btn_text_light_focused"
+                android:textSize="12sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_below="@+id/frame_layout"
+                android:layout_alignParentEnd="true"
+                android:layout_height="wrap_content"
+                android:id="@+id/token_instructions" />
+
         </RelativeLayout>
 
     </LinearLayout>

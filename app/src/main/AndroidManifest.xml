@@ -107,7 +107,7 @@
 
         <meta-data
             android:name="instamojo.orderauth.url"
-            android:value="https://wanidipak56.000webhostapp.com/access_token.php" />
+            android:value="http://messedup.in/ftrzibvapv/test/access_token.php" />
 
         <activity android:name=".SuccessPayementActivity" />
         <activity android:name=".TokenUseSuccess" />

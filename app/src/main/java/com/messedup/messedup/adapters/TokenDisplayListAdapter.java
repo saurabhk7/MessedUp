@@ -26,7 +26,7 @@ public class TokenDisplayListAdapter extends BaseAdapter {
     private final String [] mess_name_array;
     private final int [] tokens_to_expire_array;
     private final String [] expiry_dates;
-    private final int [] images= {R.drawable.poker_chip_red_shadow, R.drawable.poker_chip_blue_shadow, R.drawable.poker_chip_green_shadow,R.drawable.poker_chip_yellow_shadow};
+    private final int [] images= {R.drawable.poker_chip_red_shadow};
 
     private final int [] total_tokens_left_array;
 
@@ -85,7 +85,7 @@ public class TokenDisplayListAdapter extends BaseAdapter {
 
         viewHolder.messName.setText(mess_name_array[position]);
         viewHolder.tokenExpiryText.setText(""+tokens_to_expire_array[position]+" token(s) will expire on "+expiry_dates[position]);
-        viewHolder.icon.setImageResource(images[position%4]);
+        viewHolder.icon.setImageResource(images[0]);
         viewHolder.totalTokens.setText(""+total_tokens_left_array[position]);
 
         return convertView;
