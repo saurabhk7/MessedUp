@@ -11,6 +11,6 @@
         title="Menu" />
     <tab
         id="@+id/tab_profile"
-        icon="@drawable/ic_user"
-        title="Profile" />
+        icon="@drawable/give_money"
+        title="Tokens" />
 </tabs>

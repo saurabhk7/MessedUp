@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class TokenUseHistoryActivity extends AppCompatActivity {
 
 
@@ -188,6 +190,10 @@ public class TokenUseHistoryActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
 
 
