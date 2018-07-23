@@ -362,7 +362,7 @@ public class ProfileFragment extends Fragment {
 
             refcode = username.substring(0,3)+contactnum.substring(contactnum.length()-3,contactnum.length());
 
-            refTxtView.setText(refcode);
+            refTxtView.setText(refcode.toLowerCase());
 
 
         }
@@ -998,6 +998,7 @@ public class ProfileFragment extends Fragment {
             totaltokensleft=totaltoken-1;
             currDialog = cursweetAlertDialog;
             this.mPassedView=mPassedView;
+            contextFinal=mPassedView.getContext();
 
         }
 
@@ -1196,6 +1197,8 @@ public class ProfileFragment extends Fragment {
                 }
                 else
                 {
+
+                    Toast.makeText(contextFinal,"Something went wrong, please try again after a while!",Toast.LENGTH_LONG).show();
 
                     /*
                     currDialog

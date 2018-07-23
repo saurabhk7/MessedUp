@@ -1050,7 +1050,7 @@ public class MainActivity extends AppCompatActivity {
                                 .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
                                 // .icon(Drawable)                     // Specify a custom drawable to draw as the target
                                 .targetRadius(70)  ,                // Specify the target radius (in dp)
-                        TapTarget.forView(findViewById(R.id.tab_profile), "Your Profile", "Your details ! \n(Which you already know :P)")
+                        TapTarget.forView(findViewById(R.id.tab_profile), "Buy and Use tokens","Buy token of the messes you wish!")
                                 .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
                                 .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
                                 .targetCircleColor(R.color.white)   // Specify a color for the target circle

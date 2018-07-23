@@ -695,7 +695,7 @@ public class MessInfoActivity extends AppCompatActivity {
                                         +"\n"+"Guest Charge: ₹"+hashmessinfo.get("GuestCharge")
                                         +"\n"+"Contact: "+hashmessinfo.get("Contact")+
                                         "\n\nTap for more: "+
-                                        "https://goo.gl/rseyyY \n\n";
+                                        "http://www.messedup.in/app \n\n";
 //                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
                                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 //                                startActivity(Intent.createChooser(sharingIntent, "Share via"));

@@ -145,7 +145,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout today's "+ finalMeal +" at *" + CurrentObj.getMessID() + "* !" +
                             "\n" + CurrentObj + "\n\nTap for more: ";
-                    sAux = sAux + "https://goo.gl/rseyyY \n\n";
+                    sAux = sAux + "http://www.messedup.in/app \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     view.getContext().startActivity(Intent.createChooser(i, "Share "+CurrentObj.getMessID()+"'s Menu"+" with"));
                 } catch (Exception e) {

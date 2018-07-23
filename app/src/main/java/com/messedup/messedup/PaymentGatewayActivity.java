@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +48,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -74,6 +78,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     boolean PROMOCODE_APPLIED = false;
     String PROMOCODE_CODE = "NOPROMO";
     String PROMOCODE_FUID = "NOPROMO";
+
+    String validfrom, validtill, totaldays;
 
     String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
@@ -307,7 +313,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 disccost = Float.parseFloat(value);
             } else if (key.equals("Original_Cost")) {
                 origcost = Float.parseFloat(value);
-                ;
+
             } else if (key.equals("Offer")) {
 
             } else if (key.equals("Total_Tokens")) {
@@ -369,7 +375,25 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 ll.addView(row,i);
                 System.out.println("ROW: "+ll.getMeasuredWidth());
                 i++;*/
-            } else {
+            }
+
+            else if(key.equals("ValidFrom"))
+            {
+                Log.e("Validity From:",value);
+                validfrom = value;
+            }
+            else if(key.equals("ValidTill"))
+            {
+                Log.e("Validity Till:",value);
+                validtill = value;
+            }
+            else if(key.equals("NoOfDays"))
+            {
+                Log.e("Validity totaldays:",value);
+                totaldays = value;
+            }
+
+            else {
 
                 if (!value.equals("0")) {
 /*                    TableRow row = new TableRow(this);
@@ -413,6 +437,14 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 //            String value = FinalMapToPass.get(finalkey);
 //            System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
 //        }
+
+
+
+        TextView validityTxtView = (TextView)findViewById(R.id.validityDynamic);
+
+        String validityString = "Token Validity: <b><font color=#424242>"+validfrom+"</font></b> to <b><font color=#424242>"+validtill+"</font></b> - <b><font color=#424242>("+totaldays+" Days)</font></b>";
+//        validityTxtView.setText("Tokens Valid from "+validfrom+" till "+validtill);
+        validityTxtView.setText(Html.fromHtml(validityString));
 
         System.out.println("TABLE:");
         discount = origcost - disccost;
