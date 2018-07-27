@@ -58,7 +58,7 @@ public class SuccessPayementActivity extends AppCompatActivity {
         explainString2 = "<b><font color=#424242>Order ID:</font></b> "+orderid;
         explainString3 = "<b><font color=#424242>Total Tokens:</font></b> "+totaltokens;
         explainString4 = "<b><font color=#424242>Amount Paid:</font></b> ₹"+amount;
-        infotxtStr = "your invoice will be mailed to you<br>on your registered email address";
+        infotxtStr = "invoice will be mailed to <br>your registered email address";
 
         explainTextView1.setText(Html.fromHtml(explainString1));
         explainTextView2.setText(Html.fromHtml(explainString2));

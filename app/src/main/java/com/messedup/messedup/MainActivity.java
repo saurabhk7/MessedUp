@@ -147,12 +147,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        Log.e("DBCHECK","CHECK: 1");
 
         detailsSharedPref=new DetailsSharedPref(this);
 
-        if(!detailsSharedPref.getDetailsSent().equals("success"))
+        if(!detailsSharedPref.getDetailsSent().equals("success")) {
+            Log.e("DBCHECK","CHECK: 2");
             getUserDetails(this);
+        }
 
 
         if(detailsSharedPref.getWalkThroughStatus().equals("notdone"))
@@ -997,7 +999,7 @@ public class MainActivity extends AppCompatActivity {
 
         TapTargetSequence sequence= new TapTargetSequence(this)
                 .targets(
-                        TapTarget.forView(findViewById(R.id.spinner_text_title), "Your College Area", "Tap to select your area!\n(If not found we are soon coming there:P)")
+                        TapTarget.forView(findViewById(R.id.spinner_text_title), "Your College Area", "Tap to select your area!\n(If not found, we will soon be there :P)")
                                 .outerCircleColor(R.color.colorPrimary)      // Specify a color for the outer circle
                                 .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
                                 .targetCircleColor(R.color.transparentcol)   // Specify a color for the target circle

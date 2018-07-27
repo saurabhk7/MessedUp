@@ -84,6 +84,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     String email,phone,buyername, amount, purpose = "Messed Up Mess Tokens",userid;
     DetailsSharedPref mDetailsSharedPref;
 
+    String token_purpose="";
+    String current_mess="";
+    Boolean is_first = true;
 
     ArrayList<String> leftdata = new ArrayList<>();
     ArrayList<String> rightdata = new ArrayList<>();
@@ -154,7 +157,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 }
 
 
-                new PostTxnData(response,amount,purpose, FinalMapToPass).execute();
+                new PostTxnData(response,amount,token_purpose, FinalMapToPass).execute();
 
 
 
@@ -280,6 +283,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         {
             jsontxtview.setText("PLEASE WAIT ... ");
         }
+
+
+
     }
 
 
@@ -422,6 +428,14 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                     FinalMapToPass.put(stringToAdd+"#"+keySplit,value);
 
+                    if(is_first)
+                        token_purpose+=(value+" "+keySplit+" "+stringToAdd+" token");
+                    else
+                        token_purpose+=(", "+value+" "+keySplit+" "+stringToAdd+" token");
+
+                    is_first=false;
+
+
                     /*System.out.println("row: "+w+"platetype: "+platetype.getWidth());
                     row.addView(platetype);
                     row.addView(qty);
@@ -534,6 +548,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         });
 
 
+        Log.e("token_purpose","PURPOSE: "+token_purpose);
     }
 
     private void initListView(ArrayList<String> leftdata, ArrayList<String> rightdata) {
@@ -950,7 +965,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                     jsonObject.put("userid", userid);//change the variables accordingly
                     jsonObject.put("amount", amount);//Every variable in string format
-                    jsonObject.put("purpose", purpose);
+                    jsonObject.put("validfrom", validfrom);//Every variable in string format
+                    jsonObject.put("validtill", validtill);//Every variable in string format
+                    jsonObject.put("purpose", token_purpose);
                     jsonObject.put("tokendata", tokendata);
                     jsonObject.put("promo", promo);
 

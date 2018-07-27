@@ -102,6 +102,7 @@
             android:theme="@style/Theme.Intro" />
         <activity
             android:name=".TokenSelectionActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".PaymentGatewayActivity" />
 
@@ -109,9 +110,16 @@
             android:name="instamojo.orderauth.url"
             android:value="http://messedup.in/ftrzibvapv/test/access_token.php" />
 
-        <activity android:name=".SuccessPayementActivity" />
-        <activity android:name=".TokenUseSuccess" />
-        <activity android:name=".TokenUseHistoryActivity"></activity>
+        <activity
+            android:name=".SuccessPayementActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TokenUseSuccess"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TokenUseHistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TransactionHistoryActivity"></activity>
     </application>
 
 </manifest>

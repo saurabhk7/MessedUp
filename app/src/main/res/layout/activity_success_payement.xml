@@ -114,7 +114,7 @@
                         android:id="@+id/imageView2" />
 
                     <TextView
-                        android:text="YOUR TRANSACTION DETAILS"
+                        android:text="TRANSACTION DETAILS"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -261,7 +261,7 @@
 
 
                                 <TextView
-                                    android:text="your invoice will be mailed to you on your registered email address"
+                                    android:text="invoice will be sent to your registered email address"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"

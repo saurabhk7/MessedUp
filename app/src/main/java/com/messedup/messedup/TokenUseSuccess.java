@@ -155,4 +155,8 @@ public class TokenUseSuccess extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(TokenUseSuccess.this, MainActivity.class));
+    }
 }

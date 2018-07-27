@@ -285,14 +285,14 @@ class FooterViewHolder extends RecyclerView.ViewHolder {
 
                 String[] TO = {"help@messedup.in"};
                 String[] CC = {""};
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                Intent emailIntent = new Intent(Intent.ACTION_VIEW);
 
-                emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.setType("message/rfc822");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                emailIntent.putExtra(Intent.EXTRA_CC, CC);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Messed Up Support!");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                emailIntent.setData(Uri.parse("mailto:?subject="+"Messed Up Support!"+"&to="+"help@messedup.in"));
+//                emailIntent.setType("message/rfc822");
+//                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+//                emailIntent.putExtra(Intent.EXTRA_CC, CC);
+//                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Messed Up Support!");
+//                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
 
                 try {
                     itemView.getContext().startActivity(Intent.createChooser(emailIntent, "Send mail..."));

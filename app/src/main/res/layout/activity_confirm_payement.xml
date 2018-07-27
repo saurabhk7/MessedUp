@@ -325,7 +325,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:text="apply promos to avail exciting offers"
+                    android:text="apply promocode to avail exciting offers"
                     android:layout_width="match_parent"
                     android:textAlignment="center"
                     android:gravity="end"

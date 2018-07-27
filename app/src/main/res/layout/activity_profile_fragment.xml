@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:padding="3dp"
                         android:layout_centerHorizontal="true"
-                        android:text="Refer your friend and you and your friend each get Rs. 51 Paytm Cashback after your friend buys his first 15 tokens"
+                        android:text="Share your Referral Code with your friends."
                         android:textSize="12sp"
                         android:textColor="@color/common_google_signin_btn_text_light_focused"
                         android:layout_marginBottom="3dp"

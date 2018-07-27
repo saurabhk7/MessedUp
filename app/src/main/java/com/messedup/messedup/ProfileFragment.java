@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -74,6 +75,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Timer;
@@ -100,6 +104,8 @@ public class ProfileFragment extends Fragment {
     ProgressBar progressBar;
     DoubleBounce doubleBounce ;
 
+   // TextView refTxtView;
+
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -111,7 +117,7 @@ public class ProfileFragment extends Fragment {
     private int mShortAnimationDuration;
     public CircularProgressButton circularProgressButton;
 
-    private TextView refTxtView;
+    private TextView refTxtView, refInfoTxtView;
 
 
     public static ProfileFragment newInstance() {
@@ -152,8 +158,8 @@ public class ProfileFragment extends Fragment {
         explainTextView3 = (TextView)ProfileView.findViewById(R.id.explaintxt3);
         explainTextView4 = (TextView)ProfileView.findViewById(R.id.explaintxt4);
 
-        explainString1 = "1. Click <b><font color=#59c614>\"BUY TOKENS\"</font></b> to buy  <font color=#59c614>any number of tokens</font> of the Messes you wish <br><b>(with No minimum tokens)</b>";
-        explainString2 = "2. <b><font color=#59c614>Pay</font></b> according to your selected tokens with our <b><font color=#59c614>secured payment gateway</font></b> and <b><font color=#59c614>avail our exciting offers</font></b>";
+        explainString1 = "1. Click <b><font color=#59c614>\"BUY TOKENS\"</font></b> to purchase  <font color=#59c614>any number of tokens</font> of the Messes you wish <br><b>(with No minimum tokens)</b>";
+        explainString2 = "2. <b><font color=#59c614>Pay</font></b> according to your selected tokens with our <b><font color=#59c614>secure payment gateway</font></b> and <b><font color=#59c614>avail exciting offers</font></b>";
         explainString3 = "3. <b><font color=#59c614>Decide your mess</font></b> by comparing the daily updated and weekly predicted menu";
         explainString4 = "4. <b><font color=#59c614>Enjoy your meal</font></b> at your favourite mess everyday";
 
@@ -168,11 +174,15 @@ public class ProfileFragment extends Fragment {
 
         ImageButton viewHistoryBtn = (ImageButton) ProfileView.findViewById(R.id.viewHistoryBtn);
 
+        refTxtView = (TextView) ProfileView.findViewById(R.id.ReferralTxtView);
+
 
         circularProgressButton=(CircularProgressButton)ProfileView.findViewById(R.id.AnimImInBtn);
 
         progressBar = (ProgressBar)ProfileView.findViewById(R.id.spin_kit_progress);
         doubleBounce = new DoubleBounce();
+
+        refInfoTxtView = (TextView) ProfileView.findViewById(R.id.ReferralInfoTxtView);
 
 
         TapToExpandTxt = (TextView) ProfileView.findViewById(R.id.tap_to_expand_badge);
@@ -180,7 +190,7 @@ public class ProfileFragment extends Fragment {
 
         mDetailsSharedPref = new DetailsSharedPref(ProfileView.getContext());
 
-        refTxtView = (TextView)ProfileView.findViewById(R.id.ReferralTxtView);
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         DetailsSharedPref dspobj2=new DetailsSharedPref(ProfileView.getContext());
@@ -188,6 +198,7 @@ public class ProfileFragment extends Fragment {
 
         Uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         new UserTokenInfo(ProfileView).execute();
+        new ReferalCodeText(ProfileView,uid).execute();
 
 
         if(status.equals("OFFLINE")) {
@@ -360,9 +371,9 @@ public class ProfileFragment extends Fragment {
 
             mDetailsSharedPref.updatePhoneSharedPrefs(CurrentUser.getPhoneNumber());
 
-            refcode = username.substring(0,3)+contactnum.substring(contactnum.length()-3,contactnum.length());
+            //refcode = username.substring(0,3)+contactnum.substring(contactnum.length()-3,contactnum.length());
 
-            refTxtView.setText(refcode.toLowerCase());
+            //refTxtView.setText(refcode.toLowerCase());
 
 
         }
@@ -454,7 +465,7 @@ public class ProfileFragment extends Fragment {
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout and Download Messed Up! on Google Play. Download and " +
                             "get Mess Menu Updates!\n\n";
-                    sAux = sAux + "https://goo.gl/rseyyY \n\n";
+                    sAux = sAux + "http://www.messedup.in/app \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "Share Messed Up App to"));
                 } catch(Exception e) {
@@ -473,8 +484,8 @@ public class ProfileFragment extends Fragment {
                     i.setType("text/plain");
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout Messed Up on Google Play and " +
-                            "use '"+refcode+"' as your referral code during payment to get *FLAT ₹51 Paytm Cashback* on your first transaction! \n\n";
-                    sAux = sAux + "https://goo.gl/rseyyY \n\n";
+                            "use '"+refcode.toLowerCase()+"' as your referral code during payment to get *FLAT ₹51 Paytm Cashback* on your first transaction! \n\n";
+                    sAux = sAux + "http://www.messedup.in/app \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "Share your referral code with"));
                 } catch(Exception e) {
@@ -716,9 +727,9 @@ public class ProfileFragment extends Fragment {
 
                 String BASEURL = Constants.getBaseUrl();
 
-                Log.e("BASEURL: ", BASEURL+" : "+Uid);
+                Log.e("BASEURL: ", BASEURL + " : " + Uid);
 
-                URL url = new URL(BASEURL+"getUserTokenInfo.php?userid="+Uid);
+                URL url = new URL(BASEURL + "getUserTokenInfo.php?userid=" + Uid);
 
 
                 conn = (HttpURLConnection) url.openConnection();
@@ -736,7 +747,6 @@ public class ProfileFragment extends Fragment {
                 conn.connect();
 
 
-
                 //do somehting with response
                 is = conn.getInputStream();
 
@@ -752,11 +762,11 @@ public class ProfileFragment extends Fragment {
                     json = sb.toString();
 
                     try {
-                        Log.e("ProfDebug",json);
+                        Log.e("ProfDebug", json);
 
                         jsonResponseArray = new JSONArray(json);
 
-                        Log.e("ProfDebugafter",jsonResponseArray.toString());
+                        Log.e("ProfDebugafter", jsonResponseArray.toString());
 
                         db.updateUserCard(Uid, json);
 
@@ -767,7 +777,7 @@ public class ProfileFragment extends Fragment {
 
 
                 } catch (Exception e) {
-                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                    Log.e("Buffer Error1", "Error converting result " + e.toString());
                 }
 
                 // try parse the string to a JSON object
@@ -779,7 +789,7 @@ public class ProfileFragment extends Fragment {
                 //String contentAsString = readIt(is,len);
             } catch (IOException e) {
                 e.printStackTrace();
-            }  finally {
+            } finally {
                 //clean up
                 try {
                     if (os != null) {
@@ -812,12 +822,15 @@ public class ProfileFragment extends Fragment {
 
             try {
 
-                if (jsonResponseArray!=null) {
+                if (jsonResponseArray != null) {
+
+
+                    //TODO: add response to set string of offer cashback from server
 
 
                     JSONArray userinfo = jsonResponseArray;
 
-                    if(userinfo.length()<1)
+                    if (userinfo.length() < 1)
 //                    if(true)
                     {
                         progressBar.setVisibility(View.INVISIBLE);
@@ -825,8 +838,7 @@ public class ProfileFragment extends Fragment {
                         explainLayout.setVisibility(View.VISIBLE);
                         lView.setVisibility(View.GONE);
 
-                    }
-                    else {
+                    } else {
 
                         explainLayout.setVisibility(View.GONE);
                         lView.setVisibility(View.VISIBLE);
@@ -868,8 +880,6 @@ public class ProfileFragment extends Fragment {
 
                             // adding HashList to ArrayList
                         }
-
-
 
 
                         TokenDisplayListAdapter lAdapter = new TokenDisplayListAdapter(getContext(), messname, tokentoexpire, expirydates, totaltokens);
@@ -961,7 +971,7 @@ public class ProfileFragment extends Fragment {
 
                 } else {
 
-                        /////////If response is null : No tokens bought by user
+                    /////////If response is null : No tokens bought by user
                 }
 
             } catch (Exception e) {
@@ -974,6 +984,7 @@ public class ProfileFragment extends Fragment {
             // updating UI from Background Thread
 
         }
+
     }
 
 
@@ -1087,7 +1098,7 @@ public class ProfileFragment extends Fragment {
 
 
                 } catch (Exception e) {
-                    Log.e("Buffer Error", "Error converting result " + e.toString());
+                    Log.e("Buffer Error2", "Error converting result " + e.toString());
                 }
 
                 // try parse the string to a JSON object
@@ -1137,6 +1148,15 @@ public class ProfileFragment extends Fragment {
                     String date = jObj.getString("date");
                     String time = jObj.getString("time");
                     String transid = jObj.getString("transid");
+
+                    try {
+                        final SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
+                        final Date dateObj = sdf.parse(time);
+                        System.out.println(dateObj);
+                        System.out.println("timenew"+new SimpleDateFormat("K:mm a").format(dateObj));
+                    } catch (final ParseException e) {
+                        e.printStackTrace();
+                    }
 
 
                     sendNotification("Enjoy Your Meal at "+MessName,"At "+time+
@@ -1198,7 +1218,16 @@ public class ProfileFragment extends Fragment {
                 else
                 {
 
-                    Toast.makeText(contextFinal,"Something went wrong, please try again after a while!",Toast.LENGTH_LONG).show();
+
+                    String msg = "Something went wrong";
+                    try{
+                        msg = jObj.getString("message");
+                    }
+                    catch (Exception e)
+                    {
+                        msg = "Something went wrong";
+                    }
+                    Toast.makeText(contextFinal,msg+", please try again later!",Toast.LENGTH_LONG).show();
 
                     /*
                     currDialog
@@ -1225,6 +1254,9 @@ public class ProfileFragment extends Fragment {
 
 
             } catch (Exception e) {
+
+                Toast.makeText(contextFinal,"Oops something went wrong, please try again later!",Toast.LENGTH_LONG).show();
+
                 e.printStackTrace();
             }
 
@@ -1240,9 +1272,164 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    class ReferalCodeText extends AsyncTask<String , Void ,String> {
 
 
-        public class HitCount extends AsyncTask<String , Void ,String> {
+        private View mPassedView;
+        private Context contextFinal;
+        private String MessArea,uid;
+        JSONArray jsonResponseArray = null;
+        String json = "";
+        public DatabaseHandler db;
+
+        public ReferalCodeText(View profileView, String uid) {
+
+            mPassedView = profileView;
+            this.uid= uid;
+        }
+
+
+        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
+
+
+        /**
+         * @use clear the initial Hashmap
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        /**
+         * @param args
+         * @use to download the latest menu in the background
+         */
+        protected String doInBackground(String... args) {
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                //constants
+
+
+                String BASEURL = Constants.getBaseUrl();
+
+                Log.e("BASEURL: ", BASEURL+" : "+Uid);
+
+                URL url = new URL(BASEURL+"getReferralText.php?userid="+Uid);
+
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    json = sb.toString();
+
+
+
+
+                } catch (Exception e) {
+                    Log.e("Buffer Error3", "Error converting result " + e.toString());
+                }
+
+                // try parse the string to a JSON object
+//                try {
+//                    jObj = new JSONObject(json);
+//                } catch (JSONException e) {
+//                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+//                }
+                //String contentAsString = readIt(is,len);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }  finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         *
+         * @use Stores the Downloaded JSON into ArrayList of HashMaps
+         **/
+        protected void onPostExecute(String file_url) {
+
+
+            try {
+
+                JSONObject jobj = new JSONObject(json);
+                String mssgtoDisplay = jobj.getString("message");
+                refcode = jobj.getString("ReferralCode");
+                Log.e("PROMO", "PROMOCEODE" + mssgtoDisplay);
+                Log.e("PROMO", "PROMOCEODE" + refcode);
+
+                if(mssgtoDisplay.length()>0)
+                    refInfoTxtView.setText(mssgtoDisplay);
+                if(refcode.length()>0)
+                    refTxtView.setText(refcode);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //   View v=intializeList(mPassedView);
+            // dismiss the dialog after getting all products
+//            pDialog.dismiss();
+            // updating UI from Background Thread
+
+
+        }
+    }
+
+
+
+
+
+
+    public class HitCount extends AsyncTask<String , Void ,String> {
 
 
         private View mView;

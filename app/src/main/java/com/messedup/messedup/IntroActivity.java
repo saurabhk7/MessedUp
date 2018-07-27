@@ -37,7 +37,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.menu)
+                .image(R.drawable.menu_main_comp)
                 .title("Menu at your fingertips")
                 .description("Now no need to go and check menu of every mess. Get next 7 days menu instantly!")
                 .build());

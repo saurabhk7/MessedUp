@@ -2,11 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_token_use_history"
+    android:id="@+id/activity_transaction_history"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.messedup.messedup.TokenUseHistoryActivity">
-
+    tools:context="com.messedup.messedup.TransactionHistoryActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -89,7 +88,6 @@
         android:id="@+id/notif_list_cv"
         app:cardCornerRadius="4dp"
         android:layout_marginBottom="0dp"
-        android:layout_above="@+id/check_transaction_history"
         app:cardUseCompatPadding="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -124,16 +122,6 @@
 
     </android.support.v7.widget.CardView>
 
-    <Button
-        android:text="CHECK TRANSACTION HISTORY"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/check_transaction_history"
-        android:backgroundTint="@color/app_green"
-        android:textColor="@color/white" />
+
 
 </RelativeLayout>
