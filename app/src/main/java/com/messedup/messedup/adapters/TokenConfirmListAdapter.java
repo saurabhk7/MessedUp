@@ -84,7 +84,7 @@ public class TokenConfirmListAdapter extends BaseAdapter {
         viewHolder.messplatetypetxt.setText(leftdata.get(position));
 
         if(rightdata.get(position).equals("messname")) {
-            viewHolder.messplatetypetxt.setTextSize(18);
+            viewHolder.messplatetypetxt.setTextSize(15);
             viewHolder.messplatetypetxt.setTextColor(context.getResources().getColor(R.color.colorPrimary));
             viewHolder.tokenqtytxt.setText("");
         }

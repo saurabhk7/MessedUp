@@ -404,6 +404,7 @@ class MyJavaScriptInterface {
     public void showHTML(String html) {
         Intent intent = new Intent(ctx, PaymentGatewayActivity.class);
         intent.putExtra("jsonString",html);
+        Log.e("JSONHTML :: ","YOUR JSON IS: "+html);
         ctx.startActivity(intent);
         Log.d("&*&*&*&*&",html);
 

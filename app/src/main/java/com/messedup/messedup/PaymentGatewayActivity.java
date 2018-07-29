@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.messedup.messedup.SharedPreferancesPackage.DetailsSharedPref;
 import com.messedup.messedup.adapters.TokenConfirmListAdapter;
@@ -91,6 +92,9 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     ArrayList<String> leftdata = new ArrayList<>();
     ArrayList<String> rightdata = new ArrayList<>();
 
+    TextView sundayStaticTxt, sundayDynamictxt;
+
+    int totalSundays=0;
 
 
 //    ArrayList<String> playtetypeStr = new ArrayList<>();
@@ -180,6 +184,11 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_confirm_payement);
         // Call the function callInstamojo to start payment here
 
+
+        sundayStaticTxt = (TextView)findViewById(R.id.sundaypricetxtstatic);
+        sundayDynamictxt = (TextView)findViewById(R.id.sundaypricetxtdyanamic);
+
+
         FinalMapToDisplay = new LinkedHashMap<>();
         FinalMapToPass = new LinkedHashMap<>();
 
@@ -212,6 +221,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             jsontxtview.setText("THE TOKEN ORDER JSON IS: " + json);
             try {
 //                HashMap<String,String> hm = toHashMap(json);
+                Log.e("JSON :: ","YOUR JSON IS: "+json);
                 JsonHelper helper = new JsonHelper();
                 JSONObject jObject = new JSONObject(json);
                 Map<String,Object> hm = helper.toMap(jObject);
@@ -396,7 +406,38 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             else if(key.equals("NoOfDays"))
             {
                 Log.e("Validity totaldays:",value);
+
                 totaldays = value;
+            }
+            else if(key.equals("SundayExtraCharge"))
+            {
+                Log.e("SUNDAY: ","KEYERROR: "+key+" VALUE: "+value);
+
+                int costSunday = Integer.parseInt(value);
+
+                int extraSunday = totalSundays*costSunday;
+
+                sundayDynamictxt.setText("+₹"+extraSunday);
+
+
+            }
+
+            else if(key.equals("NoOfSundays"))
+            {
+                Log.e("NO OF SUNDAY: ","KEYERROR: "+key+" VALUE: "+value);
+                totalSundays = Integer.parseInt(value);
+                sundayStaticTxt.setText(value+" sundays extra charge");
+
+                if(totalSundays==0)
+                {
+                    sundayStaticTxt.setVisibility(View.GONE);
+                    sundayDynamictxt.setVisibility(View.GONE);
+                }
+                else
+                {
+                    sundayStaticTxt.setVisibility(View.VISIBLE);
+                    sundayDynamictxt.setVisibility(View.VISIBLE);
+                }
             }
 
             else {
@@ -421,17 +462,21 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                     qty.setText(value);*/
 
+                    Log.e("KEYSPLIT: ","KEYERROR: "+key);
+
                     String keySplit = key.split(":")[1];
 
-                    leftdata.add(keySplit + " tokens");
-                    rightdata.add(value);
+                    String valuearr[] = value.split("t");
 
-                    FinalMapToPass.put(stringToAdd+"#"+keySplit,value);
+                    leftdata.add(keySplit + " tokens "+"("+valuearr[0]+"x₹"+valuearr[1]+")");
+                    rightdata.add("₹"+valuearr[2]);
+
+                    FinalMapToPass.put(stringToAdd+"#"+keySplit,valuearr[0]);
 
                     if(is_first)
-                        token_purpose+=(value+" "+keySplit+" "+stringToAdd+" token");
+                        token_purpose+=(valuearr[0]+" "+keySplit+" "+stringToAdd+" token");
                     else
-                        token_purpose+=(", "+value+" "+keySplit+" "+stringToAdd+" token");
+                        token_purpose+=(", "+valuearr[0]+" "+keySplit+" "+stringToAdd+" token");
 
                     is_first=false;
 
@@ -488,7 +533,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
         finalDisccost = disccost + "";
 
-        int pertokencost= (int) (Float.parseFloat(finalDisccost)/Integer.parseInt(totaltokens));
+        //int pertokencost= (int) (Float.parseFloat(finalDisccost)/Integer.parseInt(totaltokens));
 
         final float finalDisccost1 = disccost;
 
