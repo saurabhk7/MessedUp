@@ -275,7 +275,7 @@
                 android:layout_marginBottom="1dp" />
 
             <TextView
-                android:text="  Predicted"
+                android:text="  Previous week's menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

@@ -584,7 +584,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
                 String refcode = refCodeTxtView.getText().toString(); //TODO: uncomment this
                 if(refcode.length()==0)
-                    Toast.makeText(mContext,"Enter the Referal code",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"Enter the Referral code",Toast.LENGTH_SHORT).show();
                 else
                     new ApplyPromo(getApplicationContext(),refcode).execute();
 

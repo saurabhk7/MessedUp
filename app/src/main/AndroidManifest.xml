@@ -78,12 +78,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".firebase_messaging.MyFirebaseMessagingService">
+        <service android:name=".firebase_messaging.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".firebase_messaging.FirebaseIDService">
+        <service android:name=".firebase_messaging.FirebaseIDService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -119,7 +123,8 @@
         <activity
             android:name=".TokenUseHistoryActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".TransactionHistoryActivity"></activity>
+        <activity android:name=".TransactionHistoryActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

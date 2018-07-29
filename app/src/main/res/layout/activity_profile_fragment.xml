@@ -115,7 +115,7 @@
                         android:paddingLeft="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="REFERRAL CODE"
+                        android:text="loading referral code ..."
                         android:textSize="15sp"
                         android:textColor="@color/app_green"
                         android:layout_marginBottom="3dp"
@@ -415,7 +415,7 @@
                     android:layout_marginRight="0dp"
                     android:background="@color/transparent"
                     android:layout_above="@id/AnimImInBtn"
-                    android:src="@drawable/info_latest_2"
+                    android:src="@drawable/broken_link_2"
                     android:scaleType="centerInside"
                     android:contentDescription="New Messed Up System!" />
 

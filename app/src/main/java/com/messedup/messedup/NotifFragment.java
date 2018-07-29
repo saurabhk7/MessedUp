@@ -260,6 +260,7 @@ public class NotifFragment extends Fragment  {
     }
 
 
+/*
 
     private void initOffers(View notifView) {
 
@@ -311,6 +312,7 @@ public class NotifFragment extends Fragment  {
 
     }
 
+*/
 
     /**
      * This interface must be implemented by activities that contain this

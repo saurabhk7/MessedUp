@@ -257,7 +257,7 @@
                     android:layout_marginRight="0dp"
                     android:background="@color/transparent"
                     android:layout_above="@id/AnimImInBtn"
-                    android:src="@drawable/info_latest_2"
+                    android:src="@drawable/broken_link_2"
                     android:scaleType="centerInside"
                     android:contentDescription="New Messed Up System!" />
 

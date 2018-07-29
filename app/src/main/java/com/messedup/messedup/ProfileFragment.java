@@ -425,7 +425,7 @@ public class ProfileFragment extends Fragment {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Logout?")
                         .setContentText("Are you sure?")
-                        .setCancelText("No")
+                        .setCancelText("Cancel")
                         .setConfirmText("Yes, logout!")
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
@@ -689,6 +689,7 @@ public class ProfileFragment extends Fragment {
         public UserTokenInfo(View profileView) {
 
             mPassedView = profileView;
+            contextFinal = mPassedView.getContext();
         }
 
 
@@ -898,7 +899,7 @@ public class ProfileFragment extends Fragment {
                                 sweetAlertDialog
                                         .setTitleText("Are you sure?")
                                         .setContentText("Use " + messname[i] + " token!")
-                                        .setCancelText("No")
+                                        .setCancelText("Cancel")
                                         .setConfirmText("Yes,use it!")
                                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
@@ -909,7 +910,13 @@ public class ProfileFragment extends Fragment {
 
                                                 new UseToken(messname[i], totaltokens[i], sDialog, sweetAlertDialog, mPassedView).execute();
 
-                                                sDialog.cancel();
+//                                                sDialog.cancel();
+
+//                                                SweetAlertDialog pDialog = new SweetAlertDialog(contextFinal, SweetAlertDialog.PROGRESS_TYPE);
+                                                sDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                                sDialog.setTitleText("Please wait ...");
+                                                sDialog.setCancelable(false);
+                                                sDialog.show();
 
                                             /*sendNotification("Enjoy Your Meal at "+messname[i],"At 12:30 p.m. " +
                                                     "on May 31 2018 | "+(totaltokens[i]-1)+" tokens left");

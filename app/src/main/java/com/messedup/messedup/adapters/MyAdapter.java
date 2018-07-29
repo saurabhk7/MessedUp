@@ -64,6 +64,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+
         // create a new view
         Contextparent=parent;
         View view;
@@ -102,6 +103,9 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 final MyViewHolder holder = (MyViewHolder) Viewholder;
 
+
+
+//                holder.setIsRecyclable(false);
                 Log.d("IN MY ADAPTER "+position, list.get(position).getMessID());
 
                 holder.MessNameTxtView.setText(list.get(position).getMessID());
@@ -110,16 +114,19 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     holder.MenuUpdatedTextView.setElevation(18f);
                 }
 
+                Log.d("IN MY ADAPTER CHECK 1"+position, list.get(position).getMessID());
 
 
                 holder.costTextView.setText(" ₹ "+list.get(position).getGCharge());
 
+                Log.d("IN MY ADAPTER CHECK 2"+position, list.get(position).getMessID());
 
                 if (list.get(position).getStat().equals("1"))
                     holder.MenuUpdatedTextView.setVisibility(View.INVISIBLE);
                 else if(list.get(position).getStat().equals("0"))
                     holder.MenuUpdatedTextView.setVisibility(View.VISIBLE);
 
+                Log.d("IN MY ADAPTER CHECK 3"+position, list.get(position).getMessID());
 
 
                 if (list.get(position).getOpenClose().equals("0")) {
@@ -129,7 +136,13 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 }
 
+                Log.d("IN MY ADAPTER CHECK 4"+position, list.get(position).getMessID());
+
+
                 holder.CurrentObj = list.get(position);
+
+                Log.d("IN MY ADAPTER CHECK 5"+position, list.get(position).getMessID());
+
 
                 StorageReference imageRef = null;
                 try {
@@ -141,45 +154,56 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 }catch (Exception e)
                 {
+                    Log.d("IN MY ADAPTER CHECK 6"+position, list.get(position).getMessID());
+
                     Log.e("SPECIAL IMAGE","Image not found!");
                 }
 
+                Log.d("IN MY ADAPTER CHECK 7"+position, list.get(position).getMessID());
 
-                if(imageRef.getDownloadUrl().toString()!=null) {
 
-                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(final Uri uri) {
-                            try {
-                                Picasso.with(Contextparent.getContext()).load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.SpecialImg, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
+                if (imageRef != null) {
+                    if(imageRef.getDownloadUrl().toString()!=null) {
 
-                                    }
+                        Log.d("IN MY ADAPTER CHECK 8"+position, list.get(position).getMessID());
 
-                                    @Override
-                                    public void onError() {
+                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(final Uri uri) {
+                                try {
+                                    Picasso.with(Contextparent.getContext()).load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.SpecialImg, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
 
-                                        Picasso.with(Contextparent.getContext()).load(uri).into(holder.SpecialImg);
+                                        }
 
-                                    }
-                                });
-                            } catch (Exception e) {
-                                Log.v("E_VALUE", e.getMessage());
+                                        @Override
+                                        public void onError() {
+
+                                            Picasso.with(Contextparent.getContext()).load(uri).into(holder.SpecialImg);
+
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    Log.v("E_VALUE", e.getMessage());
+                                }
                             }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                        }
-                    });
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                            }
+                        });
 
-                }else
-                {
-                    Log.e("SPECIAL IMAGE","Image not found!");
+                    }else
+                    {
+                        Log.d("IN MY ADAPTER CHECK 9"+position, list.get(position).getMessID());
+
+                        Log.e("SPECIAL IMAGE","Image not found!");
+                    }
                 }
 
+                Log.d("IN MY ADAPTER CHECK 10"+position, list.get(position).getMessID());
 
         /*holder.itemView.setClickable(true);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -225,24 +249,38 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });*/
 
+                Log.d("IN MY ADAPTER BEFORE SPECIAL SET TEXT"+position, list.get(position).getMessID());
+
 
                 setSpecialList(holder, position);
+
+                Log.d("IN MY ADAPTER AFTER SPECIAL SET TEXT"+position, list.get(position).getMessID());
+
                 //setMenuLists(holder, position);
                 setMenuTxt(holder,position);
 
+                Log.d("IN MY ADAPTER AFTER MENU SET TEXT"+position, list.get(position).getMessID());
 
+
+                final int position_check=position;
 
                 sharedPreference = new SharedPreference();
                 favorites = sharedPreference.getFavorites(Contextparent.getContext());
 
                 if(list.get(position).getFavMess().equals("true"))
                 {
+
+                    Log.e("Before ADDING pos","**"+position);
                     holder.favorite.setFavorite(true,false);
+                    Log.e("After ADDING pos","**"+position);
                 }
                 else if(list.get(position).getFavMess().equals("false"))
                 {
+                    Log.e("Before Remove pos","**"+position);
                     holder.favorite.setFavorite(false,false);
+                    Log.e("After Remove pos","**"+position);
                 }
+
 
 
                 holder.favorite.setOnFavoriteChangeListener(
@@ -261,42 +299,47 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             @Override
                             public void onAnimationEnd(MaterialFavoriteButton buttonView, boolean isfavorite) {
 
-                                if(isfavorite)
-                                {
-                                    sharedPreference.addFavorite(Contextparent.getContext(),
-                                            list.get(position).getMessID());
-                                    Toast.makeText(Contextparent.getContext(),list.get(position).getMessID()+ " added to your Favourites!",Toast.LENGTH_SHORT).show();
-                                    list.get(position).setFavMess("true");
-                                    Log.d("After Added","1"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
+                                Log.e("Before Remove ANIM","**"+position+"--"+position_check);
+                                if(position==position_check) {
+                                    if (isfavorite && list.get(position).getFavMess().equals("false")) {
+                                        sharedPreference.addFavorite(Contextparent.getContext(),
+                                                list.get(position).getMessID());
+                                        Toast.makeText(Contextparent.getContext(), list.get(position).getMessID() + " added to your Favourites!", Toast.LENGTH_SHORT).show();
+                                        list.get(position).setFavMess("true");
+                                        Log.d("After Added", "1" + sharedPreference.getFavorites(Contextparent.getContext()).toString());
 
-                                    FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(list.get(position).getMessID()));
-                                    // FirebaseMessaging.getInstance().subscribeToTopic("tanmay");
-                                    MenuFragment menuFragment=new MenuFragment();
-                                    menuFragment.intializeList(Contextparent);
-
-                                }
-                                if(!isfavorite)
-                                {
-                                    sharedPreference.removeFavorite(Contextparent.getContext(),
-                                            list.get(position).getMessID());
-                                    list.get(position).setFavMess("false");
-
-                                    Toast.makeText(Contextparent.getContext(),list.get(position).getMessID()+" removed from your Favourites",Toast.LENGTH_SHORT).show();
-
-                                    Log.d("After Removed","2"+sharedPreference.getFavorites(Contextparent.getContext()).toString());
-                                    try {
-                                        FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicName(list.get(position).getMessID()));
-                                        //  FirebaseMessaging.getInstance().unsubscribeFromTopic("tanmay");
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        MenuFragment menuFragment=new MenuFragment();
+                                        FirebaseMessaging.getInstance().subscribeToTopic(getTopicName(list.get(position).getMessID()));
+                                        // FirebaseMessaging.getInstance().subscribeToTopic("tanmay");
+                                        MenuFragment menuFragment = new MenuFragment();
                                         menuFragment.intializeList(Contextparent);
+
                                     }
+                                    if (!isfavorite && list.get(position).getFavMess().equals("true")) {
+                                        Log.e("After Removed", "**" + position);
+                                        sharedPreference.removeFavorite(Contextparent.getContext(),
+                                                list.get(position).getMessID());
+                                        list.get(position).setFavMess("false");
+
+                                        Toast.makeText(Contextparent.getContext(), list.get(position).getMessID() + " removed from your Favourites", Toast.LENGTH_SHORT).show();
+
+                                        Log.d("After Removed", "2" + sharedPreference.getFavorites(Contextparent.getContext()).toString());
+                                        try {
+                                            FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicName(list.get(position).getMessID()));
+                                            //  FirebaseMessaging.getInstance().unsubscribeFromTopic("tanmay");
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            MenuFragment menuFragment = new MenuFragment();
+                                            menuFragment.intializeList(Contextparent);
+                                        }
 
 
+                                    }
                                 }
-
+                                else
+                                {
+                                    Log.e("After Removed", "**NOT SAME**" + position+"---"+position_check);
+                                }
 
 
                             }
@@ -358,8 +401,18 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setMenuTxt(MyViewHolder holder, int position) {
 
+        Log.d("IN MY ADAPTER MT1", list.get(position).getMessID());
 
-        holder.menuTxtCard.setText(Html.fromHtml(list.get(position).getMenuCard()));
+        try {
+            holder.menuTxtCard.setText(Html.fromHtml(list.get(position).getMenuCard()));
+        }
+        catch (Exception e) {
+
+            Log.d("IN MY ADAPTER MT2", list.get(position).getMessID());
+        }
+
+        Log.d("IN MY ADAPTER MT3", list.get(position).getMessID());
+
 
     }
 
@@ -465,6 +518,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //Specialitems.add("No Special Today!");
         }
 
+        Log.d("IN MY ADAPTER SL1", list.get(position).getMessID());
 
 
         if(Special1!=null)
@@ -479,11 +533,17 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ArrayAdapter<String> SpecialitemsAdapter =
                 new ArrayAdapter<String>(Contextparent.getContext(),R.layout.special_custom_list_view, Specialitems);
 
+        Log.d("IN MY ADAPTER SL2", list.get(position).getMessID());
+
 
         holder.SpecialList.setAdapter(SpecialitemsAdapter);
         setListViewHeightBasedOnChildren(holder.SpecialList,0);
+        Log.d("IN MY ADAPTER SL3", list.get(position).getMessID());
 
         SpecialitemsAdapter.notifyDataSetChanged();
+
+        Log.d("IN MY ADAPTER SL4", list.get(position).getMessID());
+
     }
 
     private static void setListViewHeightBasedOnChildren(ListView listView , int num) {

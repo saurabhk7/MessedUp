@@ -145,7 +145,7 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/cv_info"
         app:cardCornerRadius="6dp"
-        android:layout_marginBottom="58dp"
+        android:layout_marginBottom="0dp"
         app:cardUseCompatPadding="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">

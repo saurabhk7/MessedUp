@@ -468,7 +468,7 @@ public class MenuFragment extends Fragment {
     }
 
     private void onRefreshComplete(String url,View v) {
-        Log.i("REFRESH COMPLETE", "onRefreshComplete"+url);
+        Log.e("REFRESH COMPLETE", "onRefreshComplete"+url);
 
         // Remove all items from the ListAdapter, and then replace them with the new items
 
@@ -477,9 +477,12 @@ public class MenuFragment extends Fragment {
         // Stop the refreshing indicator
 
         try {
-            if (mSwipeRefreshLayout.isRefreshing())
-                mSwipeRefreshLayout.setRefreshing(false);
-            afterRefresh();
+            if (mSwipeRefreshLayout != null) {
+                if (mSwipeRefreshLayout.isRefreshing())
+                    mSwipeRefreshLayout.setRefreshing(false);
+
+                afterRefresh();
+            }
         }
         catch (Exception e)
         {
@@ -966,10 +969,12 @@ public class MenuFragment extends Fragment {
                 AllMessMenu.add(0, MessMenuObj);
             } else if (MessMenuObj.getFavMess().equals("false")) {
                 try {
+                    Log.e("----REMOVING-----","removing "+MessInfoObj.get(TAG_MESSID));
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicName(MessInfoObj.get(TAG_MESSID)));
                     //  FirebaseMessaging.getInstance().unsubscribeFromTopic("tanmay");
 
                 } catch (Exception e) {
+                    Log.e("----REMOVING-----","removing ");
                     e.printStackTrace();
                 } finally {
                     Log.i("MessFavfalse ", MessMenuObj.getMessID());
