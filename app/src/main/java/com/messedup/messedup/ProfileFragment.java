@@ -484,7 +484,7 @@ public class ProfileFragment extends Fragment {
                     i.setType("text/plain");
                     i.putExtra(Intent.EXTRA_SUBJECT, "Messed Up! \nMess, Menu and more!");
                     String sAux = "\nHey!\nCheckout Messed Up on Google Play and " +
-                            "use '"+refcode.toLowerCase()+"' as your referral code during payment to get *FLAT ₹51 Paytm Cashback* on your first transaction! \n\n";
+                            "use *'"+refcode.toLowerCase()+"'* as your referral code during payment to get *FLAT ₹51 Paytm Cashback* on your first transaction! \n\n";
                     sAux = sAux + "http://www.messedup.in/app \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "Share your referral code with"));
@@ -897,7 +897,7 @@ public class ProfileFragment extends Fragment {
 
                                 final SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
                                 sweetAlertDialog
-                                        .setTitleText("Are you sure?")
+                                        .setTitleText("Confirm meal")
                                         .setContentText("Use " + messname[i] + " token!")
                                         .setCancelText("Cancel")
                                         .setConfirmText("Yes,use it!")

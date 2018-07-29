@@ -74,12 +74,12 @@
             </LinearLayout>
 
             <TextView
-                android:text="Tap to use"
+                android:text="Tap to use token"
                 android:layout_width="wrap_content"
                 android:textColor="@color/common_google_signin_btn_text_light_focused"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="3dp"
                 android:layout_below="@+id/frame_layout"
                 android:layout_alignParentEnd="true"
                 android:layout_height="wrap_content"

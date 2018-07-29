@@ -111,7 +111,10 @@ public class MessInfoActivity extends AppCompatActivity {
         selectBrkfstBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MessInfoActivity.this,TokenSelectionActivity.class);
+                Intent i = new Intent(MessInfoActivity.this,MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("frombuytokens", "true");
+                i.putExtras(bundle);
                 //i.putExtra("messid", MessID);
                 startActivity(i);
             }

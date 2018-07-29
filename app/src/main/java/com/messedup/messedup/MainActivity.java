@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
         //initializing the toolbar view
         initToolBar();
       //  loadAddinBack();
@@ -177,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
         notifcount=3;   //temp value
         notifs.setBadgeCount(0);
 
+        final int[] PREVIOUS_TAB = {R.id.tab_menu};
+
+
 
         int REQUEST_PHONE_CALL = 1;
         if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -184,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        final int[] PREVIOUS_TAB = {R.id.tab_menu};
+
+//        final int[] PREVIOUS_TAB = {R.id.tab_menu};
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes final int tabId) {
@@ -329,10 +334,84 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Initialize the first fragment
-        Fragment FirstFrag = MenuFragment.newInstance();
 
-        replaceFragmentWithAnimationtoRight(FirstFrag, "tag");
 
+
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+
+            String value = bundle.getString("frombuytokens");
+            if (value != null && value.equals("true")) {
+                bottomBar.selectTabWithId(R.id.tab_profile);
+
+                //Initialize the first fragment
+                Fragment FirstFrag2 = ProfileFragment.newInstance();
+
+                replaceFragmentWithAnimationtoNone(FirstFrag2, "tag");
+
+//                bottomBar.selectTabAtPosition();
+//
+//                Fragment selectedFragment_buytokens = null;
+//                spinner = (Spinner) findViewById(R.id.categorySpinner);
+//                spinner.animate().alpha(0.0f).setDuration(500)
+//                        .setListener(new Animator.AnimatorListener() {
+//                            @Override
+//                            public void onAnimationStart(Animator animator) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onAnimationEnd(Animator animator) {
+//                                spinner.setVisibility(View.GONE);
+//                                TextView toolup=(TextView)toolbar.findViewById(R.id.spinner_text_title);
+//                                TextView tooldown=(TextView)toolbar.findViewById(R.id.spinner_text_view);
+//
+//                                toolup.setVisibility(View.VISIBLE);
+//                                tooldown.setVisibility(View.VISIBLE);
+//
+//                                toolup.setText("SELECTED AREA");
+//
+//
+//                                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                                String PreStoredArea = preferences.getString("selectedarea", getApplicationContext().getString(R.string.pict));
+//                                tooldown.setText(PreStoredArea);
+//                            }
+//
+//                            @Override
+//                            public void onAnimationCancel(Animator animator) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onAnimationRepeat(Animator animator) {
+//
+//                            }
+//                        });
+//
+//                // spinner.setVisibility(View.INVISIBLE);
+//                selectedFragment_buytokens = ProfileFragment.newInstance();
+//                replaceFragmentWithAnimationtoLeft(selectedFragment_buytokens, "tag");
+//                PREVIOUS_TAB[0] =R.id.tab_profile;
+//
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.replace(R.id.frame_layout, selectedFragment_buytokens);
+//            transaction.commit();
+
+            }
+            else
+            {
+                Fragment FirstFrag = MenuFragment.newInstance();
+
+                replaceFragmentWithAnimationtoRight(FirstFrag, "tag");
+            }
+
+        }
+        else
+        {
+            Fragment FirstFrag = MenuFragment.newInstance();
+
+            replaceFragmentWithAnimationtoRight(FirstFrag, "tag");
+        }
 
 
 
@@ -555,6 +634,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(TRANSIT_NONE);
         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+        transaction.replace(R.id.frame_layout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void replaceFragmentWithAnimationtoNone(android.support.v4.app.Fragment fragment, String tag){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setTransition(TRANSIT_NONE);
         transaction.replace(R.id.frame_layout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
