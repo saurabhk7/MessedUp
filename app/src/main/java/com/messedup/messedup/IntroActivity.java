@@ -57,7 +57,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.copped_cardview)
+                .image(R.drawable.menu_main_comp)
                 .title("Never miss out Offers")
                 .description("Get notified about nearby offers and mess updates instantly.")
                 .build());
