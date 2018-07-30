@@ -668,7 +668,7 @@ public class MainActivity extends AppCompatActivity {
         if(isNetworkAvailable()) {
 
 
-            Toast.makeText(this,"Searching messes in your Area!",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this,"Searching messes in your Area!",Toast.LENGTH_SHORT).show();
 
 
             int SPLASH_TIME_OUT=6000;

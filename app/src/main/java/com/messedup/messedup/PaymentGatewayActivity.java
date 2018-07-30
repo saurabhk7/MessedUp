@@ -97,6 +97,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
     int totalSundays=0;
 
+    InstapayListener listener;
+
 
 //    ArrayList<String> playtetypeStr = new ArrayList<>();
 //    ArrayList<String> qtyStr = new ArrayList<>();
@@ -107,6 +109,10 @@ public class PaymentGatewayActivity extends AppCompatActivity {
     String stringToAdd="";
 
     private void callInstamojoPay(String email, String phone, String amount, String purpose, String buyername) {
+
+        Log.e("failed callPay:","paycalled");
+
+
         final Activity activity = this;
 
         this.amount=amount;
@@ -129,18 +135,17 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         }
         initListener();
         instamojoPay.start(activity, pay, listener);
+
     }
-    
-    InstapayListener listener;
+
+
 
     
     private void initListener() {
+        Log.e("failed callPay:","lsitenerinit");
         listener = new InstapayListener() {
             @Override
             public void onSuccess(String response) {
-
-
-
 
                 Log.e("PROMOCODEPASS: ",PROMOCODE_CODE);
 
@@ -162,23 +167,40 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 }
 
 
-                new PostTxnData(response,amount,token_purpose, FinalMapToPass).execute();
-
-
+                if(amount!=null) {
+                    new PostTxnData(response,amount,token_purpose, FinalMapToPass).execute();
+                    amount =null;
 
                 //TODO: write async task to send the hashmap details to server
 
                 Toast.makeText(getApplicationContext(), "Congratulations! Payment Successful", Toast.LENGTH_LONG)
                         .show();
+                }
+                else
+                {
+                    Log.e("Instamojo failed","Amount null");
+                }
+
             }
 
             @Override
             public void onFailure(int code, String reason) {
+                listener = null;
+
+
+                if(amount!=null) {
                 Log.e("Instamojo failed","Code: "+code+"reason: "+reason);
                 Toast.makeText(getApplicationContext(), "Oops, something went wrong", Toast.LENGTH_SHORT)
                         .show();
 
-                new PostTxnFailData(reason,amount,token_purpose,code).execute();
+                    new PostTxnFailData(reason, amount, token_purpose, code).execute();
+                    amount =null;
+                }
+                else
+                {
+                    Log.e("Instamojo failed","Amount null");
+                }
+
 
             }
         };
@@ -740,6 +762,13 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     @Override
                     public void onClick(final SweetAlertDialog sDialog) {
 
+//                        FinalMapToPass.clear();
+//                        FinalMapToDisplay.clear();
+//                        amount="";
+
+                    Log.e("Destoyed","************");
+
+
                         sDialog.cancel();
 //                        startActivity(new Intent(PaymentGatewayActivity.this, TokenSelectionActivity.class));
                         finish();
@@ -1191,6 +1220,8 @@ public class PaymentGatewayActivity extends AppCompatActivity {
             OutputStream os = null;
             InputStream is = null;
             HttpURLConnection conn = null;
+
+
             try {
                 URL url = new URL(url_mess_menu);
                 JSONObject jsonObject = new JSONObject();
@@ -1308,9 +1339,19 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
 
 
-            Toast.makeText(getApplicationContext(), "Transaction Failed: " + reason, Toast.LENGTH_LONG)
+            Toast.makeText(getApplicationContext(), "Transaction Failed: " + reason+", please try again!", Toast.LENGTH_LONG)
                     .show();
             Log.e("Instamojo failed2","Code: "+code+"reason: "+reason);
+
+            listener=null;
+
+//            Intent i = new Intent(PaymentGatewayActivity.this,MainActivity.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putString("frombuytokens", "true");
+//            i.putExtras(bundle);
+//            //i.putExtra("messid", MessID);
+//            startActivity(i);
+
 
         }
 

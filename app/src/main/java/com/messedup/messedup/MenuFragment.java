@@ -256,15 +256,22 @@ public class MenuFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                String selectedArea;
+                String selectedArea = "PICT, BVP, Katraj";
                 Log.d("spinner pos: ",i+" "+"" );
 
                 if(adapterView.getItemAtPosition(i)!=null) {
                     selectedArea = adapterView.getItemAtPosition(i).toString();
                 }
                 else {
-                    selectedArea = college_list.get(i);
-                    Log.d("spinner pos: ","found null using list "+selectedArea);
+                    try {
+                        selectedArea = college_list.get(i);
+                        Log.d("spinner pos: ", "found null using list " + selectedArea);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        Log.e("SPINNER EXCEPTION","**");
+                    }
                 }
 
                 try {

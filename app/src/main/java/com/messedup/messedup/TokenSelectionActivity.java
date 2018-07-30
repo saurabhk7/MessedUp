@@ -352,6 +352,12 @@ public class TokenSelectionActivity extends AppCompatActivity {
                     public void onClick(final SweetAlertDialog sDialog) {
 
                         sDialog.cancel();
+//                        Intent i = new Intent(TokenSelectionActivity.this,MainActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("frombuytokens", "true");
+//                        i.putExtras(bundle);
+//                        //i.putExtra("messid", MessID);
+//                        startActivity(i);
 //                        startActivity(new Intent(TokenSelectionActivity.this, MainActivity.class));
                         finish();
                     }
