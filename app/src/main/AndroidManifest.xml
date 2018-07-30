@@ -114,7 +114,7 @@
 
         <meta-data
             android:name="instamojo.orderauth.url"
-            android:value="http://messedup.in/ftrzibvapv/test/access_token.php" />
+            android:value="http://messedup.in/ftrzibvapv/instamojo/access_token.php" />
 
         <activity
             android:name=".SuccessPayementActivity"

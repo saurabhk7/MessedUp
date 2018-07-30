@@ -39,7 +39,8 @@ public class TokenWebViewClient extends WebViewClient {
     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
         //Your code to do
         webView.setVisibility(View.INVISIBLE);
-
+        errimg.setVisibility(View.VISIBLE);
+        errtext.setVisibility(View.VISIBLE);
         Toast.makeText(view.getContext(), "Oops, Please check your Internet Connection!", Toast.LENGTH_LONG).show();
     }
 
