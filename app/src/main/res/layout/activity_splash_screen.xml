@@ -12,6 +12,78 @@
     tools:context=".SplashScreen"
     android:background="@android:color/background_dark">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/description_layout"
+        android:layout_above="@+id/img_layout"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="20dp">
+
+
+        <TextView
+            android:text="Messaging Partner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey"
+            android:textAlignment="center"
+            android:textSize="10sp"
+            android:id="@+id/textView9"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="Payment Gateway Partner"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:textColor="@color/grey"
+            android:textAlignment="center"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView8"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/img_layout"
+        android:layout_marginTop="5dp"
+        android:layout_above="@+id/secure_layout"
+        android:layout_width="match_parent"
+        android:layout_height="20dp">
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/msg91_logo_white"
+            android:id="@+id/imageView4"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/instamojo_logo_dark"
+            android:id="@+id/imageView3"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/secure_layout"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="20dp">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/instamojo_secure_inverted"
+            android:id="@+id/imageView6"
+            android:layout_weight="1" />
+    </LinearLayout>
+
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
         android:layout_width="wrap_content"

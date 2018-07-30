@@ -421,8 +421,15 @@ public class MessInfoActivity extends AppCompatActivity {
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), fullData);
         tabLayout = (TabLayout) findViewById(R.id.tab);
 
-        viewPager.setAdapter(mAdapter);
-        tabLayout.setupWithViewPager(viewPager);
+        try {
+
+            viewPager.setAdapter(mAdapter);
+            tabLayout.setupWithViewPager(viewPager);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
@@ -670,7 +677,7 @@ public class MessInfoActivity extends AppCompatActivity {
                             case R.id.action_call:
 //                                This is how to ask permission and make calls
                                 int REQUEST_PHONE_CALL = 1;
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+91"+num));
+                                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +num));
 
                                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                     if (ContextCompat.checkSelfPermission(MessInfoActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -684,19 +691,67 @@ public class MessInfoActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.action_locate:
-                                String uri = String.format(Locale.ENGLISH, loc);//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
-                                Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                startActivity(intent1);
+                                try {
+                                    String uri = String.format(Locale.ENGLISH, loc);//"geo:18.457542,73.850834?q=life+gym");//, latitude, longitude);
+                                    Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                    startActivity(intent1);
+                                }
+                                catch (Exception e)
+                                {
+                                    Toast.makeText(getApplicationContext(),"Details not uploaded",Toast.LENGTH_SHORT).show();
+                                }
                                 break;
 
                             case R.id.action_share:
                                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                                 sharingIntent.setType("text/plain");
-                                String shareBody = "*"+hashmessinfo.get("Name")+"*"
-                                        +"\n"+"Address: "+hashmessinfo.get("Address")
-                                        +"\n"+"Monthly Charge: ₹"+hashmessinfo.get("MonthlyCharge")
-                                        +"\n"+"Guest Charge: ₹"+hashmessinfo.get("GuestCharge")
-                                        +"\n"+"Contact: "+hashmessinfo.get("Contact")+
+                                String addr,mc,gc,cont,mn;
+                                if(hashmessinfo.get("Address")==null)
+                                {
+                                    addr = "Details not uploaded";
+                                }
+                                else
+                                {
+                                     addr = hashmessinfo.get("Address");
+                                }
+                                if(hashmessinfo.get("MonthlyCharge")==null)
+                                {
+                                    mc = "Price not uploaded";
+                                }
+                                else
+                                {
+                                    mc = "₹"+hashmessinfo.get("MonthlyCharge");
+                                }
+                                if(hashmessinfo.get("GuestCharge")==null)
+                                {
+                                    gc = "Price not uploaded";
+                                }
+                                else
+                                {
+                                    gc = "₹"+hashmessinfo.get("GuestCharge");
+                                }
+                                if(hashmessinfo.get("Contact")==null)
+                                {
+                                    cont = "Details not uploaded";
+                                }
+                                else
+                                {
+                                    cont = hashmessinfo.get("Contact");
+                                }
+                                if(hashmessinfo.get("Name")==null)
+                                {
+                                    Toast.makeText(getApplicationContext(),"Mess Details not found",Toast.LENGTH_SHORT).show();
+                                    break;
+                                }
+                                else
+                                {
+                                    mn = hashmessinfo.get("Name");
+                                }
+                                String shareBody = "*"+mn+"*"
+                                        +"\n"+"Address: "+addr
+                                        +"\n"+"Monthly Charge: "+mc
+                                        +"\n"+"Guest Charge: "+gc
+                                        +"\n"+"Contact: "+cont+
                                         "\n\nTap for more: "+
                                         "http://www.messedup.in/app \n\n";
 //                                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");

@@ -550,6 +550,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 //                finish();
 
 
+                //TODO: uncomment this later
                 callInstamojoPay(email, phone, finalDisccost1 +"",totaltokens+" "+purpose, buyername);
             }
         });
