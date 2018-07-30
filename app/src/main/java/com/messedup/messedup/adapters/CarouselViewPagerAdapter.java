@@ -1,6 +1,8 @@
 package com.messedup.messedup.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,11 +44,13 @@ public class CarouselViewPagerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         Picasso.with(context)
                 .load(imageUrls[position])
-                .fit()
-                .centerCrop()
+                .resize(600,200)
+                .centerInside()
                 .into(imageView);
 
         container.addView(imageView);
+
+
     return imageView;
 
     }

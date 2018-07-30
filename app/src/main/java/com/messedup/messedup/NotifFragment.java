@@ -634,6 +634,16 @@ public class NotifFragment extends Fragment  {
                     }
                 }, DELAY_MS, PERIOD_MS);
 
+                mPager.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String url = "http://www.messedup.in";
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                });
+
             }
 
         }

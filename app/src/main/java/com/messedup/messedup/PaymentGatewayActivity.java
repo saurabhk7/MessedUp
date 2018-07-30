@@ -48,6 +48,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -173,8 +174,12 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int code, String reason) {
-                Toast.makeText(getApplicationContext(), "Failed: " + reason, Toast.LENGTH_LONG)
+                Log.e("Instamojo failed","Code: "+code+"reason: "+reason);
+                Toast.makeText(getApplicationContext(), "Oops, something went wrong", Toast.LENGTH_SHORT)
                         .show();
+
+                new PostTxnFailData(reason,amount,token_purpose,code).execute();
+
             }
         };
     }
@@ -1147,17 +1152,183 @@ public class PaymentGatewayActivity extends AppCompatActivity {
 
     }
 
+    class PostTxnFailData extends AsyncTask<String , Void ,String> {
+
+
+        JSONObject jObj = null;
+        String json = "";
+        String reason;
+        String amount;
+        String purpose;
+        String code;
+        // products JSONArray
+
+        //  private String url_all_products = "https://wanidipak56.000webhostapp.com/receiveall.php";
+
+        String BASEURL = Constants.getBaseUrl();
+
+        private String url_mess_menu = BASEURL+"/postFailedTxn.php";
+        //ArrayList<HashMap<String, String>> messList;
+
+        PostTxnFailData(String reason, String amount, String purpose, int code) {
+            this.reason = reason;
+            this.amount = amount;
+            this.purpose = purpose;
+            this.code = code+"";
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+
+
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(url_mess_menu);
+                JSONObject jsonObject = new JSONObject();
+
+                Log.e("FAILPTXN", "***" + userid);
+                Log.e("FAILPTXN", "***" + amount);
+                Log.e("FAILPTXN", "***" + purpose);
+                Log.e("FAILPTXN", "***" + code);
+                Log.e("FAILPTXN", "***" + purpose);
+
+
+                try {
+                    jsonObject.put("userid", userid);//change the variables accordingly
+                    jsonObject.put("purpose", token_purpose);
+                    jsonObject.put("amount", amount);//Every variable in string format
+                    jsonObject.put("code", code);//Every variable in string format
+                    jsonObject.put("reason", reason);//Every variable in string format
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+
+                String message = jsonObject.toString();
+
+                Log.e("FAILEDSENDING", "sending.. " + message);
+
+//                Log.e("FAILEDPTXN", "***" + message);
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(message.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(message.getBytes());
+                //clean up
+                os.flush();
+
+
+                    //do somehting with response
+                    is = conn.getInputStream();
+
+                    try {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                is, "iso-8859-1"), 8);
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        is.close();
+                        json = sb.toString();
+
+                        Log.e("PTXN", "json: " + json);
+
+                        try {
+                            jObj = new JSONObject(json);
+                            int success = jObj.getInt("success");
+                            if (success == 1) {
+
+                                Log.e("PostTxnData", "Succesful");
+                            } else {
+                                Log.e("PostTxnData", "Error");
+                            }
+                        } catch (JSONException e) {
+                            Log.e("JSON Parser", "Error parsing data " + e.toString());
+                        }
+
+
+                    } catch (Exception e) {
+                        Log.e("Buffer Error", "Error converting result " + e.toString());
+                    }
+                } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+
+
+        }
+
+        protected void onPostExecute(String file_url) {
+
+//            for (String finalkey : FinalMapToPass.keySet()) {
+//                String value = FinalMapToPass.get(finalkey);
+//                System.out.println("FINALMAPTOPASS:   " + finalkey + "   :   " + value);
+//            }
+
+
+
+            Toast.makeText(getApplicationContext(), "Transaction Failed: " + reason, Toast.LENGTH_LONG)
+                    .show();
+            Log.e("Instamojo failed2","Code: "+code+"reason: "+reason);
+
+        }
+
+        }
+
+
+
+
     class sendData extends AsyncTask<String , Void ,String> {
 
 
         JSONObject jObj = null;
         String json = "";
 
-        LinkedHashMap<String,String> detailsMap = new LinkedHashMap<>();
+        LinkedHashMap<String, String> detailsMap = new LinkedHashMap<>();
 
         String BASEURL = Constants.getBaseUrl();
 
-        private String url_mess_menu = BASEURL+"/postTxn.php";
+        private String url_mess_menu = BASEURL + "/postTxn.php";
         //ArrayList<HashMap<String, String>> messList;
 
         sendData(LinkedHashMap<String, String> dm) {
@@ -1187,7 +1358,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                 String message = jsonObject.toString();
 
 
-                Log.e("PTXN","***"+message);
+                Log.e("PTXN", "***" + message);
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -1225,7 +1396,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
                     is.close();
                     json = sb.toString();
 
-                    Log.e("PTXN","json: "+json);
+                    Log.e("PTXN", "json: " + json);
 
                     try {
                         jObj = new JSONObject(json);
