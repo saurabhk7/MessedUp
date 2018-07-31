@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        if(isNetworkAvailable()) {
+        /*if(isNetworkAvailable()) {
 
             String BASEURL = Constants.getBaseUrl();
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 //            MAHUpdaterController.INSTANCE.getSharedPref().getString()
         }
 
-
+*/
 
         //initializing the toolbar view
         initToolBar();

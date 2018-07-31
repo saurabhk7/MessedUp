@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -610,7 +612,7 @@ public class MenuFragment extends Fragment {
         private String MessArea;
         ProgressDialog progressDialog;
         private DetailsSharedPref dspobj;
-
+        private int myversion;
 
 
         JSONObject jObj = null;
@@ -675,6 +677,13 @@ public class MenuFragment extends Fragment {
             progressDialog.setMessage("Loading your Menu!");
             progressDialog.show();
             AllMessInfoFromDatabaseSplash.clear();
+
+            try {
+                PackageInfo pInfo = thiscontext.getPackageManager().getPackageInfo(thiscontext.getPackageName(), 0);
+                myversion = pInfo.versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         /**
@@ -810,7 +819,16 @@ public class MenuFragment extends Fragment {
                 dspobj.updateMealStatusSharedPref(jObj.getString("meal"));
 
                 int success = jObj.getInt("success");
-                if (success == 1) {
+                int  minversion = jObj.getInt("version");
+                minversion++;
+
+                Log.e("MINVERSTEST","MY VERSION: "+myversion+" MIN VERSION: "+minversion);
+
+
+                if (success == 1&& minversion<=myversion) {
+
+                    Log.e("MINVERSTEST","SPLASH SATISFIED");
+
                     JSONArray mess2 = jObj.getJSONArray("messinfo");
 
                     for (int i = 0; i < mess2.length(); i++) {
@@ -873,13 +891,19 @@ public class MenuFragment extends Fragment {
                     // close this activity
                     //contextFinal..finish();
 
-                } else {
+                }
+                else if (success != 1 && minversion<=myversion)
+                {
                     Log.i("SPLASH SCREEN SHARED", "ERROR");
 
 
                     Toast.makeText(thiscontext,"No data found",Toast.LENGTH_SHORT).show();
                     updateSharedPrefs(thiscontext.getString(R.string.pict));
                     onRefreshComplete("complete",mPassedView);
+                }
+                else if (minversion>myversion)
+                {
+                    startActivity(new Intent(getActivity(),UpdateVersionActivity.class));
                 }
 
             } catch (Exception e) {

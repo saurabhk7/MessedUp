@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,6 +18,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -69,6 +72,9 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
     private static final String COMP_UPDATE_KEY = "compulsary_update";
     private static final String STORE_VERSION_KEY = "store_version_code";
 
+    private RelativeLayout errorLayout;
+    private Button cancelBtn, updateBtn;
+    private boolean doubleBackToExitPressedOnce=false;
 
 
     public ConnectionManager connectionManager;
@@ -107,6 +113,11 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
         checker.setNotice(Notice.DIALOG);
         checker.start();
 
+
+        errorLayout = (RelativeLayout) findViewById(R.id.error_layout);
+        errorLayout.setVisibility(View.GONE);
+        cancelBtn = (Button)findViewById(R.id.cancel_btn);
+        updateBtn = (Button)findViewById(R.id.update_btn);
 
 
 
@@ -401,9 +412,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
         JSONObject jObj = null;
         String json = "";
         private  DetailsSharedPref dspobj;
-
-
-
+        private int myversion;
 
 
         LoadAllMess(View PassedView) {
@@ -462,6 +471,14 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
             super.onPreExecute();
 
             AllMessInfoFromDatabaseSplash.clear();
+
+            try {
+                PackageInfo pInfo = contextFinal.getPackageManager().getPackageInfo(getPackageName(), 0);
+                myversion = pInfo.versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
            /* pDialog = new ProgressDialog(getActivity().getApplicationContext());
             pDialog.setMessage("Loading products. Please wait...");
             pDialog.setIndeterminate(false);
@@ -592,7 +609,17 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
             try {
 
                 int success = jObj.getInt("success");
-                if (success == 1) {
+//                if(success==1)
+                int  minversion = jObj.getInt("version");
+//                minversion++;
+
+                Log.e("MINVERSTEST","MY VERSION: "+myversion+" MIN VERSION: "+minversion);
+
+
+                if (success == 1&& minversion<=myversion) {
+
+                    Log.e("MINVERSTEST","SPLASH SATISFIED");
+
                     dspobj.updateMealStatusSharedPref(jObj.getString("meal"));
 
 
@@ -709,7 +736,7 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                     //contextFinal..finish();
 
                 }
-                else
+                else if (success != 1 && minversion<=myversion)
                 {
                     Log.i("SPLASH SCREEN SHARED", "ERROR");
                     FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -743,6 +770,42 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
                     dspobj.updateMealStatusSharedPref("OFFLINE");
 
                     Toast.makeText(contextFinal, "Oops,Error Updating Mess Menus", Toast.LENGTH_SHORT).show();
+                }
+                else if (minversion>myversion)
+                {
+
+                    SPLASH_TIME_OUT = 1000000000;
+
+
+                    errorLayout.setVisibility(View.VISIBLE);
+
+                    updateBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            }
+                        }
+                    });
+
+                    cancelBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            finish();
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.addCategory(Intent.CATEGORY_HOME);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            System.exit(0);
+                        }
+                    });
+
+
+
+                    Log.e("MINVERSTEST","SPLASH NOT SATISFIED");
                 }
 
             } catch (Exception e) {
@@ -850,6 +913,36 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            appExit();
+
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press Back again to exit!", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+
+
+    public void appExit () {
+        finish();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        System.exit(0);
     }
 }
 

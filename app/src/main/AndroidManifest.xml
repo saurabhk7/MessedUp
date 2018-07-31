@@ -78,14 +78,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".firebase_messaging.MyFirebaseMessagingService"
+        <service
+            android:name=".firebase_messaging.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".firebase_messaging.FirebaseIDService"
+        <service
+            android:name=".firebase_messaging.FirebaseIDService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -108,9 +110,9 @@
             android:name=".TokenSelectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PaymentGatewayActivity"
-           android:screenOrientation="portrait"
-            />
+        <activity
+            android:name=".PaymentGatewayActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="instamojo.orderauth.url"
@@ -125,8 +127,12 @@
         <activity
             android:name=".TokenUseHistoryActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".TransactionHistoryActivity"
+        <activity
+            android:name=".TransactionHistoryActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".UpdateVersionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionTitleBar"/>
     </application>
 
 </manifest>
