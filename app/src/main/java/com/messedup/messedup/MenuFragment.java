@@ -820,7 +820,7 @@ public class MenuFragment extends Fragment {
 
                 int success = jObj.getInt("success");
                 int  minversion = jObj.getInt("version");
-                minversion++;
+//                minversion++;
 
                 Log.e("MINVERSTEST","MY VERSION: "+myversion+" MIN VERSION: "+minversion);
 
