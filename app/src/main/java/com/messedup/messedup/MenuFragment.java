@@ -44,6 +44,7 @@ import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 import com.messedup.messedup.ui_package.RateUsDialogFragment;
 import com.messedup.messedup.ui_package.SampleDialogFragment;
+import com.mobapphome.mahandroidupdater.tools.MAHUpdaterController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -212,9 +213,20 @@ public class MenuFragment extends Fragment {
 
 
 
+
         //set up the view
         OnCreaterootView = inflater.inflate(R.layout.fragment_card, container, false);
 
+/*
+        if(isNetworkAvailable())
+        {
+            String BASEURL = Constants.getBaseUrl();
+
+            String url = BASEURL+"checkVersion.php";
+
+            MAHUpdaterController.init(getActivity(), url);
+        }
+*/
 
 
         //  getUserDetails2(OnCreaterootView);
@@ -370,6 +382,15 @@ public class MenuFragment extends Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*if(isNetworkAvailable()) {
+
+            String BASEURL = Constants.getBaseUrl();
+
+            String url = BASEURL + "checkVersion.php";
+
+            MAHUpdaterController.init(getActivity(), url);
+        }
+*/
         // BEGIN_INCLUDE (setup_refreshlistener)
         /**
          * Implement {@link SwipeRefreshLayout.OnRefreshListener}. When users do the "swipe to
@@ -383,7 +404,15 @@ public class MenuFragment extends Fragment {
             @Override
             public void onRefresh() {
                 Log.i("IN ON REFRESH", "onRefresh called from SwipeRefreshLayout");
+                /*if(isNetworkAvailable()) {
 
+                    String BASEURL = Constants.getBaseUrl();
+
+                    String url = BASEURL + "checkVersion.php";
+
+                    MAHUpdaterController.init(getActivity(), url);
+                }
+*/
                 if(isNetworkAvailable())
                     initiateRefresh(view);
                 else

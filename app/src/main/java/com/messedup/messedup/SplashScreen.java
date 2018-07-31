@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.messedup.messedup.signin_package.GoogleSignIn;
+import com.mobapphome.mahandroidupdater.tools.MAHUpdaterController;
 import com.rampo.updatechecker.UpdateChecker;
 import com.rampo.updatechecker.UpdateCheckerResult;
 import com.rampo.updatechecker.notice.Notice;
@@ -92,6 +93,8 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
         setContentView(R.layout.activity_splash_screen);
         // Splash screen timer
 
+
+//        MAHUpdaterController.testRestricterDlg(this);
 
 
         thiscontext=getBaseContext();
@@ -145,6 +148,16 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
         connectionManager=new ConnectionManager(this);
 
+        /*if(connectionManager.isNetworkAvailable()) {
+
+            String BASEURL = Constants.getBaseUrl();
+
+            String url = BASEURL + "checkVersion.php";
+
+            MAHUpdaterController.init(this, url);
+//            MAHUpdaterController.INSTANCE.getSharedPref().getString()
+        }
+*/
         if(connectionManager.isNetworkAvailable()) {
 
             SPLASH_TIME_OUT=10000;
@@ -827,6 +840,11 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
     }
 
 
+//    @Override
+//    protected void onDestroy() {
+//        MAHUpdaterController.end();
+//        super.onDestroy();
+//    }
 
 
     @Override

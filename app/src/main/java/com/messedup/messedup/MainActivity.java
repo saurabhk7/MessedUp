@@ -60,6 +60,7 @@ import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
 import com.messedup.messedup.sqlite_helper_package.SQLiteHelper.DatabaseHandler;
 import com.messedup.messedup.ui_package.CircleTransform;
 import com.messedup.messedup.ui_package.CustomAdapter;
+import com.mobapphome.mahandroidupdater.tools.MAHUpdaterController;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarTab;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -137,6 +138,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        if(isNetworkAvailable()) {
+
+            String BASEURL = Constants.getBaseUrl();
+
+            String url = BASEURL + "checkVersion.php";
+
+            MAHUpdaterController.init(this, url);
+//            MAHUpdaterController.INSTANCE.getSharedPref().getString()
+        }
+
+
 
         //initializing the toolbar view
         initToolBar();
@@ -144,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
         addHitCount();
 
 
+//        Log.e("UPDATECONTROL","BEFORE");
+//        MAHUpdaterController.testRestricterDlg(this);
+//        Log.e("UPDATECONTROL","AFTER");
         //startActivity(new Intent(MainActivity.this, IntroActivity.class));
 
 
@@ -594,6 +609,13 @@ public class MainActivity extends AppCompatActivity {
                 doubleBackToExitPressedOnce=false;
             }
         }, 2000);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+//        MAHUpdaterController.end();
+        super.onDestroy();
     }
 
     private void showInterstitial() {

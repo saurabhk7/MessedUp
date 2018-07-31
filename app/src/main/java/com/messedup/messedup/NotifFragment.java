@@ -595,7 +595,7 @@ public class NotifFragment extends Fragment  {
                 }
 
                 final ViewPager mPager = (ViewPager) mView.findViewById(R.id.pager);
-                CarouselViewPagerAdapter carouselViewPagerAdapter = new CarouselViewPagerAdapter(mContext,imageUrls);
+                final CarouselViewPagerAdapter carouselViewPagerAdapter = new CarouselViewPagerAdapter(mContext,imageUrls);
                 mPager.setAdapter(carouselViewPagerAdapter);
                 final CircleIndicator indicator = (CircleIndicator) mView.findViewById(R.id.indicator);
                 indicator.setViewPager(mPager);
