@@ -252,8 +252,15 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent toSelectTokenAct = new Intent(getActivity(),TokenSelectionActivity.class);
-                startActivity(toSelectTokenAct);
+                if(status.equals("OFFLINE")) {
+                    circularProgressButton.setProgress(-1);
+                    circularProgressButton.setClickable(false);
+                }
+                else {
+
+                    Intent toSelectTokenAct = new Intent(getActivity(), TokenSelectionActivity.class);
+                    startActivity(toSelectTokenAct);
+                }
 
         }
     });
