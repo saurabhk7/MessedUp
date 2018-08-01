@@ -223,8 +223,10 @@
                 android:layout_width="match_parent"
                 android:layout_marginLeft="10dp"
                 android:padding="5dp"
+                android:gravity="bottom"
                 android:layout_alignBottom="@+id/SpecialImgView"
                 android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/costTextView"
                 android:id="@+id/Mess_details_layout"
                 android:clickable="false"
                 tools:clickable="false">
@@ -245,13 +247,13 @@
 
 
                 <TextView
-                    android:text="Anand Food Xprs"
+                    android:text="Mess Name"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:id="@+id/mess_name"
                     android:gravity="bottom"
-                    android:textSize="22sp"
+                    android:textSize="21sp"
                     android:textColor="@color/white"
                     android:clickable="false"
                     tools:clickable="false" />
