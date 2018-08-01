@@ -70,7 +70,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.offers_compressed)
+                .image(R.drawable.cardview_edit)
                 .title("Your Favourites First")
                 .description("Just add your favourite mess, and get notified about their real time updates!")
                 .build());
@@ -81,7 +81,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.menu_main_comp)
+                .image(R.drawable.offers_compressed_new)
                 .title("Never miss out Offers")
                 .description("Get notified about nearby offers and mess updates instantly.")
                 .build());
@@ -92,7 +92,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .buttonsColor(R.color.colorBlack)
 //                        .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
 //                        .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-                .image(R.drawable.share_compressed)
+                .image(R.drawable.share_compressed_new)
                 .title("Sharing is Caring")
                 .description("Share everyday menu with your friends and enjoy your meal together!")
                 .build());
@@ -115,7 +115,7 @@ public class IntroActivity extends MaterialIntroActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    @Override
+    /*@Override
     protected void onNewIntent(Intent intent) {
         if (intent.getScheme().equals("terms")) {
             Log.e("FOUND","TERMS");
@@ -128,7 +128,7 @@ public class IntroActivity extends MaterialIntroActivity {
         else {
             Log.e("FOUND","NONE");
         }
-    }
+    }*/
 }
 
 
