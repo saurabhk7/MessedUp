@@ -11,6 +11,8 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.messedup.messedup.signin_package.PhoneNumberAuthentication;
+
+import java.util.regex.Pattern;
 
 import agency.tango.materialintroscreen.MaterialIntroActivity;
 import agency.tango.materialintroscreen.SlideFragment;
@@ -110,10 +114,26 @@ public class IntroActivity extends MaterialIntroActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getScheme().equals("terms")) {
+            Log.e("FOUND","TERMS");
+            Toast.makeText(this,"Terms",Toast.LENGTH_SHORT).show();
+        }
+        else  if (intent.getScheme().equals("privacy")) {
+            Log.e("FOUND","TERMS");
+            Toast.makeText(this,"Privacy",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Log.e("FOUND","NONE");
+        }
+    }
 }
 
 
-class CustomSlide extends SlideFragment {
+/*
+public static class CustomSlide extends SlideFragment {
     private CheckBox checkBox;
     private TextView TermsandCondTxt;
 
@@ -123,8 +143,45 @@ class CustomSlide extends SlideFragment {
         final View view = inflater.inflate(R.layout.fragment_custom_slide, container, false);
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         TermsandCondTxt = (TextView) view.findViewById(R.id.termsend);
-        customTextView(TermsandCondTxt);
+
+        TextView tnctxt= (TextView) view.findViewById(R.id.termsend2); //txt is object of TextView
+//        tnctxt.setMovementMethod(LinkMovementMethod.getInstance());
+        tnctxt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse("http://messedup.in/terms_conditions/"));
+                startActivity(browserIntent);
+            }
+        });
+        TextView pptxt= (TextView) view.findViewById(R.id.termsend3); //txt is object of TextView
+//        pptxt.setMovementMethod(LinkMovementMethod.getInstance());
+        pptxt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse("http://messedup.in/PrivacyPolicy/"));
+                startActivity(browserIntent);
+            }
+        });
+
+        */
+/*String termsAndConditions = "Terms and Conditions";
+        String privacyPolicy = "Privacy Policy";
+
+        TermsandCondTxt.setText("I agree to Messed Up's "+termsAndConditions+" and "+privacyPolicy);
+        TermsandCondTxt.setMovementMethod(LinkMovementMethod.getInstance());
+
+        Pattern termsAndConditionsMatcher = Pattern.compile(termsAndConditions);
+        Linkify.addLinks(TermsandCondTxt, termsAndConditionsMatcher, "terms:");
+
+        Pattern privacyPolicyMatcher = Pattern.compile(privacyPolicy);
+        Linkify.addLinks(TermsandCondTxt, privacyPolicyMatcher, "privacy:");
+*//*
+
+
+//        customTextView(TermsandCondTxt);
         return view;
+
+
     }
 
     @Override
@@ -179,4 +236,5 @@ class CustomSlide extends SlideFragment {
 
 
 
-}
+
+}*/

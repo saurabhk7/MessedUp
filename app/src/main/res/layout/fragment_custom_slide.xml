@@ -13,11 +13,11 @@
         android:layout_height="wrap_content">
 
 
-
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
             android:layout_alignParentTop="true"
             app:srcCompat="@drawable/deal"
             android:id="@+id/handshakeimg" />
@@ -31,28 +31,84 @@
             android:orientation="horizontal">
 
             <CheckBox
-                android:id="@+id/checkBox"
-                android:visibility="visible"
+                android:id="@+id/checkBox2"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text=""
+                android:gravity="top"
+                android:text="I agree to Messed Up's"
                 app:layout_parallaxFactor="0.4"
-                app:buttonTint="@color/white" />
+                android:button="@android:color/white" />
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    android:textColor="@color/grey_300"
+                    android:textColorLink="#FFFFFF"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="I agree to Messed Up's"
+                    app:layout_parallaxFactor="0.4"
+                    android:theme="@style/MyCheckBox" />
+
 
             <TextView
-                android:text="Terms and Conditions"
+                android:text="I agree to Messed Up's "
                 android:textAlignment="center"
                 android:textSize="16sp"
+                android:visibility="gone"
                 android:textColor="@color/grey_300"
                 android:textColorLink="#FFFFFF"
                 android:gravity="center"
+                android:layout_weight="1"
                 app:layout_parallaxFactor="0.6"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/termsend" />
+            <TextView
+                android:text="@string/tncstring"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:visibility="visible"
+                android:textColor="@color/grey_300"
+                android:textColorLink="#FFFFFF"
+                android:gravity="center"
+                android:autoLink="web"
+                app:layout_parallaxFactor="0.6"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/termsend2" />
+            <TextView
+                android:text="@string/ppstring"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:textColor="@color/grey_300"
+                android:textColorLink="#FFFFFF"
+                android:gravity="center"
+                android:autoLink="web"
+                android:clickable="true"
+                app:layout_parallaxFactor="0.6"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/termsend3" />
 
 
-
+            </LinearLayout>
 
         </LinearLayout>
 

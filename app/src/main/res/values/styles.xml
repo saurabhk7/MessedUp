@@ -38,6 +38,10 @@
         <item name="tabTextColor">@color/black</item>
     </style>
 
+    <style name="MyCheckBox" parent="Theme.Intro">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
 
 
 </resources>

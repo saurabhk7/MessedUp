@@ -105,7 +105,9 @@
         <activity
             android:name=".IntroActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Intro" />
+            android:theme="@style/Theme.Intro">
+
+        </activity>
         <activity
             android:name=".TokenSelectionActivity"
             android:screenOrientation="portrait"

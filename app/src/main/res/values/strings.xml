@@ -43,5 +43,7 @@
 
     <string name="gujratimessdetailsadd">Survey no.34/4, Prasad Bungalow, Katraj\nLandmark: Near Pune Cambridge School.</string>
 
+    <string name="tncstring"><a href="http://messedup.in/terms_conditions/">Terms and Conditions</a></string>
+    <string name="ppstring">and <a href="http://messedup.in/PrivacyPolicy/">Privacy Policy</a></string>
 
 </resources>
