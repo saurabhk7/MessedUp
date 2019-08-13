@@ -608,6 +608,8 @@ public class SplashScreen extends AppCompatActivity implements UpdateCheckerResu
 
             try {
 
+                Log.e("%%%%%CHECK3",jObj.toString());
+
                 int success = jObj.getInt("success");
 //                if(success==1)
                 int  minversion = jObj.getInt("version");

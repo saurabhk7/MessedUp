@@ -637,7 +637,8 @@ public class NotifFragment extends Fragment  {
                 mPager.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String url = "http://www.messedup.in";
+                        // domain change Aug 2019 String url = "http://www.messedup.in";
+                        String url = "http://www.messedup.co.in";
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
                         startActivity(i);

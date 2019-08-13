@@ -7,7 +7,9 @@ package com.messedup.messedup;
 public class Constants {
 
 //    private static String BASE_URL = "https://wanidipak56.000webhostapp.com";
-    private static String BASE_URL = "http://messedup.in/ftrzibvapv/api/";
+//    Change Domain Messed Up 3.0
+//    private static String BASE_URL = "http://messedup.in/ftrzibvapv/api/";
+    private static String BASE_URL = "http://www.messedup.co.in/messedupapi/api/";
 
 
     public static String getBaseUrl() {
