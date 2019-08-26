@@ -1,6 +1,6 @@
 # Messed Up - Android Application
 
-![App Image](app-image.png?raw=true "The student on-campus dining solution")
+![App Image](app-image.png?raw=true "The student on-campus dining solution" =250x)
 
 
 
