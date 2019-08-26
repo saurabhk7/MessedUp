@@ -1,5 +1,9 @@
 # Messed Up - Android Application
 
+![App Image](app-image.png?raw=true "The student on-campus dining solution")
+
+
+
 ## Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
