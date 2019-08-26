@@ -1,4 +1,4 @@
-#Messed Up - Android Application
+# Messed Up - Android Application
 
 ## Table of contents
 * [General info](#general-info)
