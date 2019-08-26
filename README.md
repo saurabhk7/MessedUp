@@ -1,12 +1,17 @@
 # Messed Up - Android Application
 
-![App Image](app-image.png?raw=true "The student on-campus dining solution" =250x)
-
+<p align="center">
+<img src="app-image.png" height=350>
+  <br><br>
+  <b>Here's how it looks like.</b>
+  <br>
+</p>
 
 
 ## Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
+* [Screenshots](#screenshots)
 
 
 ## General info
@@ -21,4 +26,51 @@ Project is created with:
 * SQLite Database
 * JAVA
 * HTTP RequestManager
-	
+
+## Screenshots
+
+<p align="center">
+
+<img src="screenshots/1-menu.png" height=350>
+  <br>
+  <b>Home Activity | Dining Menu Screen</b>
+  <br><br>
+</p>
+
+<p align="center">
+<img src="screenshots/2-profile-no.png" height=350>
+  <br>
+  <b>User Profile Activity</b>
+  <br><br>
+</p>
+
+<p align="center">
+<img src="screenshots/3-buy-no.png" height=350>
+  <br>
+  <b>Buy Meal Pass Activity</b>
+  <br><br>
+</p>
+
+<p align="center">
+<img src="screenshots/4-use-token-no.png" height=350>
+  <br>
+  <b>Activity Screen after using Meal Pass</b>
+  <br><br>
+</p>
+
+<p align="center">
+<img src="screenshots/5-payment-success-no.png" height=350>
+  <br>
+  <b>Payment Success Activity</b>
+  <br><br>
+</p>
+
+<p align="center">
+<img src="screenshots/6-offer-no.png" height=350>
+  <br>
+  <b>Offer and Notifications Activity</b>
+  <br><br>
+</p>
+
+
+
